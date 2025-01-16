@@ -29,10 +29,21 @@ class Server(ABC):
     def select_clients(self):
         pass
     
-    ''' need to implement '''
-    def train():
-        pass
+    def send_model(self):
+        for client_id in self.selected_clients:
+            self.available_clients[str(client_id)].receive_model()
 
+    ''' need to implement '''
+    def train(self):
+
+        ''' select clients '''
+        self.select_clients()
+
+        ''' send model to the clients '''
+        self.send_model()
+
+
+    
     def update_epoch(self):
         self.epoch+=1
 

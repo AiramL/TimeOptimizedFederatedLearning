@@ -9,6 +9,7 @@ class Client(object):
                  model_size=527000, 
                  message_period=0.1,
                  client_id=1,
+                 server=None,
                  datapath='executions/v2x_simulation_results1.csv'):
         
         df  = pd.read_csv(datapath)
@@ -17,6 +18,12 @@ class Client(object):
         self.model_size = model_size
         self.message_period = message_period
         self.client_id = client_id
+        self.server = server
+        self.epoch = 0
+
+    def set_server(self, server):
+        self.server = server
+        
 
     def print_dataframe(self):
         print(self.dataframe)
@@ -60,6 +67,36 @@ class Client(object):
         # final time
         print(0.1 * (self.state - initial_time))
 
+        self.server.set_state(self.state)
+
+    def receive_data_chunk(self,data):
+        maximum_chunk_size = floor(self.message_period * 1000 * self.dataframe['Throughput UD'].iloc[[self.state]])
+                
+        if (maximum_chunk_size >= data):
+            return 0 # no more data to send
+        return data - maximum_chunk_size # remain data to send
+
+
+    def receive_model(self):
+        initial_time = self.state
+
+        remain_data = self.model_size
+
+        while (remain_data):
+            remain_data = self.receive_data_chunk(remain_data)
+            print(remain_data)
+            self.update_state()
+
+        # final time
+        print(0.1 * (self.state - initial_time))
+
+        self.server.set_state(self.state)
+
+        ''' local training '''
+
+        ''' send model back to the server '''
+        self.send_model()
+        
 ''' Class test '''    
 
 if __name__ == '__main__':

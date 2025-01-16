@@ -15,6 +15,13 @@ server = Server(avalilable_clients=available_clients,
                 n_epochs=n_epochs,
                 n_select_clients=number_of_clients_to_select)
 
+''' associate clients and server '''
+for client in available_clients.values():
+    client.set_server(server)
+
+
+''' load delays information into clients '''
+
 ''' simulate the training'''
 server.train()
 
