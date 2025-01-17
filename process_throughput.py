@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+PLOT = False
+
 def generate_mean_and_std(n_executions):
     dataset_name = "executions/v2x_simulation_results"
     dataset_extension = ".csv"
@@ -20,23 +22,33 @@ def generate_mean_and_std(n_executions):
 mean = []
 std = []
 
-for n_execution in range(3,101):
-    df_mean, df_std = generate_mean_and_std(n_execution)
-    
-    mean.append(df_mean['Throughput UL'][0])
-    std.append(df_std['Throughput UL'][0])
+#for n_execution in range(3,101):
+#    df_mean, df_std = generate_mean_and_std(n_execution)
+#    
+#    mean.append(df_mean['Throughput UL'][0])
+#    std.append(df_std['Throughput UL'][0])
 
-print(mean)
-print(std)
+df_mean, df_std = generate_mean_and_std(40)
+    
+
+#print(mean)
+#print(std)
 
 executions = [ index for index in range(2,len(mean)+2) ]
 #error_interval = [-np.array(std),
 #                  np.array(std)]
 
-# Plot throughput
-plt.figure(figsize=(12, 8))
-plt.errorbar(executions, mean, yerr=std, capsize=3, fmt="r--o", ecolor = "black", label="throughputs_ul mean value")
-plt.xlabel("Number of Executions (#)")
-plt.ylabel("Throughput (Mb/s)")
-plt.legend()
-plt.show()
+#with open() as :
+file_name = "mean_tp.csv"
+df_mean.to_csv(file_name)
+
+if PLOT:
+    # Plot throughput
+    plt.figure(figsize=(12, 8))
+    plt.errorbar(executions, mean, yerr=std, capsize=3, fmt="r--o", ecolor = "black", label="throughputs_ul mean value")
+    plt.xlabel("Number of Executions (#)")
+    plt.ylabel("Throughput (Mb/s)")
+    plt.legend()
+    plt.show()
+
+    
