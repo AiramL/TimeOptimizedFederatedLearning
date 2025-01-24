@@ -1,6 +1,5 @@
 import pandas as pd
 import logging  
-''' add logging '''
 from math import floor
 
 class Client(object):
@@ -24,7 +23,7 @@ class Client(object):
         self.server = server
         self.epoch = 0
         self.time_last_chunk = 0.0
-        self.computation_delay = [ 1 for i in range(n_epochs)] # in seconds
+        self.computation_delay = [ 0 for i in range(n_epochs)] # in seconds
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(filename="client.log",encoding='utf-8', level=logging.DEBUG)
         
@@ -38,7 +37,7 @@ class Client(object):
         self.state+=1
     
     def set_state(self, state):
-        self.state = state
+        self.state = int(state)
     
     ''' Determines the delay giving the throughput. '''
     def get_delay(self):
@@ -47,10 +46,13 @@ class Client(object):
     ''' Sends the maximum data as possible during the 100ms. '''
     def send_data_chunk(self, data):
         
-        maximum_chunk_size = floor(self.message_period * 1000 * self.dataframe['Throughput UL'].iloc[self.state])
+        maximum_chunk_size = floor(self.message_period * 1000 * 
+                                   self.dataframe['Throughput UL'].iloc[self.state])
                 
         if (maximum_chunk_size >= data):
-            self.time_last_chunk = data/(1000 * self.dataframe['Throughput UL'].iloc[self.state])
+            self.time_last_chunk = data/(1000 * 
+                                         self.dataframe['Throughput UL'].iloc[self.state])
+                                         
             return 0 # no more data to send
         
         return data - maximum_chunk_size # remain data to send
@@ -80,25 +82,32 @@ class Client(object):
         self.logger.debug("state: %d" % self.state)
         self.logger.debug("initial state %d" % initial_time)
         self.logger.debug("last chunck: %f" % float(self.time_last_chunk))
-        self.logger.debug("time to send the model: %f" % float(0.1 * (self.state + self.time_last_chunk - initial_time)))
+        self.logger.debug("time to send the model: %f" % 
+                          float(0.1 * (self.state + self.time_last_chunk - initial_time)))
 
         self.update_state()
 
         if self.server is not None:
             self.server.update_received_models()
-            self.server.set_highest_delay(float(0.1 * (self.state + self.time_last_chunk - initial_time)))
+            self.server.set_highest_delay(float(0.1 * (self.state + 
+                                                       self.time_last_chunk - 
+                                                       initial_time)))
             self.server.set_server_state(self.state)
 
     def receive_data_chunk(self,data):
-        maximum_chunk_size = floor(self.message_period * 1000 * self.dataframe['Throughput DL'].iloc[self.state])
+        maximum_chunk_size = floor(self.message_period * 
+                                   1000 * 
+                                   self.dataframe['Throughput DL'].iloc[self.state])
                 
         if (maximum_chunk_size >= data):
-            self.time_last_chunk = data/(1000 * self.dataframe['Throughput DL'].iloc[self.state])
+            self.time_last_chunk = data/(1000 * 
+                                         self.dataframe['Throughput DL'].iloc[self.state])
             return 0 # no more data to send
         return data - maximum_chunk_size # remain data to send
 
 
     def receive_model(self):
+
         initial_time = self.state
 
         remain_data = self.model_size
@@ -106,7 +115,8 @@ class Client(object):
         self.logger.debug("receiving model %s" % self.server)
         
         while (remain_data):
-            self.logger.debug("client ID: %s state: %d", str(self.client_id), self.state)
+            self.logger.debug("client ID: %d state: %d",
+                              self.client_id, self.state)
             
             remain_data = self.receive_data_chunk(remain_data)
             
@@ -114,7 +124,10 @@ class Client(object):
                 self.update_state()
 
         # final time
-        self.logger.debug("time to receive the model: %f", float(0.1 * (self.state + self.time_last_chunk - initial_time)))
+        self.logger.debug("time to receive the model: %f" % 
+                          float(0.1 * (self.state + 
+                                       self.time_last_chunk - 
+                                       initial_time)))
 
         if self.server is not None:
             self.server.set_server_state(self.state)

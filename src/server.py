@@ -35,6 +35,7 @@ class Server(ABC):
         self.num_received_models = 0
         self.highest_delay = 0.0
         self.file_name = file_name
+        self.clients_computation_delay = [ 0 for i in range(n_epochs)] # in seconds
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(filename="server.log",encoding='utf-8', level=logging.DEBUG)
         
@@ -94,6 +95,9 @@ class Server(ABC):
         ''' save result '''
         self.save(self.epochs_delays)
 
+        ''' return the total delay '''
+        return self.calculate_total_delay()
+
     def set_highest_delay(self,delay):
         self.logger.debug("client delay: %f" % delay)
         self.logger.debug("highest delay: %f" % self.highest_delay)
@@ -114,7 +118,7 @@ class Server(ABC):
 
     def set_server_state(self, state):
         if state > self.state:
-            self.state = state
+            self.state = int(state)
     
     def set_clients_state(self):
         for client in self.available_clients.values():
@@ -174,12 +178,12 @@ class ServerMFastestSelection(Server):
         self.logger.debug("client delay: %f" % delay)
         self.logger.debug("highest delay: %f" % self.highest_delay)
         if (delay > self.highest_delay) and \
-           (self.receive_models <= self.m_clients):
+           (self.num_received_models <= self.m_clients):
             self.highest_delay = delay
     
     def update_received_models(self):
 
-        if self.receive_models < self.m_clients:
+        if self.num_received_models < self.m_clients:
             self.num_received_models+=1
             self.logger.debug("number of received models updated: %d" 
                             % self.num_received_models)
@@ -190,11 +194,11 @@ class ServerMFastestSelection(Server):
 
     def set_server_state(self, state):
         if (state > self.state) and \
-           (self.receive_models <= self.m_clients):
-            self.state = state
+           (self.num_received_models <= self.m_clients):
+            self.state = int(state)
 
 
-class ServerTOFLSelection(Server):
+class ServerTOFLSelection(Server, ABC):
 
     def __init__(self, 
                  n_select_clients=5, 
@@ -279,11 +283,12 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
 
         self.dataframe = pd.read_csv(datapath)
         self.message_period = 0.1
+        self.computational_delays = []
         self.logger.debug("loading data")
         self.clients_info = { str(client_id): self.dataframe[
-                                self.dataframe['Node ID'] == client_id].reset_index() 
+                                self.dataframe['Node ID'] == int(client_id)].reset_index() 
                                 for client_id in 
-                                avalilable_clients.values()}
+                                avalilable_clients.keys()}
                                 
         self.logger.debug("finished loading data")
         if n_select_clients > len(self.dataframe['Node ID'].unique()):
@@ -299,11 +304,13 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
         
         time_last_chunk = 0.0
 
-        maximum_chunk_size = floor(self.message_period * 1000 * self.clients_info[client_id]['Throughput UL'].iloc[state])
+        maximum_chunk_size = floor(self.message_period * 1000 * 
+                                   self.clients_info[client_id]['Throughput UL'].iloc[state])
                 
         if (maximum_chunk_size >= data):
 
-            time_last_chunk = data/(1000 * self.clients_info[client_id]['Throughput UL'].iloc[state])
+            time_last_chunk = data/(1000 * 
+                                    self.clients_info[client_id]['Throughput UL'].iloc[state])
             
             return 0, time_last_chunk
 
@@ -335,11 +342,12 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
                   time=0):
 
         initial_time = self.state + time
-        state = self.state + time
+        state = int(self.state + time)
 
         remaining_data = self.model_size
 
         while (remaining_data):
+            self.logger.debug("remaining data: %d state: %d", remaining_data, state)
             
             if direction == "d":
                 remaining_data, time_last_chunk = self.receive_data_chunk(remaining_data, 
@@ -357,10 +365,14 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
         return float(0.1 * (state + time_last_chunk - initial_time)), state
     
     def estimate_delay(self):
+
         for client in self.available_clients.keys():
+            
             self.logger.debug("estimating delay client %s" % client)
             self.logger.debug("estimating download delay")
+            
             d, time = self.get_delay(client, "d")
+            
             self.logger.debug("estimating upload delay")
             u, _ = self.get_delay(client, "u", time)
             self.clients_estimated_delays[client] = d + u
