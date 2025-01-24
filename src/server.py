@@ -2,6 +2,9 @@ from abc import ABC
 from abc import abstractmethod
 from pickle import dump
 import random
+import pandas as pd
+from math import floor
+import logging
 
 class Server(ABC):
 
@@ -9,6 +12,7 @@ class Server(ABC):
                  n_select_clients=5,
                  n_epochs=10,
                  file_name="result",
+                 model_size=527,
                  avalilable_clients={"1":1,
                                      "2":2,
                                      "3":3,
@@ -18,11 +22,12 @@ class Server(ABC):
                                      "7":7,
                                      "8":8,
                                      "9":9,
-                                     "10":10,}):
+                                     "0":0,}):
         
         self.available_clients = avalilable_clients
         self.selected_clients = []
         self.epochs_delays = []
+        self.model_size = model_size
         self.number_of_clients_to_select = n_select_clients
         self.number_of_epochs = n_epochs
         self.state = 0
@@ -30,6 +35,13 @@ class Server(ABC):
         self.num_received_models = 0
         self.highest_delay = 0.0
         self.file_name = file_name
+        self.logger = logging.getLogger(__name__)
+        logging.basicConfig(filename="server.log",encoding='utf-8', level=logging.DEBUG)
+        
+        
+        if n_select_clients > len(avalilable_clients.keys()):
+            self.logger.error("Invalid configuration. Number of clients to select greater than number of available clients")
+            raise Exception
 
     @abstractmethod
     def select_clients(self):
@@ -41,9 +53,9 @@ class Server(ABC):
 
     def receive_models(self):
         if(len(self.selected_clients)-self.num_received_models):
-            print("ok")
+            self.logger.debug("model received")
         else:
-            print("not ok")
+            self.logger.debug("model not received")
         
     def save(self,results):
         with open(self.file_name,"wb") as writer:
@@ -53,13 +65,11 @@ class Server(ABC):
     def train(self):
         
         while(self.epoch < self.number_of_epochs+1):
+
             self.set_clients_state()
             self.highest_delay = 0.0
-            #initial_time = self.state
-            print("starting global epoch at state: ",self.state)
-            
-
-            print("global epoch: ", self.epoch)
+            self.logger.debug("starting global epoch at state: %d" % self.state)
+            self.logger.debug("global epoch: %d" % self.epoch)
 
             ''' select clients '''
             self.select_clients()
@@ -71,29 +81,36 @@ class Server(ABC):
             self.num_received_models = 0
             self.receive_models()
 
-            self.epochs_delays.append(self.highest_delay)
-            
-            print("server state: ", self.state)
+            self.epochs_delays.append(self.highest_delay)            
+
+            self.logger.debug("server state: %d", self.state)
             
             ''' update epoch '''
             self.update_epoch()
         
+        ''' total delay '''
+        self.logger.info(self.calculate_total_delay())
+
         ''' save result '''
         self.save(self.epochs_delays)
 
     def set_highest_delay(self,delay):
-        print("client delay:", delay)
-        print("highest delay: ",self.highest_delay)
+        self.logger.debug("client delay: %f" % delay)
+        self.logger.debug("highest delay: %f" % self.highest_delay)
         if delay > self.highest_delay:
             self.highest_delay = delay
     
+    def calculate_total_delay(self):
+        return sum(self.epochs_delays)
+
     def update_epoch(self):
         self.epoch+=1
 
     def update_received_models(self):
         self.num_received_models+=1
-        print("number of received models updated: ",self.num_received_models)
-        print("number of models to be received: ", len(self.selected_clients)-self.num_received_models)
+        self.logger.debug("number of received models updated: %d" % self.num_received_models)
+        models_to_receive = len(self.selected_clients) - self.num_received_models
+        self.logger.debug("number of models to be received: %d" % models_to_receive)
 
     def set_server_state(self, state):
         if state > self.state:
@@ -106,7 +123,8 @@ class Server(ABC):
 class ServerRandomSelection(Server):
 
     def select_clients(self):
-        self.selected_clients = random.sample(range(1,len(self.available_clients)+1),self.number_of_clients_to_select)
+        self.selected_clients = random.sample(range(len(self.available_clients)),
+                                              self.number_of_clients_to_select)
 
 class ServerFixedSelection(Server):
     
@@ -116,19 +134,270 @@ class ServerFixedSelection(Server):
     def select_clients(self):
         pass
 
+# writing 
+class ServerMFastestSelection(Server):
+    def __init__(self, 
+                 n_select_clients=5, 
+                 n_epochs=10, 
+                 file_name="result", 
+                 model_size=527,
+                 m_clients=2, 
+                 avalilable_clients={ "1": 1,
+                                      "2": 2,
+                                      "3": 3,
+                                      "4": 4,
+                                      "5": 5,
+                                      "6": 6,
+                                      "7": 7,
+                                      "8": 8,
+                                      "9": 9,
+                                      "0": 0 }):
+        
+        super().__init__(n_select_clients, 
+                         n_epochs, 
+                         file_name, 
+                         model_size, 
+                         avalilable_clients)
+
+        self.m_clients = m_clients
+
+        if m_clients > n_select_clients:
+            self.logger.error("Invalid configuration. Number of m_clients \
+                               greater than number of clients to select")
+            raise Exception
+
+    def select_clients(self):
+        self.selected_clients = random.sample(range(len(self.available_clients)),
+                                              self.number_of_clients_to_select)
+
+    def set_highest_delay(self,delay):
+        self.logger.debug("client delay: %f" % delay)
+        self.logger.debug("highest delay: %f" % self.highest_delay)
+        if (delay > self.highest_delay) and \
+           (self.receive_models <= self.m_clients):
+            self.highest_delay = delay
+    
+    def update_received_models(self):
+
+        if self.receive_models < self.m_clients:
+            self.num_received_models+=1
+            self.logger.debug("number of received models updated: %d" 
+                            % self.num_received_models)
+            
+            models_to_receive = self.m_clients - self.num_received_models
+            self.logger.debug("number of models to be received: %d" 
+                            % models_to_receive)
+
+    def set_server_state(self, state):
+        if (state > self.state) and \
+           (self.receive_models <= self.m_clients):
+            self.state = state
+
 
 class ServerTOFLSelection(Server):
 
-    def load_estimator(self):
-        pass
+    def __init__(self, 
+                 n_select_clients=5, 
+                 n_epochs=10, 
+                 file_name="result", 
+                 model_size=527, 
+                 avalilable_clients={ "1": 1,
+                                      "2": 2,
+                                      "3": 3,
+                                      "4": 4,
+                                      "5": 5,
+                                      "6": 6,
+                                      "7": 7,
+                                      "8": 8,
+                                      "9": 9,
+                                      "0": 0 }):
 
+        super().__init__(n_select_clients, 
+                         n_epochs, 
+                         file_name, 
+                         model_size, 
+                         avalilable_clients)
+
+        self.clients_delays = {}
+        self.clients_estimated_delays = {}
+        
+    @abstractmethod
     def estimate_delay(self):
         pass
 
+    def select_clients(self):
+
+        selected_clients = []
+
+        total_estimated_delay = []
+
+        self.estimate_delay()
+
+        for client, delay in self.clients_estimated_delays.items():
+            total_estimated_delay.append((delay,client))
+            total_estimated_delay.sort()
+
+        num_selected_clients = 0 
+        while num_selected_clients < self.number_of_clients_to_select:
+
+            selected_clients.append(int(total_estimated_delay[
+                                    num_selected_clients][1]))
+            
+            num_selected_clients+=1
+
+        self.selected_clients = selected_clients
+
+
+
+
+# writing
+class ServerOracleTOFLSelection(ServerTOFLSelection):
+
+    # load dataset
+    def __init__(self, 
+                 n_select_clients=5, 
+                 n_epochs=10, 
+                 file_name="result", 
+                 model_size=527, 
+                 avalilable_clients={ "1": 1,
+                                      "2": 2,
+                                      "3": 3,
+                                      "4": 4,
+                                      "5": 5,
+                                      "6": 6,
+                                      "7": 7,
+                                      "8": 8,
+                                      "9": 9,
+                                      "0": 0 },
+                 datapath='executions/mean_tp.csv'):
+        
+        super().__init__(n_select_clients, 
+                         n_epochs, 
+                         file_name, 
+                         model_size, 
+                         avalilable_clients)
+
+        self.dataframe = pd.read_csv(datapath)
+        self.message_period = 0.1
+        self.logger.debug("loading data")
+        self.clients_info = { str(client_id): self.dataframe[
+                                self.dataframe['Node ID'] == client_id].reset_index() 
+                                for client_id in 
+                                avalilable_clients.values()}
+                                
+        self.logger.debug("finished loading data")
+        if n_select_clients > len(self.dataframe['Node ID'].unique()):
+            self.logger.error("Invalid number of clients to be selected, \
+                               higher than the total available number of clients.")
+            raise Exception
+        
+
+    def send_data_chunk(self, 
+                        data, 
+                        state, 
+                        client_id):
+        
+        time_last_chunk = 0.0
+
+        maximum_chunk_size = floor(self.message_period * 1000 * self.clients_info[client_id]['Throughput UL'].iloc[state])
+                
+        if (maximum_chunk_size >= data):
+
+            time_last_chunk = data/(1000 * self.clients_info[client_id]['Throughput UL'].iloc[state])
+            
+            return 0, time_last_chunk
+
+        return data - maximum_chunk_size, time_last_chunk
+
+    
+    def receive_data_chunk(self, 
+                           data, 
+                           state, 
+                           client_id):
+
+        time_last_chunk = 0.0
+
+        maximum_chunk_size = floor(self.message_period * 1000 * 
+                                   self.clients_info[client_id]['Throughput DL'].iloc[state])
+
+        if (maximum_chunk_size >= data):
+
+            time_last_chunk = data/(1000 * 
+                                    self.clients_info[client_id]['Throughput DL'].iloc[state])
+            
+            return 0, time_last_chunk
+
+        return data - maximum_chunk_size, time_last_chunk
+
+    def get_delay(self, 
+                  client_id, 
+                  direction, 
+                  time=0):
+
+        initial_time = self.state + time
+        state = self.state + time
+
+        remaining_data = self.model_size
+
+        while (remaining_data):
+            
+            if direction == "d":
+                remaining_data, time_last_chunk = self.receive_data_chunk(remaining_data, 
+                                                                          state, 
+                                                                          client_id)
+            
+            elif direction == "u":
+                remaining_data, time_last_chunk = self.send_data_chunk(remaining_data, 
+                                                                       state, 
+                                                                       client_id)
+            
+            if remaining_data:
+                state+=1
+        
+        return float(0.1 * (state + time_last_chunk - initial_time)), state
+    
+    def estimate_delay(self):
+        for client in self.available_clients.keys():
+            self.logger.debug("estimating delay client %s" % client)
+            self.logger.debug("estimating download delay")
+            d, time = self.get_delay(client, "d")
+            self.logger.debug("estimating upload delay")
+            u, _ = self.get_delay(client, "u", time)
+            self.clients_estimated_delays[client] = d + u
+
+class ServerTOFLEstimatorSelection(ServerTOFLSelection):
+
+    def __init__(self, 
+                 n_select_clients=5, 
+                 n_epochs=10, 
+                 file_name="result", 
+                 model_size=527, 
+                 avalilable_clients={"1": 1,
+                                     "2": 2,
+                                     "3": 3,
+                                     "4": 4,
+                                     "5": 5,
+                                     "6": 6,
+                                     "7": 7,
+                                     "8": 8,
+                                     "9": 9,
+                                     "0": 0 }):
+        
+        super().__init__(n_select_clients, 
+                         n_epochs, 
+                         file_name, 
+                         model_size, 
+                         avalilable_clients)
+
+
+
 
 if __name__ == "__main__":
-    server = ServerRandomSelection()
 
-    for i in range(10):
-        print(server.selected_clients)
+    # testing random selection
+    #server = ServerRandomSelection()
+
+    for i in range(2,11):
+        server = ServerOracleTOFLSelection(n_select_clients=i)
         server.select_clients()
+        print(server.selected_clients)
