@@ -15,26 +15,39 @@ def single_client_plot():
     plt.legend()
     plt.show()
 
-def selection_plot():
+def selection_plot(file_path="results/client_selection/",file_name="model_size500", PLOT=False):
+    
     plt.figure(figsize=(12, 8))
-
+    
     servers = ["random",
                "m_fastest",
-               "tofl_oracle"]
+               "tofl_oracle",
+               "tofl_estimator_dl"
+               ]
 
-    
+    # servers = ["tofl_estimator_dl","fixed_test"]
 
-    with open("all_results","rb") as loader:
+    with open(file_path+file_name,"rb") as loader:
         result = load(loader)
     
     for index, name in enumerate(servers):
-        plt.plot(range(1,len(result[index])),result[index][1:],label=name)
+        plt.plot(range(1,len(result[index])+1),result[index][:],label=name)
 
     plt.xlabel("Selected Clients (#)")
     plt.ylabel("Total Training Time (s)")
     plt.legend()
-    plt.show()
+    plt.savefig("figures/"+file_name+".png",dpi=300,bbox_inches='tight')
+
+    if PLOT:
+        plt.show()
 
 
 if __name__ == "__main__":
-    selection_plot()
+    
+    sizes = ["500",
+             "1000",
+             "2000",
+             "3000"]
+    
+    for model_size in sizes:
+        selection_plot("results/client_selection/","model_size"+model_size)

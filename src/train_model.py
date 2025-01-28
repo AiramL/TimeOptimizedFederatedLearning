@@ -22,7 +22,7 @@ def create_dataset(dataset, lookback):
         y.append(target)
     return torch.tensor(X), torch.tensor(y)
 
-class AirModel(nn.Module):
+class LSTM(nn.Module):
     
     def __init__(self):
         super().__init__()
@@ -34,9 +34,9 @@ class AirModel(nn.Module):
         x = self.linear(x)
         return x
 
-def load_tp(client_id=1):
+def load_tp(client_id=1, data_path="data/processed/", data_file="v2x_mobility_0_mean.csv"):
     client_id = 1
-    df = pd.read_csv('executions/mean_tp.csv')
+    df = pd.read_csv(data_path+data_file)
     dt = df[df['Node ID'] == client_id].reset_index()
     tpu = dt[['Throughput DL']].values.astype('float32')
     tpd = dt[['Throughput UL']].values.astype('float32')
@@ -57,12 +57,12 @@ def train():
     print(X_train.shape, y_train.shape)
     print(X_test.shape, y_test.shape)
 
-    model = AirModel()
+    model = LSTM()
     optimizer = optim.Adam(model.parameters())
     loss_fn = nn.MSELoss()
     loader = data.DataLoader(data.TensorDataset(X_train, y_train), shuffle=True, batch_size=8)
 
-    n_epochs = 100
+    n_epochs = 60
     for epoch in range(n_epochs):
         model.train()
         for X_batch, y_batch in loader:
@@ -71,6 +71,7 @@ def train():
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+        
         # Validation
         if epoch % 10 != 0:
             continue
@@ -103,7 +104,7 @@ def train():
     plt.legend()
     plt.show()
     
-    torch.save(model.state_dict(),"model_5.pt")
+    torch.save(model.state_dict(),"models/model_10.pt")
 
 if __name__ == "__main__":
     train()

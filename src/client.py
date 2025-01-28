@@ -85,7 +85,7 @@ class Client(object):
         self.logger.debug("time to send the model: %f" % 
                           float(0.1 * (self.state + self.time_last_chunk - initial_time)))
 
-        self.update_state()
+        #self.update_state()
 
         if self.server is not None:
             self.server.update_received_models()
@@ -128,10 +128,6 @@ class Client(object):
                           float(0.1 * (self.state + 
                                        self.time_last_chunk - 
                                        initial_time)))
-
-        if self.server is not None:
-            self.server.set_server_state(self.state)
-
         ''' training '''
         self.local_training()
 

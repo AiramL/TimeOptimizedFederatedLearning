@@ -1,17 +1,10 @@
-# implement the training for lstm model to predict thorughputs
-import matplotlib.pyplot as plt
-import pandas as pd
 import torch
-import torch.nn as nn
-import numpy as np
-import torch.optim as optim
-import torch.utils.data as data
+from collections import deque
+from train_model import LSTM, load_tp, create_dataset
 
-from train_model import AirModel, load_tp, create_dataset
+model = LSTM()
 
-model = AirModel()
-
-model.load_state_dict(torch.load("model_10.pt", weights_only=True))
+model.load_state_dict(torch.load("models/model_10.pt", weights_only=True))
 
 tpu, tpd = load_tp()
 
@@ -24,7 +17,18 @@ lookback = 10
 X_train, y_train = create_dataset(train, lookback=lookback)
 X_test, y_test = create_dataset(test, lookback=lookback)
 
-print("x[0]: ",X_test[0])
 
-y_hat = model(X_test[0])
-print("y: ",y_test[0],"y_hat: ",y_hat)
+
+
+
+s  = deque(10*[100],10)
+l = list(s)
+window = torch.tensor(l,dtype=torch.float32).view(-1,1)
+print("x[0]: ",X_test[0])
+print("x[0]: ",X_test[0].shape)
+print(window.shape)
+print("window: ", window)
+
+#print("y_hat: ",float(model(X_test[0])[-1]))
+print("y_hat: ", model(window))
+print(" y: ",y_test[0])
