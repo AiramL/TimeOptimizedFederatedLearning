@@ -19,7 +19,7 @@ def generate_mean_and_std(n_executions,origin="v2x_mobility_0_"):
 
     df = pd.read_csv(dataset_name+str(0)+dataset_extension)
 
-    for execution in range(1,n_executions):
+    for execution in range(n_executions):
         df = pd.concat((df, pd.read_csv(dataset_name+
                                         str(execution)+
                                         dataset_extension)))
@@ -32,11 +32,17 @@ def generate_mean_and_std(n_executions,origin="v2x_mobility_0_"):
 
 
 
-for origin in listdir("mobility/"):
-    df_mean, df_std = generate_mean_and_std(30,origin=origin[:-4])
-    file_path =  "data/processed/"
-    file_name = file_path+origin[:-4]+"_mean.csv"
-    df_mean.to_csv(file_name)
+# for origin in listdir("mobility/processed/"):
+#     df_mean, df_std = generate_mean_and_std(30,origin=origin[:-4])
+#     file_path =  "data/processed/"
+#     file_name = file_path+origin[:-4]+"_mean.csv"
+#     df_mean.to_csv(file_name)
+
+#for origin in listdir("mobility/processed/"):
+df_mean, df_std = generate_mean_and_std(30,origin="v2x_mobility_20")
+file_path =  "data/processed/"
+file_name = file_path+"v2x_mobility_20"+"_mean.csv"
+df_mean.to_csv(file_name)
 
 
     

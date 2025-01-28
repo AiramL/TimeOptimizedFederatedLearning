@@ -1,7 +1,7 @@
 from client import *
 from server import *
 
-number_of_clients = 10
+number_of_clients = 20
 n_epochs = 100
 sid = 0
 model_sizes=[500,1000,2000,3000]
@@ -11,7 +11,7 @@ def main(sid=0,
          number_of_clients=10,
          server_type="random",
          n_epochs=10,
-         datapath="data/processed/v2x_mobility_0_mean.csv",
+         datapath="data/processed/v2x_mobility_20_mean.csv",
          number_of_clients_to_select=2,
          m_clients=2):
     
