@@ -1,35 +1,46 @@
 
-n_nodes = 20
-file_name = "mobility/raw/scenarios/speed0/Krauss/20/manhattan_Krauss_20_0.tcl"
-processed_file = "mobility/processed/v2x_mobility_"+str(n_nodes)+".txt"
-txt_writer = ""
 
-with open(file_name, "r") as reader:
-    current_nodes = 0
-    start_process = False
-    
-    for line in reader:
+def process_scenario(n_nodes=20, 
+                     file_name="mobility/raw/scenarios/speed0/Krauss/20/manhattan_Krauss_20_",
+                     execution=0):
 
-        if current_nodes < n_nodes:
+    file_name = file_name+str(execution)+".tcl"
+    processed_file = "mobility/processed/mobility_"+str(n_nodes)+"_execution_"+str(execution)+".txt"
+    txt_writer = ""
+
+    with open(file_name, "r") as reader:
+        current_nodes = 0
+        start_process = False
         
-            if ") set Z_" in line:
-                current_nodes += 1
+        for line in reader:
 
-        elif current_nodes == n_nodes and not start_process:
-            time = float(line.split(' ')[2])
-            start_process = True
-        
-        elif start_process:
-            if float(line.split(' ')[2]) <= time:
-                pass
+            if current_nodes < n_nodes:
+            
+                if ") set Z_" in line:
+                    current_nodes += 1
 
-            else:
-                elements_list = line.split(' ')
-                txt_writer += elements_list[2] + ' ' + \
-                              elements_list[3][elements_list[3].find('(')+1:elements_list[3].find(')')] + ' ' + \
-                              elements_list[5] + ' ' + \
-                              elements_list[6] + ' ' + \
-                              elements_list[7][:-2] + "\n"
-                
-with open(processed_file, "w") as writer:
-    writer.writelines(txt_writer)
+            elif current_nodes == n_nodes and not start_process:
+                time = float(line.split(' ')[2])
+                start_process = True
+            
+            elif start_process:
+                if float(line.split(' ')[2]) <= time:
+                    pass
+
+                else:
+                    elements_list = line.split(' ')
+                    txt_writer += elements_list[2] + ' ' + \
+                                elements_list[3][elements_list[3].find('(')+1:elements_list[3].find(')')] + ' ' + \
+                                elements_list[5] + ' ' + \
+                                elements_list[6] + ' ' + \
+                                elements_list[7][:-2] + "\n"
+                    
+    with open(processed_file, "w") as writer:
+        writer.writelines(txt_writer)
+
+n_cars = "100"
+
+for execution in range():
+    process_scenario(n_nodes=int(n_cars), 
+                     file_name="mobility/raw/scenarios/speed0/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
+                     execution=execution)
