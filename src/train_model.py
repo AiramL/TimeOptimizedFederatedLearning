@@ -34,7 +34,7 @@ class LSTM(nn.Module):
         x = self.linear(x)
         return x
 
-def load_tp(client_id=1, data_path="data/processed/", data_file="v2x_mobility_0_mean.csv"):
+def load_tp(client_id=1, data_path="data/processed/", data_file="0.csv"):
     client_id = 1
     df = pd.read_csv(data_path+data_file)
     dt = df[df['Node ID'] == client_id].reset_index()
@@ -42,7 +42,6 @@ def load_tp(client_id=1, data_path="data/processed/", data_file="v2x_mobility_0_
     tpd = dt[['Throughput UL']].values.astype('float32')
     return tpu, tpd
 
-tpu, tpd = load_tp()
 
 def train():
     # train-test split for time series
@@ -107,4 +106,5 @@ def train():
     torch.save(model.state_dict(),"models/model_10.pt")
 
 if __name__ == "__main__":
+    tpu, tpd = load_tp()
     train()

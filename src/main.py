@@ -1,11 +1,8 @@
 from os import listdir
 from client import *
 from server import *
+import threading
 
-number_of_clients = 20
-n_epochs = 10
-sid = 0
-model_sizes=[500,1000,2000,3000]
 
 def main(sid=0,
          model_size=527,
@@ -24,7 +21,6 @@ def main(sid=0,
                                                    datapath=datapath, 
                                                    n_epochs=n_epochs)
 
-    ''' create a server object ''' 
     if server_type == "random":
         
         server = ServerRandomSelection(avalilable_clients=available_clients,
@@ -74,6 +70,7 @@ def main(sid=0,
 
         server = ServerEstimatorTOFLSelectionDL(avalilable_clients=available_clients,
                                               n_epochs=n_epochs,
+                                              datapath=datapath,
                                               file_name="results/server_"+server_type+
                                               "_n_clients_"+str(number_of_clients)+
                                               "_model_size_"+str(model_size),
@@ -104,33 +101,64 @@ def main(sid=0,
     # print(server_type)
     return server.train()
 
+def execute_results(model_sizes,servers,data):
+
+    number_of_clients = 100
+    n_epochs = 10
+
+    dataset_path = "data/processed/"
+
+    for model_size in model_sizes:
+    
+        for dataset in data:
+            
+            for method in servers:
+            
+                results = [ ]
+                
+                print("processing model size ",
+                        model_size,
+                        " dataset ",
+                        dataset)
+                
+                for number_of_clients_to_select in range(1,number_of_clients+1):                
+                    
+                    results.append(main(model_size=model_size,
+                                        number_of_clients_to_select=number_of_clients_to_select,
+                                        number_of_clients=number_of_clients,
+                                        n_epochs=n_epochs,
+                                        m_clients=int(number_of_clients_to_select*0.5),
+                                        server_type=method,
+                                        datapath=dataset_path+str(dataset)+".csv"))
+
+                with open("results/client_selection/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
+                    dump(results,writer)
+
 
 if  __name__ == "__main__":
 
     servers = ["random",
                "m_fastest",
                "tofl_oracle",
-               "tofl_estimator_dl"
-               ]
+               "tofl_estimator_dl"]
+    
+    model_sizes=[500,1000,2000,3000]
 
-    dataset_path = "data/processed/"
+    threads = { }
+    
+    for data in range(10):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data]))
 
-    for dataset in listdir(dataset_path):
+    for data in range(10):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)].start()
 
-        for model_size in model_sizes:
+    for data in range(10):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)].join()
 
-            results = [ [] for i in range(len(servers)) ]
-
-            for number_of_clients_to_select in range(1,number_of_clients+1):
-                    
-                for index, method in enumerate(servers):
-                    results[index].append(main(model_size=model_size,
-                                            number_of_clients_to_select=number_of_clients_to_select,
-                                            number_of_clients=number_of_clients,
-                                            n_epochs=n_epochs,
-                                            m_clients=int(number_of_clients_to_select*0.5),
-                                            server_type=method,
-                                            datapath=dataset_path+dataset))
-
-            with open("results/client_selection/model_size"+str(model_size)+"dataset_"+dataset,"wb") as writer:
-                dump(results,writer)
+    print("experiments finished")

@@ -312,7 +312,7 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
                                       "8": 8,
                                       "9": 9,
                                       "0": 0 },
-                 datapath="data/processed/v2x_mobility_0_mean.csv"):
+                 datapath="data/processed/0.csv"):
         
         super().__init__(n_select_clients, 
                          n_epochs, 

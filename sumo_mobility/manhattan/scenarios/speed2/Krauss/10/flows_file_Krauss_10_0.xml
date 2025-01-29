@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-01-28 17:02:58.347212 by randomTrips.py UNKNOWN
+<configuration>
+    <net-file value="/home/lcastrod/Documents/Dev/doutorado/Tese/TimeOptimizedFederatedLearning/sumo_mobility/manhattan/scenarios/speed2/manhattan_net_2.xml"/>
+    <output-trip-file value="/home/lcastrod/Documents/Dev/doutorado/Tese/TimeOptimizedFederatedLearning/sumo_mobility/manhattan/scenarios/speed2/Krauss/10/flows_file_Krauss_10_0.xml"/>
+    <trip-attributes value="departPos=&quot;random&quot; departSpeed=&quot;max&quot;"/>
+    <seed value="0"/>
+    <random value="True"/>
+    <jtrrouter value="True"/>
+    <end value="1.0"/>
+    <period value="0.01"/>
+    <flows value="10"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <flow id="0" begin="0" end="1" period="0.1" from="A1A0" departPos="random" departSpeed="max"/>
+    <flow id="1" begin="0" end="1" period="0.1" from="B0A0" departPos="random" departSpeed="max"/>
+    <flow id="2" begin="0" end="1" period="0.1" from="B0B1" departPos="random" departSpeed="max"/>
+    <flow id="3" begin="0" end="1" period="0.1" from="A1A0" departPos="random" departSpeed="max"/>
+    <flow id="4" begin="0" end="1" period="0.1" from="B1A1" departPos="random" departSpeed="max"/>
+    <flow id="5" begin="0" end="1" period="0.1" from="B1A1" departPos="random" departSpeed="max"/>
+    <flow id="6" begin="0" end="1" period="0.1" from="A0B0" departPos="random" departSpeed="max"/>
+    <flow id="7" begin="0" end="1" period="0.1" from="B0B1" departPos="random" departSpeed="max"/>
+    <flow id="8" begin="0" end="1" period="0.1" from="B1B0" departPos="random" departSpeed="max"/>
+    <flow id="9" begin="0" end="1" period="0.1" from="A0B0" departPos="random" departSpeed="max"/>
+</routes>

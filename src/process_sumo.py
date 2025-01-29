@@ -5,7 +5,7 @@ def process_scenario(n_nodes=20,
                      execution=0):
 
     file_name = file_name+str(execution)+".tcl"
-    processed_file = "mobility/processed/mobility_"+str(n_nodes)+"_execution_"+str(execution)+".txt"
+    processed_file = "mobility/processed/mobility_"+str(execution)+".txt"
     txt_writer = ""
 
     with open(file_name, "r") as reader:
@@ -40,7 +40,7 @@ def process_scenario(n_nodes=20,
 
 n_cars = "100"
 
-for execution in range():
+for execution in range(10):
     process_scenario(n_nodes=int(n_cars), 
                      file_name="mobility/raw/scenarios/speed0/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
                      execution=execution)

@@ -51,16 +51,17 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
                "tofl_estimator_dl"
                ]
 
-    results = { server: [ ] for server in servers }
+    results = { server : [ ] for server in servers }
     executions = range(1,n_executions+1)
 
     for server in servers:
         for dataset in range(n_executions):
-            with open(file_path+"model_"+server+model_size+"_dataset_"+dataset,"rb") as loader:
-                results[server].append(load(loader))
+            with open(file_path+"model_"+server+model_size+"_dataset_"+str(dataset),"rb") as loader:
+                result_list = load(loader)
+                print(result_list, "len: ", len(result_list))
+                results[server].append(result_list)
     
     for server in servers:
-        
         m = mean(results[server],axis=0)
         s = std(results[server],axis=0)
         
@@ -84,5 +85,5 @@ if __name__ == "__main__":
 
 
     for model_size in sizes:
-        selection_plot("results/client_selection/","_size_"+model_size)
+        selection_error_plot("results/client_selection/", "_size_"+model_size)
         

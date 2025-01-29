@@ -377,8 +377,10 @@ if __name__ == "__main__":
     #         simulate_v2x(input_data,"data/raw/"+file_name[:-4]+"_v2x_simulation_"+str(index)+".csv")
 
     for mobility in range(10):
+        print("processing mobility file ",mobility)
         file_name = "mobility_"+str(mobility)+".txt"
         input_data = read_input_file("mobility/processed/"+file_name)
 
         for index in range(30):
+            print("processing execution ",index)
             simulate_v2x(input_data,"data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv")

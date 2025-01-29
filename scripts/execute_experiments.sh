@@ -1,7 +1,7 @@
 
 [ ! -d "../data/processed" ] && ./create_paths.sh
 
-[ ! -f "../mobility/raw/scenarios/speed0/Krauss/20/manhattan_Krauss_20_0.tcl" ] && ./generate_trips.sh 
+[ ! -f "../mobility/raw/scenarios/speed0/Krauss/100/manhattan_Krauss_100_0.tcl" ] && ./generate_trips.sh 
 
 cd ..
 

@@ -14,7 +14,7 @@ def plot_fig(mean, std):
 
 
 def generate_mean_and_std(n_executions=30,origin="mobility_0_"):
-    dataset_name = "data/raw/"+origin+"_v2x_simulation_"
+    dataset_name = "data/raw/"+origin+"_simulation_"
     dataset_extension = ".csv"
 
     df = pd.read_csv(dataset_name+str(0)+dataset_extension)
@@ -39,6 +39,7 @@ def generate_mean_and_std(n_executions=30,origin="mobility_0_"):
 #     df_mean.to_csv(file_name)
 
 #for origin in listdir("mobility/processed/"):
+
 for index in range(10):
     
     df_mean, df_std = generate_mean_and_std(30,origin="mobility_"+str(index))
