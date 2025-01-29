@@ -1,11 +1,11 @@
 from pickle import load
 import matplotlib.pyplot as plt
-
+from numpy import mean, std
 
 def single_client_plot():
     plt.figure(figsize=(12, 8))
 
-    for index in range(10):
+    for index in range(20):
         with open("results/7000/results_client"+str(index),"rb") as loader:
             result = load(loader)
             plt.plot(range(101),result,label="client_"+str(index))
@@ -19,13 +19,12 @@ def selection_plot(file_path="results/client_selection/",file_name="model_size50
     
     plt.figure(figsize=(12, 8))
     
-    servers = ["random",
+    servers = [
+               "random",
                "m_fastest",
                "tofl_oracle",
                "tofl_estimator_dl"
                ]
-
-    # servers = ["tofl_estimator_dl","fixed_test"]
 
     with open(file_path+file_name,"rb") as loader:
         result = load(loader)
@@ -41,6 +40,39 @@ def selection_plot(file_path="results/client_selection/",file_name="model_size50
     if PLOT:
         plt.show()
 
+def selection_error_plot(file_path="results/client_selection/",model_size="model_size500", PLOT=False, n_executions=10):
+    
+    plt.figure(figsize=(12, 8))
+    
+    servers = [
+               "random",
+               "m_fastest",
+               "tofl_oracle",
+               "tofl_estimator_dl"
+               ]
+
+    results = { server: [ ] for server in servers }
+    executions = range(1,n_executions+1)
+
+    for server in servers:
+        for dataset in range(n_executions):
+            with open(file_path+"model_"+server+model_size+"_dataset_"+dataset,"rb") as loader:
+                results[server].append(load(loader))
+    
+    for server in servers:
+        
+        m = mean(results[server],axis=0)
+        s = std(results[server],axis=0)
+        
+        plt.errorbar(executions, m, yerr=s, capsize=3, label=server)
+
+    plt.xlabel("Selected Clients (#)")
+    plt.ylabel("Total Training Time (s)")
+    plt.legend()
+    plt.savefig("figures/"+model_size+".png",dpi=300,bbox_inches='tight')
+
+    if PLOT:
+        plt.show()
 
 if __name__ == "__main__":
     
@@ -49,5 +81,8 @@ if __name__ == "__main__":
              "2000",
              "3000"]
     
+
+
     for model_size in sizes:
-        selection_plot("results/client_selection/","model_size"+model_size)
+        selection_plot("results/client_selection/","_size_"+model_size)
+        

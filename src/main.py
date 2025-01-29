@@ -1,8 +1,9 @@
+from os import listdir
 from client import *
 from server import *
 
 number_of_clients = 20
-n_epochs = 100
+n_epochs = 10
 sid = 0
 model_sizes=[500,1000,2000,3000]
 
@@ -112,21 +113,24 @@ if  __name__ == "__main__":
                "tofl_estimator_dl"
                ]
 
-    # servers = ["tofl_estimator_dl","fixed_test"]
+    dataset_path = "data/processed/"
 
-    for model_size in model_sizes:
+    for dataset in listdir(dataset_path):
 
-        results = [ [] for i in range(len(servers)) ]
+        for model_size in model_sizes:
 
-        for number_of_clients_to_select in range(1,number_of_clients+1):
-                
-            for index, method in enumerate(servers):
-                results[index].append(main(model_size=model_size,
-                                        number_of_clients_to_select=number_of_clients_to_select,
-                                        number_of_clients=number_of_clients,
-                                        n_epochs=n_epochs,
-                                        m_clients=int(number_of_clients_to_select*0.5),
-                                        server_type=method))
+            results = [ [] for i in range(len(servers)) ]
 
-        with open("results/client_selection/model_size"+str(model_size),"wb") as writer:
-            dump(results,writer)
+            for number_of_clients_to_select in range(1,number_of_clients+1):
+                    
+                for index, method in enumerate(servers):
+                    results[index].append(main(model_size=model_size,
+                                            number_of_clients_to_select=number_of_clients_to_select,
+                                            number_of_clients=number_of_clients,
+                                            n_epochs=n_epochs,
+                                            m_clients=int(number_of_clients_to_select*0.5),
+                                            server_type=method,
+                                            datapath=dataset_path+dataset))
+
+            with open("results/client_selection/model_size"+str(model_size)+"dataset_"+dataset,"wb") as writer:
+                dump(results,writer)

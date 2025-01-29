@@ -13,7 +13,7 @@ def plot_fig(mean, std):
     plt.show()
 
 
-def generate_mean_and_std(n_executions,origin="v2x_mobility_0_"):
+def generate_mean_and_std(n_executions=30,origin="mobility_0_"):
     dataset_name = "data/raw/"+origin+"_v2x_simulation_"
     dataset_extension = ".csv"
 
@@ -39,10 +39,12 @@ def generate_mean_and_std(n_executions,origin="v2x_mobility_0_"):
 #     df_mean.to_csv(file_name)
 
 #for origin in listdir("mobility/processed/"):
-df_mean, df_std = generate_mean_and_std(30,origin="v2x_mobility_20")
-file_path =  "data/processed/"
-file_name = file_path+"v2x_mobility_20"+"_mean.csv"
-df_mean.to_csv(file_name)
+for index in range(10):
+    
+    df_mean, df_std = generate_mean_and_std(30,origin="mobility_"+str(index))
+    file_path =  "data/processed/"
+    file_name = file_path+str(index)+".csv"
+    df_mean.to_csv(file_name)
 
 
     
