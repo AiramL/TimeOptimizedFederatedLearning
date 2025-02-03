@@ -35,7 +35,7 @@ class Client(object):
         communications conditions. '''
     def update_state(self):
         self.state+=1
-    
+
     def set_state(self, state):
         self.state = int(state)
     
@@ -64,7 +64,7 @@ class Client(object):
 
     ''' Sends the model to the aggregation server. '''
     def send_model(self):
-
+        
         initial_time = self.state
 
         remain_data = self.model_size

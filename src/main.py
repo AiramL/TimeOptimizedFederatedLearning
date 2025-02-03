@@ -88,10 +88,6 @@ def main(sid=0,
         client.set_server(server)
 
     ''' simulate the training'''
-    #total_time = server.train()
-    #print("total_time: ",total_time," n_clients: ", number_of_clients_to_select, " strategy: ",server_type)
-    #return total_time
-    # print(server_type)
     return server.train()
 
 def execute_results(model_sizes,servers,data,speed):
@@ -125,7 +121,7 @@ def execute_results(model_sizes,servers,data,speed):
                                         server_type=method,
                                         datapath=dataset_path+str(dataset)+".csv"))
 
-                with open("results/client_selection/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset)+"_speed_"+str(speed),"wb") as writer:
+                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
                     dump(results,writer)
 
 
@@ -138,7 +134,7 @@ if  __name__ == "__main__":
     
     model_sizes=[500,1000,2000,3000]
     
-    speed = 1
+    speed = 0 
 
     threads = { }
     
