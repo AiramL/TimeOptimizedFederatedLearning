@@ -1,11 +1,12 @@
-
+import threading
 
 def process_scenario(n_nodes=20, 
                      file_name="mobility/raw/scenarios/speed0/Krauss/20/manhattan_Krauss_20_",
-                     execution=0):
+                     execution=0,
+                     speed=0):
 
     file_name = file_name+str(execution)+".tcl"
-    processed_file = "mobility/processed/mobility_"+str(execution)+".txt"
+    processed_file = "mobility/processed/mobility_"+str(execution)+"_speed_"+str(speed)+".txt"
     txt_writer = ""
 
     with open(file_name, "r") as reader:
@@ -13,12 +14,11 @@ def process_scenario(n_nodes=20,
         start_process = False
         
         for line in reader:
-
             if current_nodes < n_nodes:
             
                 if ") set Z_" in line:
                     current_nodes += 1
-
+                    print(current_nodes)
             elif current_nodes == n_nodes and not start_process:
                 time = float(line.split(' ')[2])
                 start_process = True
@@ -39,8 +39,19 @@ def process_scenario(n_nodes=20,
         writer.writelines(txt_writer)
 
 n_cars = "100"
+speed = 2 
+threads = {}
 
 for execution in range(10):
-    process_scenario(n_nodes=int(n_cars), 
-                     file_name="mobility/raw/scenarios/speed0/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
-                     execution=execution)
+    threads["thread"+str(execution)] = threading.Thread(target=process_scenario,
+                                                        args=(int(n_cars), 
+                                                              "mobility/raw/scenarios/speed"+str(speed)+"/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
+                                                              execution,
+                                                              speed))
+
+    threads["thread"+str(execution)].start()
+
+    threads["thread"+str(execution)].join()
+
+
+print("process finished")

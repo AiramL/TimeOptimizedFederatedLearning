@@ -1,4 +1,13 @@
-mkdir -p ../data/processed
-mkdir -p ../data/raw
-mkdir -p ../mobility/processed
-mkdir -p ../mobility/raw
+mkdir -p ../data/processed/speed0
+mkdir -p ../data/processed/speed1
+mkdir -p ../data/processed/speed2
+mkdir -p ../data/raw/speed0
+mkdir -p ../data/raw/speed1
+mkdir -p ../data/raw/speed2
+mkdir -p ../mobility/processed/speed0
+mkdir -p ../mobility/processed/speed1
+mkdir -p ../mobility/processed/speed2
+mkdir -p ../mobility/raw/speed0
+mkdir -p ../mobility/raw/speed1
+mkdir -p ../mobility/raw/speed2
+mkdir ../logs

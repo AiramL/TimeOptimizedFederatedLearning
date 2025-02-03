@@ -9,15 +9,16 @@ NB_Cars=(20 50 100)
 NB_Runs=(0 1 2 3 4 5 6 7 8 9 10)
 NB_grid=2 ### for value of x grids will be x-1
 carFM=Krauss ### Krauss, IDM, ACC
-Simulation_duration=300
+Simulation_duration=2000
 
 
 ##m/sec 
 declare -A speeds
 
-speeds[speed0]=3.638889 #13.1km/h
-speeds[speed1]=13.88889 #50km/h
-speeds[speed2]=27.77778 #100km/h
+#speeds[speed0]=3.638889 #13.1km/h
+#speeds[speed1]=13.88889 #50km/h
+#speeds[speed2]=27.77778 #100km/h
+speeds[speed2]=25.0000 #100km/h
 
 for (( run=0; run<${#NB_Runs[@]}; run++ ))
 do

@@ -5,6 +5,7 @@ import threading
 
 
 def main(sid=0,
+         speed=0,
          model_size=527,
          number_of_clients=10,
          server_type="random",
@@ -13,6 +14,12 @@ def main(sid=0,
          number_of_clients_to_select=2,
          m_clients=2):
     
+
+    file_name = "results/server_"+server_type+\
+                "_n_clients_"+str(number_of_clients)+\
+                "_model_size_"+str(model_size)+\
+                "_speed_"+str(speed)
+
     ''' create multiple clients objects '''
     available_clients = {}
     for client_id in range(number_of_clients):
@@ -25,19 +32,14 @@ def main(sid=0,
         
         server = ServerRandomSelection(avalilable_clients=available_clients,
                                        n_epochs=n_epochs,
-                                       file_name="results/server_"+server_type+
-                                       "_n_clients_"+str(number_of_clients)+
-                                       "_model_size_"+str(model_size),
+                                       file_name=file_name,
                                        n_select_clients=number_of_clients_to_select)
 
     elif server_type == "fixed":
         
         server = ServerFixedSelection(avalilable_clients=available_clients,
                                     n_epochs=n_epochs,
-                                    file_name="results/server_"+server_type+
-                                    "_client_"+str(sid)+
-                                    "_n_clients_"+str(number_of_clients)+
-                                    "_model_size_"+str(model_size),
+                                    file_name=file_name,
                                     n_select_clients=number_of_clients_to_select)
         
         server.set_selected_clients(range(number_of_clients_to_select))
@@ -48,9 +50,7 @@ def main(sid=0,
         server = ServerMFastestSelection(avalilable_clients=available_clients,
                                          n_epochs=n_epochs,                                              
                                          m_clients=m_clients,
-                                         file_name="results/server_"+server_type+
-                                         "_n_clients_"+str(number_of_clients)+
-                                         "_model_size_"+str(model_size),
+                                         file_name=file_name,
                                          n_select_clients=number_of_clients_to_select)
     
     # Need to test
@@ -59,9 +59,7 @@ def main(sid=0,
         server = ServerOracleTOFLSelection(avalilable_clients=available_clients,
                                            n_epochs=n_epochs,
                                            datapath=datapath,
-                                           file_name="results/server_"+server_type+
-                                           "_n_clients_"+str(number_of_clients)+
-                                           "_model_size_"+str(model_size),
+                                           file_name=file_name,
                                            n_select_clients=number_of_clients_to_select)
     
 
@@ -71,19 +69,14 @@ def main(sid=0,
         server = ServerEstimatorTOFLSelectionDL(avalilable_clients=available_clients,
                                               n_epochs=n_epochs,
                                               datapath=datapath,
-                                              file_name="results/server_"+server_type+
-                                              "_n_clients_"+str(number_of_clients)+
-                                              "_model_size_"+str(model_size),
+                                              file_name=file_name,
                                               n_select_clients=number_of_clients_to_select)
     
     elif server_type == "fixed_test":
         
         server = ServerFixedTestSelection(avalilable_clients=available_clients,
                                     n_epochs=n_epochs,
-                                    file_name="results/server_"+server_type+
-                                    "_client_"+str(sid)+
-                                    "_n_clients_"+str(number_of_clients)+
-                                    "_model_size_"+str(model_size),
+                                    file_name=file_name,
                                     n_select_clients=number_of_clients_to_select)
     
 
@@ -101,12 +94,12 @@ def main(sid=0,
     # print(server_type)
     return server.train()
 
-def execute_results(model_sizes,servers,data):
+def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
     n_epochs = 10
 
-    dataset_path = "data/processed/"
+    dataset_path = "data/processed/speed"+str(speed)+"/"
 
     for model_size in model_sizes:
     
@@ -124,6 +117,7 @@ def execute_results(model_sizes,servers,data):
                 for number_of_clients_to_select in range(1,number_of_clients+1):                
                     
                     results.append(main(model_size=model_size,
+                                        speed=speed,
                                         number_of_clients_to_select=number_of_clients_to_select,
                                         number_of_clients=number_of_clients,
                                         n_epochs=n_epochs,
@@ -131,7 +125,7 @@ def execute_results(model_sizes,servers,data):
                                         server_type=method,
                                         datapath=dataset_path+str(dataset)+".csv"))
 
-                with open("results/client_selection/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
+                with open("results/client_selection/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset)+"_speed_"+str(speed),"wb") as writer:
                     dump(results,writer)
 
 
@@ -143,20 +137,42 @@ if  __name__ == "__main__":
                "tofl_estimator_dl"]
     
     model_sizes=[500,1000,2000,3000]
+    
+    speed = 1
 
     threads = { }
     
     for data in range(10):
         for server in servers:
             for size in model_sizes:
-                threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data]))
+                threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data],speed))
 
-    for data in range(10):
+    for data in range(3):
         for server in servers:
             for size in model_sizes:
                 threads[server+str(size)+str(data)].start()
 
-    for data in range(10):
+    for data in range(3):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)].join()
+    
+    for data in range(3,6):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)].start()
+
+    for data in range(3,6):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)].join()
+    
+    for data in range(6,10):
+        for server in servers:
+            for size in model_sizes:
+                threads[server+str(size)+str(data)].start()
+
+    for data in range(6,10):
         for server in servers:
             for size in model_sizes:
                 threads[server+str(size)+str(data)].join()

@@ -40,9 +40,10 @@ class Server(ABC):
         self.num_received_models = 0
         self.highest_delay = 0.0
         self.file_name = file_name
+        self.SAVE =  False
         self.clients_computation_delay = [ 0 for i in range(n_epochs)] # in seconds
         self.logger = logging.getLogger(__name__)
-        logging.basicConfig(filename="server.log",encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.DEBUG)
         
         
         if n_select_clients > len(avalilable_clients.keys()):
@@ -108,7 +109,8 @@ class Server(ABC):
         self.logger.info(self.calculate_total_delay())
 
         ''' save result '''
-        self.save(self.epochs_delays)
+        if self.SAVE:
+            self.save(self.epochs_delays)
 
         ''' return the total delay '''
         return self.calculate_total_delay()

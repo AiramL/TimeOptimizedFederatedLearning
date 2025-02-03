@@ -52,20 +52,18 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
                ]
 
     results = { server : [ ] for server in servers }
-    executions = range(1,n_executions+1)
+    epochs = range(1,101)
 
     for server in servers:
         for dataset in range(n_executions):
             with open(file_path+"model_"+server+model_size+"_dataset_"+str(dataset),"rb") as loader:
                 result_list = load(loader)
-                print(result_list, "len: ", len(result_list))
                 results[server].append(result_list)
     
     for server in servers:
         m = mean(results[server],axis=0)
         s = std(results[server],axis=0)
-        
-        plt.errorbar(executions, m, yerr=s, capsize=3, label=server)
+        plt.errorbar(epochs, m, yerr=s, capsize=3, label=server)
 
     plt.xlabel("Selected Clients (#)")
     plt.ylabel("Total Training Time (s)")

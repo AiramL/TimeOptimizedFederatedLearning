@@ -1,7 +1,0 @@
-<configuration>
-	<input>
-		<net-file value="manhattan_net_2.xml"/>
-		<route-files value="manhattan_Krauss_20_1.xml"/>
-		<additional-files value="manhatan_rerouter_Krauss_20_1.add.xml"/>
-	</input>
-</configuration>

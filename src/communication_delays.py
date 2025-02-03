@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 from os import listdir
+import threading
 
 # Constants
 c = 3e8  # Speed of light (m/s)
@@ -229,6 +230,8 @@ class Vehicle:
         self.fading_dl = None
         self.fading_ul = None
 
+        self.base_station_range = 300000000
+
     def update_position(self, new_x, new_y):
         self.position = np.array([new_x, new_y])
 
@@ -313,9 +316,15 @@ class Vehicle:
         # Update distance
         self.distance_ul = distance
 
+    # adding the disconnection condition
     def calculate_throughput(self):
-        self.throughput_dl = (self.spectral_efficiency_dl * self.allocated_bandwidth_dl) * 1e-6
-        self.throughput_ul = (self.spectral_efficiency_ul * self.allocated_bandwidth_ul) * 1e-6
+        if self.distance_ul < self.base_station_range:
+            self.throughput_dl = (self.spectral_efficiency_dl * self.allocated_bandwidth_dl) * 1e-6
+            self.throughput_ul = (self.spectral_efficiency_ul * self.allocated_bandwidth_ul) * 1e-6
+        else:
+            self.throughput_dl = 0.0 
+            self.throughput_ul = 0.0
+
 
 
 # save to an output file
@@ -375,12 +384,18 @@ if __name__ == "__main__":
     
     #     for index in range(30):
     #         simulate_v2x(input_data,"data/raw/"+file_name[:-4]+"_v2x_simulation_"+str(index)+".csv")
+    
+    speed = 1
+    threads = {}
 
     for mobility in range(10):
         print("processing mobility file ",mobility)
-        file_name = "mobility_"+str(mobility)+".txt"
+        file_name = "mobility_"+str(mobility)+"_speed_"+str(speed)+".txt"
         input_data = read_input_file("mobility/processed/"+file_name)
 
         for index in range(30):
             print("processing execution ",index)
-            simulate_v2x(input_data,"data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv")
+            threads[str(index)+str(mobility)] = threading.Thread(target=simulate_v2x,
+                                                                 args=(input_data,
+                                                                       "data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv"))
+            threads[str(index)+str(mobility)].start()
