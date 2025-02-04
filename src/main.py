@@ -94,6 +94,8 @@ def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
     n_epochs = 10
+    p = int(number_of_clients_to_select*0.2)
+    m_clients =  p if p > 0 else 1 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
 
@@ -117,21 +119,23 @@ def execute_results(model_sizes,servers,data,speed):
                                         number_of_clients_to_select=number_of_clients_to_select,
                                         number_of_clients=number_of_clients,
                                         n_epochs=n_epochs,
-                                        m_clients=int(number_of_clients_to_select*0.5),
+                                        m_clients=m_clients,
                                         server_type=method,
                                         datapath=dataset_path+str(dataset)+".csv"))
 
-                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
+                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_m_clients_"+str(m_clients)+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
                     dump(results,writer)
 
 
 if  __name__ == "__main__":
 
-    servers = ["random",
-               "m_fastest",
-               "tofl_oracle",
-               "tofl_estimator_dl"]
+#    servers = ["random",
+#               "m_fastest",
+#               "tofl_oracle",
+#               "tofl_estimator_dl"]
     
+    servers = ["m_fastest"]
+
     model_sizes=[500,
                  1000,
                  2000,
