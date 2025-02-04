@@ -132,45 +132,36 @@ if  __name__ == "__main__":
                "tofl_oracle",
                "tofl_estimator_dl"]
     
-    model_sizes=[500,1000,2000,3000]
+    model_sizes=[500,
+                 1000,
+                 2000,
+                 3000]
     
     speed = 0 
 
     threads = { }
     
-    for data in range(10):
+    data_range = 10
+    ranges = 4
+    ranges_size = int(data_range/ranges)
+
+    for data in range(data_range):
         for server in servers:
             for size in model_sizes:
                 threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data],speed))
-
-    for data in range(3):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)].start()
-
-    for data in range(3):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)].join()
     
-    for data in range(3,6):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)].start()
+    for subset in range(ranges):
 
-    for data in range(3,6):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)].join()
-    
-    for data in range(6,10):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)].start()
-
-    for data in range(6,10):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)].join()
+        for data in range(subset*ranges_size,(subset+1)*ranges_size):
+            if data < data_range:
+                for server in servers:
+                    for size in model_sizes:
+                        threads[server+str(size)+str(data)].start()
+        
+        for data in range(subset*ranges_size,(subset+1)*ranges_size):
+            if data < data_range:
+                for server in servers:
+                    for size in model_sizes:
+                        threads[server+str(size)+str(data)].join()
 
     print("experiments finished")

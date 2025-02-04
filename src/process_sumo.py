@@ -18,7 +18,6 @@ def process_scenario(n_nodes=20,
             
                 if ") set Z_" in line:
                     current_nodes += 1
-                    print(current_nodes)
             elif current_nodes == n_nodes and not start_process:
                 time = float(line.split(' ')[2])
                 start_process = True
@@ -39,7 +38,7 @@ def process_scenario(n_nodes=20,
         writer.writelines(txt_writer)
 
 n_cars = "100"
-speed = 2 
+speed = 0 
 threads = {}
 
 for execution in range(10):

@@ -76,7 +76,7 @@ class Server(ABC):
     def train(self):
         
         while(self.epoch < self.number_of_epochs+1):
-
+            print("epoch: ", self.epoch)
             self.set_clients_state()
             self.highest_delay = 0.0
             self.logger.debug("starting global epoch at state: %d" % self.state)
@@ -101,7 +101,7 @@ class Server(ABC):
             self.epochs_delays.append(self.highest_delay)            
 
             self.logger.debug("server state: %d", self.state)
-            
+                
             ''' update epoch '''
             self.update_epoch()
         

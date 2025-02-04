@@ -385,7 +385,7 @@ if __name__ == "__main__":
     #     for index in range(30):
     #         simulate_v2x(input_data,"data/raw/"+file_name[:-4]+"_v2x_simulation_"+str(index)+".csv")
     
-    speed = 1
+    speed = 0
     threads = {}
 
     for mobility in range(10):
