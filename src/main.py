@@ -94,8 +94,7 @@ def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
     n_epochs = 10
-    p = int(number_of_clients_to_select*0.2)
-    m_clients =  p if p > 0 else 1 
+    m_ratio = 0.2 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
 
@@ -114,6 +113,9 @@ def execute_results(model_sizes,servers,data,speed):
                 
                 for number_of_clients_to_select in range(1,number_of_clients+1):                
                     
+                    p = int(number_of_clients_to_select*m_ratio)
+                    m_clients =  p if p > 0 else 1 
+                    
                     results.append(main(model_size=model_size,
                                         speed=speed,
                                         number_of_clients_to_select=number_of_clients_to_select,
@@ -123,7 +125,7 @@ def execute_results(model_sizes,servers,data,speed):
                                         server_type=method,
                                         datapath=dataset_path+str(dataset)+".csv"))
 
-                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_m_clients_"+str(m_clients)+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
+                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_m_clients_"+str(m_ratio)+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
                     dump(results,writer)
 
 
