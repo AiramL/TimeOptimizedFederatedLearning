@@ -31,6 +31,8 @@ class Server(ABC):
         self.available_clients = avalilable_clients
         self.selected_clients = []
         self.epochs_delays = []
+        self.m_clients_delays = []
+        self.m_clients_states = []
         self.model_size = model_size
         self.number_of_clients_to_select = n_select_clients
         self.number_of_epochs = n_epochs
@@ -76,9 +78,13 @@ class Server(ABC):
     def train(self):
         
         while(self.epoch < self.number_of_epochs+1):
-            print("epoch: ", self.epoch)
+            
             self.set_clients_state()
             self.highest_delay = 0.0
+            
+            self.m_clients_delays = []
+            self.m_clients_states = []
+            
             self.logger.debug("starting global epoch at state: %d" % self.state)
             self.logger.debug("global epoch: %d" % self.epoch)
 
@@ -187,6 +193,7 @@ class ServerMFastestSelection(Server):
 
         self.m_clients = m_clients
 
+
         if m_clients > n_select_clients:
             self.logger.error("Invalid configuration. Number of m_clients \
                                greater than number of clients to select")
@@ -199,25 +206,24 @@ class ServerMFastestSelection(Server):
     def set_highest_delay(self,delay):
         self.logger.debug("client delay: %f" % delay)
         self.logger.debug("highest delay: %f" % self.highest_delay)
-        if (delay > self.highest_delay) and \
-           (self.num_received_models <= self.m_clients):
-            self.highest_delay = delay
+        
+        self.m_clients_delays.append(delay)
+        
+        if len(self.m_clients_delays) > 1:
+            self.m_clients_delays.sort() 
+        
+        if (self.num_received_models == self.number_of_clients_to_select):
+            self.highest_delay = self.m_clients_delays[self.m_clients-1]
     
-    def update_received_models(self):
-
-        if self.num_received_models < self.m_clients:
-            self.num_received_models+=1
-            self.logger.debug("number of received models updated: %d" 
-                            % self.num_received_models)
-            
-            models_to_receive = self.m_clients - self.num_received_models
-            self.logger.debug("number of models to be received: %d" 
-                            % models_to_receive)
-
     def set_server_state(self, state):
-        if (state > self.state) and \
-           (self.num_received_models <= self.m_clients):
-            self.state = int(state)
+        
+        self.m_clients_states.append(int(state))
+        
+        if len(self.m_clients_states) > 1:
+            self.m_clients_states.sort()
+
+        if (self.num_received_models == self.number_of_clients_to_select):
+            self.state = self.m_clients_states[self.m_clients-1]
 
 
 class ServerTOFLSelection(Server, ABC):

@@ -24,7 +24,7 @@ class Client(object):
         self.epoch = 0
         self.time_last_chunk = 0.0
         self.computation_delay = [ 0 for i in range(n_epochs)] # in seconds
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger("client_"+str(client_id))
         logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.DEBUG)
         
 
@@ -84,8 +84,6 @@ class Client(object):
         self.logger.debug("last chunck: %f" % float(self.time_last_chunk))
         self.logger.debug("time to send the model: %f" % 
                           float(0.1 * (self.state + self.time_last_chunk - initial_time)))
-
-        #self.update_state()
 
         if self.server is not None:
             self.server.update_received_models()

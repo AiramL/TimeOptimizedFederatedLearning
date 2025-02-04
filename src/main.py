@@ -93,7 +93,7 @@ def main(sid=0,
 def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 10
+    n_epochs = 20
     m_ratio = 0.2 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
@@ -125,30 +125,31 @@ def execute_results(model_sizes,servers,data,speed):
                                         server_type=method,
                                         datapath=dataset_path+str(dataset)+".csv"))
 
-                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_m_clients_"+str(m_ratio)+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
+                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
                     dump(results,writer)
 
 
 if  __name__ == "__main__":
 
-#    servers = ["random",
-#               "m_fastest",
-#               "tofl_oracle",
-#               "tofl_estimator_dl"]
+    servers = ["random",
+               "m_fastest",
+               "tofl_oracle",
+               "tofl_estimator_dl"]
     
-    servers = ["m_fastest"]
 
     model_sizes=[500,
                  1000,
                  2000,
                  3000]
     
+    model_sizes = [500]
+
     speed = 0 
 
     threads = { }
     
     data_range = 10
-    ranges = 4
+    ranges = 5
     ranges_size = int(data_range/ranges)
 
     for data in range(data_range):
