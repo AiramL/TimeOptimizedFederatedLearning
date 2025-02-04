@@ -19,12 +19,10 @@ def selection_plot(file_path="results/client_selection/",file_name="model_size50
     
     plt.figure(figsize=(12, 8))
     
-    servers = [
-               "random",
+    servers = ["random",
                "m_fastest",
                "tofl_oracle",
-               "tofl_estimator_dl"
-               ]
+               "tofl_estimator_dl"]
 
     with open(file_path+file_name,"rb") as loader:
         result = load(loader)
@@ -44,12 +42,10 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
     
     plt.figure(figsize=(12, 8))
     
-    servers = [
-               "random",
+    servers = ["random",
                "m_fastest",
                "tofl_oracle",
-               "tofl_estimator_dl"
-               ]
+               "tofl_estimator_dl"]
 
     results = { server : [ ] for server in servers }
     epochs = range(1,101)
@@ -68,7 +64,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
     plt.xlabel("Selected Clients (#)")
     plt.ylabel("Total Training Time (s)")
     plt.legend()
-    plt.savefig("figures/"+model_size+".png",dpi=300,bbox_inches='tight')
+    plt.savefig("figures/"+model_size[1:]+".png",dpi=300,bbox_inches='tight')
 
     if PLOT:
         plt.show()
@@ -83,5 +79,5 @@ if __name__ == "__main__":
 
 
     for model_size in sizes:
-        selection_error_plot("results/client_selection/", "_size_"+model_size)
+        selection_error_plot("results/client_selection/speed0/", "_size_"+model_size)
         
