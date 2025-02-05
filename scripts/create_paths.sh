@@ -10,4 +10,7 @@ mkdir -p ../mobility/processed/speed2
 mkdir -p ../mobility/raw/speed0
 mkdir -p ../mobility/raw/speed1
 mkdir -p ../mobility/raw/speed2
+mkdir -p ../results/client_selection/speed0
+mkdir -p ../results/client_selection/speed1
+mkdir -p ../results/client_selection/speed2
 mkdir ../logs

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from os import listdir
+import sys 
 
 def plot_fig(mean, std):
     # Plot throughput
@@ -31,23 +32,29 @@ def generate_mean_and_std(n_executions=30,origin="mobility_0_"):
     return (df_mean,df_std)
 
 
+SINGLE = True
 
-# for origin in listdir("mobility/processed/"):
-#     df_mean, df_std = generate_mean_and_std(30,origin=origin[:-4])
-#     file_path =  "data/processed/"
-#     file_name = file_path+origin[:-4]+"_mean.csv"
-#     df_mean.to_csv(file_name)
+if SINGLE:
+    speed = sys.argv[1]
+    index = sys.argv[2]
 
-#for origin in listdir("mobility/processed/"):
-
-speed = 1
-
-for index in range(10):
-    
+    print("processing file ", index) 
     df_mean, df_std = generate_mean_and_std(30,origin="mobility_"+str(index)+"_speed_"+str(speed))
     file_path =  "data/processed/speed"+str(speed)+"/"
     file_name = file_path+str(index)+".csv"
     df_mean.to_csv(file_name)
+
+
+else:
+
+    speed = 1
+
+    for index in range(10):
+        print("processing file ", index) 
+        df_mean, df_std = generate_mean_and_std(30,origin="mobility_"+str(index)+"_speed_"+str(speed))
+        file_path =  "data/processed/speed"+str(speed)+"/"
+        file_name = file_path+str(index)+".csv"
+        df_mean.to_csv(file_name)
 
 
     

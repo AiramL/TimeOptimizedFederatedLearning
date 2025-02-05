@@ -38,7 +38,7 @@ def process_scenario(n_nodes=20,
         writer.writelines(txt_writer)
 
 n_cars = "100"
-speed = 0 
+speed = 2 
 threads = {}
 
 for execution in range(10):
@@ -49,8 +49,9 @@ for execution in range(10):
                                                               speed))
 
     threads["thread"+str(execution)].start()
-
+    
     threads["thread"+str(execution)].join()
 
 
 print("process finished")
+

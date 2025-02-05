@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import csv
 from os import listdir
 import threading
+import sys 
 
 # Constants
 c = 3e8  # Speed of light (m/s)
@@ -385,17 +386,56 @@ if __name__ == "__main__":
     #     for index in range(30):
     #         simulate_v2x(input_data,"data/raw/"+file_name[:-4]+"_v2x_simulation_"+str(index)+".csv")
     
+    THREAD = False
+    SINGLE = True
     speed = 0
-    threads = {}
+    
 
-    for mobility in range(10):
+    if THREAD:
+
+        threads = {}
+
+        for mobility in range(10):
+            print("processing mobility file ",mobility)
+            file_name = "mobility_"+str(mobility)+"_speed_"+str(speed)+".txt"
+            input_data = read_input_file("mobility/processed/"+file_name)
+
+            for index in range(30):
+                print("index ", index)
+                threads[str(index)+str(mobility)] = threading.Thread(target=simulate_v2x,
+                                                                 args=(input_data,
+                                                                       "data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv"))
+                threads[str(index)+str(mobility)].start()
+            
+        for mobility in range(10):
+            for index in range(30): 
+                threads[str(index)+str(mobility)].join()
+    
+        print("processed finished")
+
+    elif SINGLE:
+        mobility = sys.argv[1]
+        speed = sys.argv[2]
+        index = sys.argv[3]
         print("processing mobility file ",mobility)
         file_name = "mobility_"+str(mobility)+"_speed_"+str(speed)+".txt"
         input_data = read_input_file("mobility/processed/"+file_name)
+        print("index ", index)
+        simulate_v2x(input_data,
+                     "data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv")
 
-        for index in range(30):
-            print("processing execution ",index)
-            threads[str(index)+str(mobility)] = threading.Thread(target=simulate_v2x,
-                                                                 args=(input_data,
-                                                                       "data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv"))
-            threads[str(index)+str(mobility)].start()
+    else:
+        for mobility in range(10):
+            print("processing mobility file ",mobility)
+            file_name = "mobility_"+str(mobility)+"_speed_"+str(speed)+".txt"
+            input_data = read_input_file("mobility/processed/"+file_name)
+
+            for index in range(30):
+                print("index ", index)
+                simulate_v2x(input_data,
+                             "data/raw/"+file_name[:-4]+"_simulation_"+str(index)+".csv")
+            
+        print("processed finished")
+
+
+

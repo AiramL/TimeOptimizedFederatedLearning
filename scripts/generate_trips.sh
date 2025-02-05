@@ -18,7 +18,6 @@ declare -A speeds
 speeds[speed0]=3.638889 #13.1km/h
 speeds[speed1]=13.88889 #50km/h
 speeds[speed2]=27.77778 #100km/h
-#speeds[speed2]=25.0000 #90km/h
 
 for (( run=0; run<${#NB_Runs[@]}; run++ ))
 do
@@ -32,7 +31,7 @@ do
 
                 #### To generate a manhattan network topology
                 #netgenerate --grid --grid.number $NB_grid --grid.x-length 600 --grid.y-length 50 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
-                netgenerate --grid --grid.number $NB_grid --grid.x-length 3000 --grid.y-length 250 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
+                netgenerate --grid --grid.number $NB_grid --grid.x-length 4200 --grid.y-length 350 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
                 for (( i=0; i<${#NB_Cars[@]}; i++ ))
                 do
 

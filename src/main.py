@@ -2,7 +2,7 @@ from os import listdir
 from client import *
 from server import *
 import threading
-
+import sys
 
 def main(sid=0,
          speed=0,
@@ -131,44 +131,60 @@ def execute_results(model_sizes,servers,data,speed):
 
 if  __name__ == "__main__":
 
-    servers = ["random",
-               "m_fastest",
-               "tofl_oracle",
-               "tofl_estimator_dl"]
-    
+    SINGLE = True
 
-    model_sizes=[500,
-                 1000,
-                 2000,
-                 3000]
-    
-    model_sizes = [500]
+    if SINGLE:
+        server = sys.argv[1]        
 
-    speed = 0 
-
-    threads = { }
-    
-    data_range = 10
-    ranges = 5
-    ranges_size = int(data_range/ranges)
-
-    for data in range(data_range):
-        for server in servers:
-            for size in model_sizes:
-                threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data],speed))
-    
-    for subset in range(ranges):
-
-        for data in range(subset*ranges_size,(subset+1)*ranges_size):
-            if data < data_range:
-                for server in servers:
-                    for size in model_sizes:
-                        threads[server+str(size)+str(data)].start()
+        size = int(sys.argv[2])
         
-        for data in range(subset*ranges_size,(subset+1)*ranges_size):
-            if data < data_range:
-                for server in servers:
-                    for size in model_sizes:
-                        threads[server+str(size)+str(data)].join()
+        speed = int(sys.argv[3]) 
+        
+        data = int(sys.argv[4])
 
-    print("experiments finished")
+        execute_results([size],[server],[data],speed)
+
+        print("experiments finished")
+        
+
+    else:
+        
+        servers = ["random",
+                   "m_fastest",
+                   "tofl_oracle",
+                   "tofl_estimator_dl"]
+        
+
+        model_sizes=[500,
+                     1000,
+                     2000,
+                     3000]
+
+        speed = 0 
+
+        threads = { }
+        
+        data_range = 10
+        ranges = 1
+        ranges_size = int(data_range/ranges)
+
+        for data in range(data_range):
+            for server in servers:
+                for size in model_sizes:
+                    threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data],speed))
+        
+        for subset in range(ranges):
+
+            for data in range(subset*ranges_size,(subset+1)*ranges_size):
+                if data < data_range:
+                    for server in servers:
+                        for size in model_sizes:
+                            threads[server+str(size)+str(data)].start()
+            
+            for data in range(subset*ranges_size,(subset+1)*ranges_size):
+                if data < data_range:
+                    for server in servers:
+                        for size in model_sizes:
+                            threads[server+str(size)+str(data)].join()
+
+        print("experiments finished")
