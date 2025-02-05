@@ -93,8 +93,8 @@ def main(sid=0,
 def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 20
-    m_ratio = 0.2 
+    n_epochs = 100
+    m_ratio = 0.5 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
 
@@ -128,10 +128,53 @@ def execute_results(model_sizes,servers,data,speed):
                 with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
                     dump(results,writer)
 
+def save_results(speed,method,model_size,dataset,number_of_clients_to_select,results):
+
+    with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset)+"_n_clients_"+str(number_of_clients_to_select),"wb") as writer:
+        dump(results,writer)
+
+def execute_results_per_client(model_sizes,servers,data,speed):
+
+    number_of_clients = 100
+    n_epochs = 40
+    m_ratio = 0.5 
+
+    dataset_path = "data/processed/speed"+str(speed)+"/"
+    
+    threads_local = {}
+
+    for model_size in model_sizes:
+    
+        for dataset in data:
+            
+            for method in servers:
+            
+                print("processing model size ",
+                        model_size,
+                        " dataset ",
+                        dataset)
+                
+                for number_of_clients_to_select in range(1,number_of_clients+1):                
+                    
+                    p = int(number_of_clients_to_select*m_ratio)
+                    m_clients =  p if p > 0 else 1 
+                    
+                    threads[str(model_size)+str(dataset)+method+str(number_of_clients_to_select)] =   threading.Thread(target=save_results, args=(speed,method,model_size,dataset,number_of_clients_to_select, main(model_size=model_size,
+                   speed=speed,
+                   number_of_clients_to_select=number_of_clients_to_select,
+                   number_of_clients=number_of_clients,
+                   n_epochs=n_epochs,
+                   m_clients=m_clients,
+                   server_type=method,
+                   datapath=dataset_path+str(dataset)+".csv")))
+                    
+                    threads[str(model_size)+str(dataset)+method+str(number_of_clients_to_select)].start()
+
 
 if  __name__ == "__main__":
 
-    SINGLE = True
+    SINGLE = False
+    M_CLIENT = True
 
     if SINGLE:
         server = sys.argv[1]        
@@ -145,7 +188,49 @@ if  __name__ == "__main__":
         execute_results([size],[server],[data],speed)
 
         print("experiments finished")
+    
+    elif M_CLIENT:
         
+        servers = ["random",
+                   "m_fastest",
+                   "tofl_oracle",
+                   "tofl_estimator_dl"]
+        
+
+        model_sizes=[500,
+                     1000,
+                     2000,
+                     3000]
+
+        speed = 1 
+
+        threads = { }
+        
+        data_range = 10
+        ranges = 5
+        ranges_size = int(data_range/ranges)
+
+        for data in range(data_range):
+            for server in servers:
+                for size in model_sizes:
+                    threads[server+str(size)+str(data)] = threading.Thread(target=execute_results_per_client, args=([size],[server],[data],speed))
+        
+        for subset in range(ranges):
+
+            for data in range(subset*ranges_size,(subset+1)*ranges_size):
+                if data < data_range:
+                    for server in servers:
+                        for size in model_sizes:
+                            threads[server+str(size)+str(data)].start()
+            
+            for data in range(subset*ranges_size,(subset+1)*ranges_size):
+                if data < data_range:
+                    for server in servers:
+                        for size in model_sizes:
+                            threads[server+str(size)+str(data)].join()
+
+        print("experiments finished")
+
 
     else:
         
@@ -165,7 +250,7 @@ if  __name__ == "__main__":
         threads = { }
         
         data_range = 10
-        ranges = 1
+        ranges = 5
         ranges_size = int(data_range/ranges)
 
         for data in range(data_range):

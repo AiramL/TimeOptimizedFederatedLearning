@@ -25,7 +25,7 @@ class Client(object):
         self.time_last_chunk = 0.0
         self.computation_delay = [ 0 for i in range(n_epochs)] # in seconds
         self.logger = logging.getLogger("client_"+str(client_id))
-        logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.CRITICAL)
         
 
     def set_server(self, server):

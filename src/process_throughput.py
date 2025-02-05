@@ -47,7 +47,7 @@ if SINGLE:
 
 else:
 
-    speed = 1
+    speed = 2
 
     for index in range(10):
         print("processing file ", index) 

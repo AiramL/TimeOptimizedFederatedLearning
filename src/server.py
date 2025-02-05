@@ -45,7 +45,7 @@ class Server(ABC):
         self.SAVE =  False
         self.clients_computation_delay = [ 0 for i in range(n_epochs)] # in seconds
         self.logger = logging.getLogger(__name__)
-        logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.CRITICAL)
         
         
         if n_select_clients > len(avalilable_clients.keys()):
