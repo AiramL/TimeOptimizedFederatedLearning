@@ -14,7 +14,13 @@ echo "Verifying if the results directory exists"
 
 echo "Starting server"
 cd ../src/federated_learning
-python3.10 server.py -ncf=$numClientsFit -tf=$TOFL -nc=$numClients -nor=$eps &
+if [ "$strategy" = "kfastest" ]
+then	
+	[[ $(($numClientsFit/2)) = 0 ]] && numClientsFit=1 || numClientsFit=$(($numClientsFit/2))
+	python3.10 server.py -ncf=$numClientsFit -tf=$TOFL -nc=$numClients -nor=$eps &
+else	
+	python3.10 server.py -ncf=$numClientsFit -tf=$TOFL -nc=$numClients -nor=$eps &
+fi
 
 echo "Starting clients"
 sleep 3
