@@ -1,9 +1,9 @@
 #!/bin/bash
 
-eps=20
+eps=40
 TOFL=0
-numClients=20
-numClientsFit=10
+numClients=100
+numClientsFit=80
 bs=32
 strategy="random"
 dataset="VeReMi_Extension"
