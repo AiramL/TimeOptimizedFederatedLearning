@@ -1,13 +1,13 @@
 #!/bin/bash
 
-eps=100
+eps=20
 TOFL=0
-numClients=100
+numClients=20
 numClientsFit=10
 bs=32
 strategy="random"
-datataset="VeReMi_Extension"
-image_flag="False"
+dataset="VeReMi_Extension"
+image_flag=0
 
 echo "Verifying if the results directory exists"
 [ ! -d ../../results/classification/$dataset/$strategy/$numClients/ ] && mkdir -p ../../results/classification/$dataset/$strategy/$numClients/
@@ -27,7 +27,7 @@ do
 		python3.10 client.py -cid=$i -b=$bs -cf=0 >> ../../results/classification/tofl/client_"$i" &
 	
 	else
-		python client.py -nc=$numClients -cid=$i -b=$bs -cf=0 -if=$image_flag >> ../../results/classification/$dataset"_"$strategy"_client_""$i" &
+		python3.10 client.py -nc=$numClients -cid=$i -b=$bs -cf=0 -ncf=$numClientsFit >> ../../results/classification/$dataset"_"$strategy"_client_""$i" &
 	fi
 	echo "Waiting client "$i" initialization"
 	sleep 2

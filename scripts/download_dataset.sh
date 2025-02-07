@@ -2,11 +2,11 @@
 
 echo "Creating directories"
 
-[ -d ../datasets/VeReMi_Extension ] && mkdir -p ../../datasets/VeReMi_Extension
-[ -d ../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset ] && mkdir -p ../../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset
-[ -d ../results/classification/random ] && mkdir -p ../../results/classification/random
-[ -d ../results/classification/tofl ] && mkdir -p ../../results/classification/tofl
-[ -d ../results/classification/kfastest ] && mkdir -p ../../results/classification/kfastest
+[ ! -d ../datasets/VeReMi_Extension ] && mkdir -p ../datasets/VeReMi_Extension
+[ ! -d ../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset ] && mkdir -p ../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset
+[ ! -d ../results/classification/random ] && mkdir -p ../results/classification/random
+[ ! -d ../results/classification/tofl ] && mkdir -p ../results/classification/tofl
+[ ! -d ../results/classification/kfastest ] && mkdir -p ../results/classification/kfastest
 
 echo "Downloading dataset"
 

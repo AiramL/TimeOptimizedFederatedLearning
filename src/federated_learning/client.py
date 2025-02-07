@@ -39,13 +39,20 @@ num_selected_clients = args.num_clients_fit
 
 SAVE_COMPUTATIONAL_TIME = False
 
+print(IMAGE_DATA)
+print(bs)
+print(ts)
+print(SERVER_IP)
+print(num_clients)
+print(DATASET)
+print(client_id)
+
 # Load delays
 if COMMUNICATION_FLAG:
     if client_id < 10:
         delays = pd.read_csv("../delays/client0"+str(client_id), header=None)
     else:
         delays = pd.read_csv("../delays/client"+str(client_id), header=None)
-
 
 # Load data
 if IMAGE_DATA:

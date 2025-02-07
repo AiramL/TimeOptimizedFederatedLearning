@@ -20,7 +20,7 @@ def get_args_client():
     parser.add_argument("-mp","--model_path", type=str, default="../../models/model", help="Path to the model")
     parser.add_argument("-cid","--client_id", type=int, default=1, help="Client identifier") 
     parser.add_argument("-rp","--result_path", type=str, default="../../results/", help="Path to store results")
-    parser.add_argument("-if","--image_flag", type=bool, default=False, help="Indicates the type of data")
+    parser.add_argument("-imf","--image_flag", type=bool, default=False, help="Indicates the type of data")
     parser.add_argument("-md","--model", type=str, default="BIGAN", help="Model name to use in the FL scenario")
     parser.add_argument("-ds","--dataset", type=str, default="VeReMi", help="Dataset name")
     parser.add_argument("-cf","--communication_flag", type=int, default=0, help="Flag to indicate if the clients will simulate the communication delay")
