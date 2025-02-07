@@ -27,7 +27,7 @@ do
 		python3.10 client.py -cid=$i -b=$bs -cf=0 >> ../../results/classification/tofl/client_"$i" &
 	
 	else
-		python3.10 client.py -nc=$numClients -cid=$i -b=$bs -cf=0 -ncf=$numClientsFit >> ../../results/classification/$dataset"_"$strategy"_client_""$i" &
+		python3.10 client.py -nc=$numClients -cid=$i -b=$bs -cf=0 -ncf=$numClientsFit >> ../../results/classification/raw/$strategy/$dataset"_client_""$i" &
 	fi
 	echo "Waiting client "$i" initialization"
 	sleep 2

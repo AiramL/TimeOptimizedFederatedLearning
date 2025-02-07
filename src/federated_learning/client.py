@@ -39,13 +39,6 @@ num_selected_clients = args.num_clients_fit
 
 SAVE_COMPUTATIONAL_TIME = False
 
-print(IMAGE_DATA)
-print(bs)
-print(ts)
-print(SERVER_IP)
-print(num_clients)
-print(DATASET)
-print(client_id)
 
 # Load delays
 if COMMUNICATION_FLAG:
@@ -81,6 +74,9 @@ else:
     x_train = x_train[:8192]
     y_train = y_train[:8192]
     
+    x_test = x_test[:4096]
+    y_test = y_test[:4096]
+
     spe = len(x_train)//bs
 
 
