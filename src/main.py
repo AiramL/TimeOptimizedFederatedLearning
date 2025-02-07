@@ -79,11 +79,7 @@ def main(sid=0,
                                     n_epochs=n_epochs,
                                     file_name=file_name,
                                     n_select_clients=number_of_clients_to_select)
-    
-
-    #elif server_type == "tofl_estimator":
-    #    server = ServerEstimatorTOFLSelection()
-    
+     
     ''' associate clients and server '''
     for client in available_clients.values():
         client.set_server(server)
@@ -200,12 +196,12 @@ if  __name__ == "__main__":
 
         model_sizes=[500]
 
-        speed = 0 
+        speed = 2 
 
         threads = { }
         
         data_range = 10
-        ranges = 5
+        ranges = 1
         ranges_size = int(data_range/ranges)
 
         for data in range(data_range):
