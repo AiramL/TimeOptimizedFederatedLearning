@@ -14,3 +14,6 @@ mkdir -p ../results/client_selection/speed0
 mkdir -p ../results/client_selection/speed1
 mkdir -p ../results/client_selection/speed2
 mkdir ../logs
+mkdir -p ../results/classification/processed/random
+mkdir -p ../results/classification/processed/tofl
+mkdir -p ../results/classification/processed/kfastest
