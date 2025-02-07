@@ -13,29 +13,31 @@ sizes=[500,
        2000,
        3000]
 
-datasets = [ i for i in range(2) ]
+datasets = [ i for i in range(10) ]
 
-for model in servers:
-
-    for size in sizes:
+for size in sizes:
+        
+    for model in servers:
 
         for dataset in datasets:
             
             agg_results = []
             
-            for n_clients in range(1,11):
+            for n_clients in range(1,101):
             
                 file = "model_"+model+\
                        "_size_"+str(size)+\
                        "_dataset_"+str(dataset)+\
                        "_n_clients_"+str(n_clients)
-
-                with open(file_path+file,"rb") as reader:
-                    agg_results.append(load(reader))
+                try:
+                    with open(file_path+file,"rb") as reader:
+                        agg_results.append(load(reader))
+                except:
+                    print(file)
                 
             file = "model_"+model+\
                    "_size_"+str(size)+\
-                   "_dataset_"+str(dataset)+"teste"
-
+                   "_dataset_"+str(dataset)
+            
             with open(file_path+file,"wb") as writer:
                 dump(agg_results, writer)

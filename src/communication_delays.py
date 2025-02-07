@@ -115,15 +115,6 @@ sinr_dl = 10 ** ((rx_power_dl - (-174 + 10 * np.log10(total_bandwidth_dl))) / 10
 # Step 6. Calculate spectral efficiency using Shannon's formula.
 spectral_efficiency_dl = np.log2(1 + sinr_dl)
 
-print(
-    f"distance = {distance} \n" 
-    f"path_loss_dl = {pl_dl} \n" 
-    f"rician_fading = {pl_dl} \n"
-    f"rx_power_dl = {rx_power_dl} \n"
-    f"sinr_dl = {sinr_dl} \n"
-    f"spectral_efficiency_dl = {spectral_efficiency_dl} \n"
-    )
-
 
 def equal_bandwidth_allocation(vehicles, total_bandwidth, link_type):
     """
@@ -388,7 +379,7 @@ if __name__ == "__main__":
     
     THREAD = False
     SINGLE = True
-    speed = 0
+    speed = 1 
     
 
     if THREAD:

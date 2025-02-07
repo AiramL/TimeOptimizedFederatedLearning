@@ -2,7 +2,7 @@
 
 cd ..
 
-for speed in $( seq 0 2) 
+for speed in 0 
 do
 	for index in $( seq 0 9)
 	do

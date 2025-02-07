@@ -261,7 +261,7 @@ class ServerTOFLSelection(Server, ABC):
                                          self.available_clients.keys() }
     
 
-        self.dataframe = pd.read_csv(datapath)
+        self.dataframe = datapath 
         self.logger.debug("loading data")
         
         self.clients_info = { str(client_id): self.dataframe[
@@ -340,36 +340,6 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
                                higher than the total available number of clients.")
             raise Exception
 
-    # def get_delay(self, 
-    #               client_id, 
-    #               direction, 
-    #               time=0):
-
-    #     state = self.state + time
-    #     initial_time = self.state
-
-    #     remaining_data = self.model_size
-
-    #     while (remaining_data):
-    #         self.logger.debug("remaining %d state:data:  %d", remaining_data, state)
-            
-    #         # server -> client
-    #         if direction == "d":
-    #             remaining_data, time_last_chunk = self.receive_data_chunk(remaining_data, 
-    #                                                                       client_id,
-    #                                                                       state)
-    #         # server <- client 
-    #         elif direction == "u":
-    #             remaining_data, time_last_chunk = self.send_data_chunk(remaining_data, 
-    #                                                                    client_id,
-    #                                                                    state)
-            
-    #         if remaining_data:
-    #             state+=1
-        
-    #     return float(0.1 * (state + time_last_chunk - initial_time)), state
-
-##############
 
     def local_training(self):
         pass
@@ -410,10 +380,6 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
         return float(0.1 * (state + 
                             time_last_chunk - 
                             initial_time))
-
-
-
-#############
 
 
 
@@ -590,71 +556,6 @@ class ServerEstimatorTOFLSelectionDL(ServerTOFLSelection):
             self.clients_estimated_delays[client] = self.get_delay(client)
 
     
-
-# I need to create another server that estimate the delay in both directions
-# Just need to call the update function for the up link at the same time
-class ServerEstimatorTOFLSelection(ServerEstimatorTOFLSelectionDL):
-    
-    def __init__(self, n_select_clients=5, n_epochs=10, file_name="result", model_size=527, avalilable_clients={ "1": 1,"2": 2,"3": 3,"4": 4,"5": 5,"6": 6,"7": 7,"8": 8,"9": 9,"0": 0 }, datapath="data/processed/v2x_mobility_0_mean.csv"):
-        super().__init__(n_select_clients, n_epochs, file_name, model_size, avalilable_clients, datapath)
-
-
-    def receive_data_chunk(self, 
-                           data, 
-                           state, 
-                           client_id):
-
-        time_last_chunk = 0.0
-
-        estimated_delay = self.estimator.predict(pd.DataFrame(list(self.clients_estimated_delays[client_id][0])))
-        estimated_delay_ul = self.estimator.predict(pd.DataFrame(list(self.clients_estimated_delays[client_id][1])))
-
-        self.clients_estimated_delays[client_id][0].appendleft(
-            estimated_delay)
-
-        self.clients_estimated_delays[client_id][1].appendleft(
-            estimated_delay_ul)
-
-        
-        maximum_chunk_size = floor(self.message_period * 
-                                   1000 * 
-                                   estimated_delay)
-
-        if (maximum_chunk_size >= data):
-
-            time_last_chunk = data/(1000 * 
-                                    estimated_delay)
-            
-            return 0, time_last_chunk
-
-        return data - maximum_chunk_size, time_last_chunk
-    
-    def send_data_chunk(self, 
-                        data, 
-                        state, 
-                        client_id):
-        
-        time_last_chunk = 0.0
-
-        estimated_delay = self.estimator.predict(pd.DataFrame(list(self.clients_estimated_delays[client_id][1])))
-
-        self.clients_estimated_delays[client_id][1].appendleft(
-            estimated_delay)
-
-        
-        maximum_chunk_size = floor(self.message_period * 
-                                   1000 * 
-                                   estimated_delay)
-
-        if (maximum_chunk_size >= data):
-
-            time_last_chunk = data/(1000 * 
-                                    estimated_delay)
-            
-            return 0, time_last_chunk
-
-        return data - maximum_chunk_size, time_last_chunk
-
 
 if __name__ == "__main__":
 

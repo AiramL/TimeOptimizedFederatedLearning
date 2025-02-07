@@ -38,19 +38,20 @@ def process_scenario(n_nodes=20,
         writer.writelines(txt_writer)
 
 n_cars = "100"
-speed = 2 
+speeds = [0, 1, 2] 
 threads = {}
 
-for execution in range(10):
-    threads["thread"+str(execution)] = threading.Thread(target=process_scenario,
+for speed in speeds:
+    for execution in range(10):
+        threads["thread"+str(execution)+str(speed)] = threading.Thread(target=process_scenario,
                                                         args=(int(n_cars), 
                                                               "mobility/raw/scenarios/speed"+str(speed)+"/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
                                                               execution,
                                                               speed))
 
-    threads["thread"+str(execution)].start()
+        threads["thread"+str(execution)+str(speed)].start()
     
-    threads["thread"+str(execution)].join()
+        threads["thread"+str(execution)+str(speed)].join()
 
 
 print("process finished")

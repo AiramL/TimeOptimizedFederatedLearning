@@ -14,7 +14,7 @@ class Client(object):
 
         ''' Read the 5G dataset to add at 
         client object the communications conditions. '''    
-        df  = pd.read_csv(datapath)
+        df  = datapath
         self.dataframe = df[df['Node ID'] == client_id].reset_index()
         self.state = 0 # indicates the dataset line used to calculate the delay
         self.model_size = model_size

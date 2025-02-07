@@ -13,7 +13,8 @@ def main(sid=0,
          datapath="data/processed/v2x_mobility_20_mean.csv",
          number_of_clients_to_select=2,
          m_clients=2):
-    
+
+    df = pd.read_csv(datapath)
 
     file_name = "results/server_"+server_type+\
                 "_n_clients_"+str(number_of_clients)+\
@@ -25,7 +26,7 @@ def main(sid=0,
     for client_id in range(number_of_clients):
         available_clients[str(client_id)] = Client(client_id=client_id, 
                                                    model_size=model_size,
-                                                   datapath=datapath, 
+                                                   datapath=df, 
                                                    n_epochs=n_epochs)
 
     if server_type == "random":
@@ -58,7 +59,7 @@ def main(sid=0,
         
         server = ServerOracleTOFLSelection(avalilable_clients=available_clients,
                                            n_epochs=n_epochs,
-                                           datapath=datapath,
+                                           datapath=df,
                                            file_name=file_name,
                                            n_select_clients=number_of_clients_to_select)
     
@@ -68,7 +69,7 @@ def main(sid=0,
 
         server = ServerEstimatorTOFLSelectionDL(avalilable_clients=available_clients,
                                               n_epochs=n_epochs,
-                                              datapath=datapath,
+                                              datapath=df,
                                               file_name=file_name,
                                               n_select_clients=number_of_clients_to_select)
     
@@ -93,7 +94,7 @@ def main(sid=0,
 def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 100
+    n_epochs = 40
     m_ratio = 0.5 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
@@ -197,12 +198,9 @@ if  __name__ == "__main__":
                    "tofl_estimator_dl"]
         
 
-        model_sizes=[500,
-                     1000,
-                     2000,
-                     3000]
+        model_sizes=[500]
 
-        speed = 1 
+        speed = 0 
 
         threads = { }
         
