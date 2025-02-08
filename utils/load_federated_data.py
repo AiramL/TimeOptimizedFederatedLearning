@@ -110,11 +110,11 @@ def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
 
     elif DATASET == "WiSec":
         # Load dataset
-        dataset_1 = scio.loadmat('../../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat')
-        dataset_2 = scio.loadmat('../../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack1withlabels.mat')
-        dataset_3 = scio.loadmat('../../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack2withlabels.mat')
-        dataset_4 = scio.loadmat('../../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack4withlabels.mat')
-        dataset_5 = scio.loadmat('../../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat')
+        dataset_1 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat')
+        dataset_2 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack1withlabels.mat')
+        dataset_3 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack2withlabels.mat')
+        dataset_4 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack4withlabels.mat')
+        dataset_5 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat')
     
         # Pre-process
         header = ["type",
