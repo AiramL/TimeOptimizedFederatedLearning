@@ -12,7 +12,7 @@ from os import listdir
 # language = 1 -> print in portuguese-br
 # language = otherwise -> print in english
 
-def file_to_list(figureType=0,epochs=100,results_path='../results/classification/random'):
+def file_to_list(figureType=0,epochs=100,results_path='../results/classification/random',pattern="79871/79871"):
 
     
     file_names = {}
@@ -49,26 +49,29 @@ def file_to_list(figureType=0,epochs=100,results_path='../results/classification
     if figureType == 1:
         for i in range(1,total_files+1):
             for line in file_lines['Lines'+str(i)]:
-                if ("/step" in line) and ("128/128" in line):
+                if ("/step" in line) and (pattern in line):
+                    line = "".join(c for c in line if c.isprintable())
                     accuracies[i-1].append(float(line.split(':')[1][1:].split(' ')[0]))        
     else:
         for i in range(1,total_files+1):
             for line in file_lines['Lines'+str(i)]:
-                if ("/step" in line) and ("128/128" in line):
+                if ("/step" in line) and (pattern in line):
+                    line = "".join(c for c in line if c.isprintable())
                     accuracies[i-1].append(float(line.split(':')[2].split(' ')[1]))
        
     for i in range(total_files):
         ac[i] = accuracies[i][:]
 
-    ac = [ele for ele in ac if ele != []]
+    ac = [ele[:40] for ele in ac if ele != []]
     
     try:
         x1Mean = mean(ac,axis=0);
-        x1Interval = std(ac,axis=0)*1.96/sqrt(10);
+        x1Interval = std(ac,axis=0)*1.96/sqrt(80);
         x = arange(len(x1Mean))
         
     except:
-        print(ac)
+        for i in ac:
+            print(len(i))
     
     superior = x1Mean + x1Interval
     inferior = x1Mean - x1Interval
@@ -94,9 +97,9 @@ def file_to_list(figureType=0,epochs=100,results_path='../results/classification
     return(x, x1Mean, superior_interval, inferior_interval)    
    
 if __name__ == "__main__":
-    dataset = "VeReMi_Extension_"
+    dataset = "WiSec_"
     model = "random"
-    axis,mean,superior,inferior = file_to_list(figureType=0,epochs=40,results_path='../results/classification/raw/'+model+'/')
+    axis,mean,superior,inferior = file_to_list(figureType=1,epochs=40,results_path='../results/classification/raw/'+model+'/'+dataset[:-1]+'/')
     with open('../results/classification/processed/'+model+'/mean_model','w') as writer:
         csv_data = ''
         for item in mean:
