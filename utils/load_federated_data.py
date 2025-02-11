@@ -12,7 +12,8 @@ from skimage import transform
 from pickle import load
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.utils import to_categorical
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 
 def load_data_federated_IID(dataset_name,clientID,numClients,trPer):
@@ -69,44 +70,86 @@ def load_data_federated_IID(dataset_name,clientID,numClients,trPer):
     
     return X[:trSize], Y[:trSize], X[trSize:], Y[trSize:]
 
+def create_time_series(group):
+    X, y = [], []
+    group = group[features + [label_col]].values  # Convert to NumPy array
+
+    if len(group) < sequence_length:
+        return None  # Skip senders with insufficient data
+
+    # Create sliding window sequences
+    for i in range(len(group) - sequence_length):
+        X.append(group[i:i+sequence_length, :-1])  # Features
+        y.append(group[i+sequence_length, -1])  # Label
+
+    X, y = np.array(X), np.array(y)
+
+    # Ensure correct dimensions: X should be 3D, y should be 1D
+    if X.ndim != 3 or y.ndim != 1:
+        return None  # Skip malformed sequences
+
+    return X, y
 
 def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
     # Need to implement the VeRemi data transformation
     if DATASET == "VeReMi":
         # Load dataset
-        df_dataset = pd.read_csv('../../datasets/VeReMi_Extension/mixalldata_clean.csv')
+        df = pd.read_csv('../../datasets/VeReMi_Extension/mixalldata_clean.csv')
 
-        # Remove identifiers
-        df_dataset = df_dataset.drop(['sender','senderPseudo', 'messageID'], axis=1)
+        # Sort by sender and timestamp
+        df.sort_values(["sender", "messageID"], inplace=True)
+
+        # Define features
+        features = ['posx', 
+                    'posy', 
+                    'posx_n', 
+                    'spdx', 
+                    'spdy', 
+                    'spdx_n',
+                    'spdy_n', 
+                    'aclx', 
+                    'acly', 
+                    'aclx_n', 
+                    'acly_n', 
+                    'hedx', 
+                    'hedy', 
+                    'hedx_n',
+                    'hedy_n'] 
+
+
+        label_col = "class"
+
+        # Normalize features
+        scaler = StandardScaler()
+        df[features] = scaler.fit_transform(df[features])
+
+        # Encode labels
+        df[label_col] = df[label_col].astype("category").cat.codes
+
+        # Group by sender_id
+        grouped = df.groupby("sender")
+
+        sequence_length = 10
+
+        # Apply function to all sender groups
+        X_y_pairs = [create_time_series(group) for _, group in grouped]
+
+        # Remove None values (senders with insufficient data)
+        X_y_pairs = [pair for pair in X_y_pairs if pair is not None]
+
+        # Ensure valid unpacking
+        if len(X_y_pairs) > 0:
+            X_list, y_list = zip(*X_y_pairs)  # Unpack
+            X = np.concatenate(X_list, axis=0)  # Convert to final shape
+            y = np.concatenate(y_list, axis=0)
+        else:
+            raise ValueError("No valid sequences found! Reduce `sequence_length`.")
+
+        y = to_categorical(y, num_classes=len(np.unique(y)))
+
+        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
         
-        # Remove high correlated features
-        features_nan_corr = ["posz",
-                     "posz_n",
-                     "spdz",
-                     "spdz_n",
-                     "hedz",
-                     "aclz_n",
-                     "hedz_n",
-                     "type",
-                     "posy_n",
-                     "aclz"]
-
-        df_dataset = df_dataset.drop(columns=features_nan_corr)
-        
-        # Feature set
-        X = df_dataset.drop(columns=['class'])
-    
-        columns_names = X.columns
-        scaler = MinMaxScaler()
-        scaler = scaler.fit(X)
-        X = pd.DataFrame(scaler.transform(X))
-        X.columns = columns_names
-        
-        # Label set
-        y = df_dataset['class']
-        y = pd.get_dummies(y,columns=['class'])
-
-
+        return x_train, x_test, y_train, y_test
 
     elif DATASET == "WiSec":
         # Load dataset
