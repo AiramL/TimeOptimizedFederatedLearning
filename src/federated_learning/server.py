@@ -17,11 +17,11 @@ TOFL = args.tofl_flag
 if TOFL:
     strategy = fl.server.strategy.TOFL(min_available_clients=num_clients,
                                        min_fit_clients=num_clients_fit,
-                                       fraction_fit=0.5)
+                                       fraction_fit=0.1)
 else:
     strategy = fl.server.strategy.FedAvg(min_available_clients=num_clients,
                                          min_fit_clients=num_clients_fit,
-                                         fraction_fit=0.5)
+                                         fraction_fit=0.1)
 
 fl.server.start_server(config=fl.server.ServerConfig(num_rounds=num_rounds),
                        server_address=server_ip+":"+server_port,

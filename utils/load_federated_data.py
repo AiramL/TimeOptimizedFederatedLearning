@@ -70,7 +70,7 @@ def load_data_federated_IID(dataset_name,clientID,numClients,trPer):
     
     return X[:trSize], Y[:trSize], X[trSize:], Y[trSize:]
 
-def create_time_series(group):
+def create_time_series(group, features, label_col,sequence_length):
     X, y = [], []
     group = group[features + [label_col]].values  # Convert to NumPy array
 
@@ -132,7 +132,7 @@ def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
         sequence_length = 10
 
         # Apply function to all sender groups
-        X_y_pairs = [create_time_series(group) for _, group in grouped]
+        X_y_pairs = [create_time_series(group, features, label_col, sequence_length) for _, group in grouped]
 
         # Remove None values (senders with insufficient data)
         X_y_pairs = [pair for pair in X_y_pairs if pair is not None]
@@ -149,7 +149,7 @@ def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
 
         x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
         
-        return x_train, x_test, y_train, y_test
+        return x_train[:8192*2], x_test[:2048*2], y_train[:8192*2], y_test[:2048*2]
 
     elif DATASET == "WiSec":
         # Load dataset

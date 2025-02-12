@@ -3,8 +3,6 @@ from abc import abstractmethod
 from train_model import LSTM
 import torch
 
-
-
 class Estimator(ABC):
 
     def __init__(self,model):

@@ -39,7 +39,6 @@ num_selected_clients = args.num_clients_fit
 
 SAVE_COMPUTATIONAL_TIME = False
 
-
 # Load delays
 if COMMUNICATION_FLAG:
     if client_id < 10:
@@ -70,13 +69,6 @@ else:
     # define DATASET and test_size
     x_train, x_test, y_train, y_test = load_CAM_data_federated(DATASET,ts)
     
-    # Limiting the amount of samples 
-    x_train = x_train[:8192]
-    y_train = y_train[:8192]
-    
-    x_test = x_test[:4096]
-    y_test = y_test[:4096]
-
     spe = len(x_train)//bs
 
 

@@ -1,7 +1,7 @@
 from tensorflow.keras.layers import LSTM, Dense, Dropout, Bidirectional, GlobalAveragePooling1D
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.metrics import Precision, Recall, F1Score
+from tensorflow.keras.metrics import Precision, Recall#, F1Score
 
 
 def build_model(features_shape,labels_shape,model_name="MLP",MODEL_PATH=None):

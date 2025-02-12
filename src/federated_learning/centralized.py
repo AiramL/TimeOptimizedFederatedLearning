@@ -11,6 +11,7 @@ from sys import path
 path.append("../../utils")
 from dataset_operations import *
 from utils import *
+from models import build_model 
 from load_federated_data import *
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
