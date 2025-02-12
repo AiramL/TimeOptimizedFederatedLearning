@@ -71,10 +71,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
 
 if __name__ == "__main__":
     
-    sizes = ["500",
-             "1000",
-             "2000"]#,
-   #          "3000"]
+    sizes = ["500"]
     
 
 
