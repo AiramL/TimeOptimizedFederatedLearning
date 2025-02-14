@@ -115,8 +115,7 @@ class Server(ABC):
         self.logger.info(self.calculate_total_delay())
 
         ''' save result '''
-        if self.SAVE:
-            self.save(self.epochs_delays)
+        self.save(self.epochs_delays)
 
         ''' return the total delay '''
         return self.calculate_total_delay()
@@ -555,6 +554,61 @@ class ServerEstimatorTOFLSelectionDL(ServerTOFLSelection):
             self.logger.debug("estimating download delay")    
             self.clients_estimated_delays[client] = self.get_delay(client)
 
+
+class ServerEstimatorTOFLSelectionMFastest(ServerEstimatorTOFLSelectionDL):
+
+    def __init__(self,
+                 n_select_clients=5,
+                 m_clients=2,
+                 n_epochs=10,
+                 file_name="result",
+                 model_size=527,
+                 avalilable_clients={"1": 1,
+                                     "2": 2,
+                                     "3": 3,
+                                     "4": 4,
+                                     "5": 5,
+                                     "6": 6,
+                                     "7": 7,
+                                     "8": 8,
+                                     "9": 9,
+                                     "0": 0 },
+                 datapath="data/processed/v2x_mobility_0_mean.csv"):
+
+        super().__init__(n_select_clients,
+                         n_epochs,
+                         file_name,
+                         model_size,
+                         avalilable_clients,
+                         datapath)
+
+        if m_clients > n_select_clients:
+            self.logger.error("Invalid configuration. Number of m_clients \
+                               greater than number of clients to select")
+            raise Exception
+
+        self.m_clients = m_clients
+
+    def select_clients(self):
+
+        selected_clients = []
+
+        total_estimated_delay = []
+
+        self.estimate_delay()
+
+        for client, delay in self.clients_estimated_delays.items():
+            total_estimated_delay.append((delay,client))
+            total_estimated_delay.sort()
+
+        num_selected_clients = 0
+        while num_selected_clients < self.m_clients:
+            selected_clients.append(int(total_estimated_delay[
+                                    num_selected_clients][1]))
+
+            num_selected_clients+=1
+
+        self.selected_clients = selected_clients
     
 
 if __name__ == "__main__":

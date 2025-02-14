@@ -16,10 +16,9 @@ def main(sid=0,
 
     df = pd.read_csv(datapath)
 
-    file_name = "results/server_"+server_type+\
-                "_n_clients_"+str(number_of_clients)+\
-                "_model_size_"+str(model_size)+\
-                "_speed_"+str(speed)
+    file_name = "results/client_selection/raw/epoch/server_"+server_type+\
+                "_n_clients_selected_"+str(number_of_clients_to_select)+\
+                "execution_"+datapath.split('/')[3][:-4]
 
     ''' create multiple clients objects '''
     available_clients = {}
@@ -72,7 +71,15 @@ def main(sid=0,
                                               datapath=df,
                                               file_name=file_name,
                                               n_select_clients=number_of_clients_to_select)
-    
+   
+    elif server_type == "tofl_estimator_m_fastest":
+        server = ServerEstimatorTOFLSelectionMFastest(avalilable_clients=available_clients,
+                                                      m_clients=m_clients,
+                                                      n_epochs=n_epochs,
+                                                      datapath=df,
+                                                      file_name=file_name,
+                                                      n_select_clients=number_of_clients_to_select)
+
     elif server_type == "fixed_test":
         
         server = ServerFixedTestSelection(avalilable_clients=available_clients,
@@ -191,17 +198,18 @@ if  __name__ == "__main__":
         servers = ["random",
                    "m_fastest",
                    "tofl_oracle",
-                   "tofl_estimator_dl"]
+                   "tofl_estimator_dl",
+                   "tofl_estimator_m_fastest"]
         
 
         model_sizes=[500]
 
-        speed = 2 
+        speed = 1 
 
         threads = { }
         
         data_range = 10
-        ranges = 1
+        ranges = 2
         ranges_size = int(data_range/ranges)
 
         for data in range(data_range):
@@ -234,10 +242,7 @@ if  __name__ == "__main__":
                    "tofl_estimator_dl"]
         
 
-        model_sizes=[500,
-                     1000,
-                     2000,
-                     3000]
+        model_sizes=[500]
 
         speed = 0 
 
