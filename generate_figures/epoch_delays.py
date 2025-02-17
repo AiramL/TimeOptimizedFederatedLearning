@@ -11,23 +11,33 @@ def selection_error_plot(n_clients=95, file_path="results/client_selection/proce
                "tofl_oracle",
                "tofl_estimator_dl",
                "tofl_estimator_m_fastest"]
- 
+    
+    legends = {"random": "Random",
+               "m_fastest": "M-Fastest (M=50%)",
+               "tofl_oracle": "TOFL Oracle",
+               "tofl_estimator_dl" : "TOFL Estimator",
+               "tofl_estimator_m_fastest": "TOFL Estimating \nand Selecting M-Fastest Clients"}
+    
+
     means = []
     stds = []
 
 
     for server in servers:
-        with open(file_path+"server_"+server+"_n_clients_selected"+str(n_clients)+"_mean","rb") as loader:
+        with open(file_path+"server_"+server+"_n_clients_selected_"+str(n_clients)+"_mean","rb") as loader:
             result_list = load(loader)
             means.append(mean(result_list))
             stds.append(std(result_list))
 
-    plt.bar(servers, means, yerr=stds, capsize=3)
+    plt.bar([ legends[server] for server in servers ], 
+            means, 
+            yerr=stds, 
+            capsize=3)
 
     plt.xlabel("Strategy")
     plt.ylabel("Global Epoch Delay (s)")
     plt.legend()
-    plt.savefig("figures/time_epoch.png",dpi=300,bbox_inches='tight')
+    plt.savefig("figures/time_epoch"+str(n_clients)+".png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
 

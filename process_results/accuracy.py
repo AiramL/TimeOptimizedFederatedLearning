@@ -63,7 +63,7 @@ def file_to_list(figureType=0,epochs=100,results_path='../results/classification
     for i in range(total_files):
         ac[i] = accuracies[i][:]
 
-    ac = [ele[:40] for ele in ac if ele != []]
+    ac = [ele[:100] for ele in ac if ele != []]
     
     try:
         x1Mean = mean(ac,axis=0);
@@ -79,7 +79,8 @@ if __name__ == "__main__":
     
     pattern="64/64"   
     dataset = "VeReMi"
-    model = "kfastest"
+    #dataset = "WiSec"
+    model = "m_fastest"
     #model = "random"
     
     mean,std = file_to_list(figureType=1,epochs=40,results_path='../results/classification/raw/'+model+'/'+dataset+'/',pattern=pattern)

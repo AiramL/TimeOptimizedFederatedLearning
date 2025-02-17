@@ -2,11 +2,13 @@
 
 eps=100
 TOFL=0
-numClients=30
-numClientsFit=25
-bs=64
+numClients=20
+numClientsFit=16
+bs=128
 strategy="random"
+#strategy="m_fastest"
 dataset="VeReMi"
+#dataset="WiSec"
 image_flag=0
 
 echo "Verifying if the results directory exists"
@@ -14,7 +16,7 @@ echo "Verifying if the results directory exists"
 
 echo "Starting server"
 cd ../src/federated_learning
-if [ "$strategy" = "kfastest" ]
+if [ "$strategy" = "m_fastest" ]
 then	
 	[[ $(($numClientsFit/2)) = 0 ]] && numClientsFit=1 || numClientsFit=$(($numClientsFit/2))
 	python3.12 server.py -ncf=$numClientsFit -tf=$TOFL -nc=$numClients -nor=$eps &

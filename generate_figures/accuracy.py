@@ -7,14 +7,10 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
     plt.figure(figsize=(12, 8))
     
     servers = ["random",
-               "kfastest"]
+               "m_fastest"]
 
-    epochs = range(1,41)
     results = {}
     
-    #centralized = [ 86 for _ in epochs ]
-    #plt.plot(epochs, centralized, linestyle="--", label="centralized")
-
     for server in servers:
         
         with open(file_path+server+"/"+dataset+"_mean_model","rb") as loader:
@@ -24,12 +20,14 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
         with open(file_path+server+"/"+dataset+"_std_model","rb") as loader:
             result_list = load(loader)
             results[server+"std"] = result_list*100
+    
+    epochs = range(1,len(results[server+"mean"])+1)
      
     for server in servers:
-        if server == "kfastest":
-            plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="m-Fastest")
+        if server == "random":
+            plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="Random and TOFL")
         else:
-            plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="random and tofl")
+            plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="M-Fastest")
     
 
     plt.xlabel("Epoch (#)")

@@ -23,12 +23,19 @@ def selection_plot(file_path="results/client_selection/",file_name="model_size50
                "m_fastest",
                "tofl_oracle",
                "tofl_estimator_dl"]
+    
+    legends = {"random": "Random",
+               "m_fastest": "M-Fastest (M=50%)",
+               "tofl_oracle": "TOFL Oracle",
+               "tofl_estimator_dl" : "TOFL Estimator",
+               "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
+
 
     with open(file_path+file_name,"rb") as loader:
         result = load(loader)
     
     for index, name in enumerate(servers):
-        plt.plot(range(1,len(result[index])+1),result[index][:],label=name)
+        plt.plot(range(1,len(result[index])+1),result[index][:],label=lengeds[name])
 
     plt.xlabel("Selected Clients (#)")
     plt.ylabel("Total Training Time (s)")
@@ -46,6 +53,13 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
                "m_fastest",
                "tofl_oracle",
                "tofl_estimator_dl"]
+    
+    legends = {"random": "Random",
+               "m_fastest": "M-Fastest (M=50%)",
+               "tofl_oracle": "TOFL Oracle",
+               "tofl_estimator_dl" : "TOFL Estimator",
+               "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
+
 
     results = { server : [ ] for server in servers }
     epochs = range(1,101)
@@ -59,7 +73,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
     for server in servers:
         m = mean(results[server],axis=0)
         s = std(results[server],axis=0)
-        plt.errorbar(epochs, m, yerr=s, capsize=3, label=server)
+        plt.errorbar(epochs, m, yerr=s, capsize=3, label=legends[server])
 
     plt.xlabel("Selected Clients (#)")
     plt.ylabel("Total Training Time (s)")
