@@ -2,7 +2,7 @@ from pickle import load
 import matplotlib.pyplot as plt
 from numpy import mean, std
 
-def accuracy_error_plot(file_path="results/classification/processed/",dataset="WiSec", PLOT=False):
+def accuracy_error_plot(file_path="results/classification/processed/",dataset="WiSec", PLOT=False, language="pt"):
     
     plt.figure(figsize=(12, 8))
     
@@ -25,13 +25,24 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
      
     for server in servers:
         if server == "random":
-            plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="Random and TOFL")
+            if language == "en":
+                plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="Random and TOFL")
+
+            elif language == "pt":
+                plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="Aleatório e TOFL")
+
         else:
             plt.errorbar(epochs, results[server+"mean"], yerr=results[server+"std"], capsize=3, label="M-Fastest")
     
+    
+    if language == "en":
+        plt.xlabel("Epoch (#)")
+        plt.ylabel("Accuracy (%)")
 
-    plt.xlabel("Epoch (#)")
-    plt.ylabel("Accuracy (%)")
+    elif language == "pt":
+        plt.xlabel("Época (#)")
+        plt.ylabel("Acurácia (%)")
+    
     plt.legend()
     plt.savefig("figures/"+dataset+"_accuracy.png",dpi=300,bbox_inches='tight')
 

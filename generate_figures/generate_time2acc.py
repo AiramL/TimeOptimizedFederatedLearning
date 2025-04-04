@@ -2,7 +2,13 @@ from pickle import load
 import matplotlib.pyplot as plt
 from itertools import accumulate
 
-def process_accuracy_delays(n_clients=95,dataset="WiSec",acc_path="results/classification/processed/",time_path="results/client_selection/processed/",n_executions=10,model_size=500):
+def process_accuracy_delays(n_clients=95,
+                            dataset="WiSec",
+                            acc_path="results/classification/processed/",
+                            time_path="results/client_selection/processed/",
+                            n_executions=10,
+                            model_size=500,
+                            language="pt"):
     
     plt.figure(figsize=(12, 8))
     
@@ -12,11 +18,27 @@ def process_accuracy_delays(n_clients=95,dataset="WiSec",acc_path="results/class
                "tofl_estimator_dl",
                "tofl_estimator_m_fastest"]
    
-    legends = {"random": "Random",
-               "m_fastest": "M-Fastest (M=50%)",
-               "tofl_oracle": "TOFL Oracle",
-               "tofl_estimator_dl" : "TOFL Estimator",
-               "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
+    
+    if language == "en":
+        legends = {"random": "Random",
+                   "m_fastest": "M-Fastest (M=50%)",
+                   "tofl_oracle": "TOFL Oracle",
+                   "tofl_estimator_dl" : "TOFL Estimator",
+                   "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
+        
+        plt.xlabel("Time (s)")
+        plt.ylabel("Accuracy (%)")
+
+    elif language == "pt":
+        legends = {"random": "Aleatório",
+                   "m_fastest": "M-Fastest (M=50%)",
+                   "tofl_oracle": "TOFL Oráculo",
+                   "tofl_estimator_dl" : "TOFL Estimador",
+                   "tofl_estimator_m_fastest": "TOFL Estimando e Selecionando os M-Fastest Clientes"}
+        
+        plt.xlabel("Tempo (s)")
+        plt.ylabel("Acurácia (%)")
+
 
     results_time = { }
     results = { }
@@ -51,8 +73,6 @@ def process_accuracy_delays(n_clients=95,dataset="WiSec",acc_path="results/class
                      capsize=3, 
                      label=legends[server])
     
-    plt.xlabel("Time (s)")
-    plt.ylabel("Accuracy (%)")
     plt.legend()
     plt.savefig("figures/"+dataset+"_time2acc.png",dpi=300,bbox_inches='tight')
 

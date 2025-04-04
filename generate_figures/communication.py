@@ -45,7 +45,7 @@ def selection_plot(file_path="results/client_selection/",file_name="model_size50
     if PLOT:
         plt.show()
 
-def selection_error_plot(file_path="results/client_selection/",model_size="model_size500", PLOT=False, n_executions=10):
+def selection_error_plot(file_path="results/client_selection/",model_size="model_size500", PLOT=False, n_executions=10, language="pt"):
     
     plt.figure(figsize=(12, 8))
     
@@ -54,11 +54,25 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
                "tofl_oracle",
                "tofl_estimator_dl"]
     
-    legends = {"random": "Random",
-               "m_fastest": "M-Fastest (M=50%)",
-               "tofl_oracle": "TOFL Oracle",
-               "tofl_estimator_dl" : "TOFL Estimator",
-               "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
+    if language == "en":
+        legends = {"random": "Random",
+                   "m_fastest": "M-Fastest (M=50%)",
+                   "tofl_oracle": "TOFL Oracle",
+                   "tofl_estimator_dl" : "TOFL Estimator",
+                   "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
+        
+        plt.xlabel("Selected Clients (#)")
+        plt.ylabel("Total Training Time (s)")
+
+    elif language == "pt":
+        legends = {"random": "Aleatório",
+                   "m_fastest": "M-Fastest (M=50%)",
+                   "tofl_oracle": "TOFL Oráculo",
+                   "tofl_estimator_dl" : "TOFL Estimador",
+                   "tofl_estimator_m_fastest": "TOFL Estimando e Selecionando os M-Fastest Clientes"}
+        
+        plt.xlabel("Quantidade de Clientes Selecionados (#)")
+        plt.ylabel("Tempo Total de Treinamento (s)")
 
 
     results = { server : [ ] for server in servers }
@@ -75,8 +89,6 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
         s = std(results[server],axis=0)
         plt.errorbar(epochs, m, yerr=s, capsize=3, label=legends[server])
 
-    plt.xlabel("Selected Clients (#)")
-    plt.ylabel("Total Training Time (s)")
     plt.legend()
     plt.savefig("figures/"+model_size[1:]+".png",dpi=300,bbox_inches='tight')
 
@@ -90,5 +102,5 @@ if __name__ == "__main__":
 
 
     for model_size in sizes:
-        selection_error_plot("results/client_selection/speed0/", "_size_"+model_size)
+        selection_error_plot("results/client_selection/speed0/", "_size_"+model_size, language="pt")
         
