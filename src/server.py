@@ -43,7 +43,8 @@ class Server(ABC):
         self.highest_delay = 0.0
         self.file_name = file_name
         self.SAVE =  False
-        self.clients_computation_delay = [ 0 for i in range(n_epochs)] # in seconds
+        self.clients_computation_delay = [ 0 for i in range(n_epochs)] # in secondsi
+        self.server_name = ""
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.CRITICAL)
         
@@ -94,8 +95,8 @@ class Server(ABC):
             ''' select clients '''
             self.select_clients()             
 
-            # with open("test/epoch"+str(self.epoch),"wb") as writer:
-            #     dump(self.selected_clients , writer)
+            with open("results/selected_clients/"+self.server_name+"epoch"+str(self.epoch),"wb") as writer:
+                dump(self.selected_clients , writer)
 
             ''' send model to the clients '''
             self.send_model()
@@ -148,11 +149,26 @@ class Server(ABC):
 
 class ServerRandomSelection(Server):
 
+    def __init__(self, 
+                 *args):
+
+        super().__init__(*args)
+ 
+        self.server_name = "random"
+
     def select_clients(self):
+
         self.selected_clients = random.sample(range(len(self.available_clients)),
                                               self.number_of_clients_to_select)
 
 class ServerFixedSelection(Server):
+    
+    def __init__(self, 
+                 *args):
+
+        super().__init__(*args)
+ 
+        self.server_name = "fixed"
     
     def set_selected_clients(self,clients_ids):
         self.selected_clients = clients_ids
@@ -192,6 +208,8 @@ class ServerMFastestSelection(Server):
 
         self.m_clients = m_clients
 
+        
+        self.server_name = "m_fastest"
 
         if m_clients > n_select_clients:
             self.logger.error("Invalid configuration. Number of m_clients \
@@ -332,6 +350,7 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
         self.computational_delays = []
         self.estimated_state = 0
 
+        self.server_name = "tofl_oracle"
                                 
         self.logger.debug("finished loading data")
         if n_select_clients > len(self.dataframe['Node ID'].unique()):
@@ -468,6 +487,8 @@ class ServerEstimatorTOFLSelectionDL(ServerTOFLSelection):
                          datapath)
 
         self.estimator = EstimatorLSTM()
+        
+        self.server_name = "tofl"
 
         self.past_delays = { client_id : (deque(10*[100],10),
                                           deque(10*[100],10))
@@ -581,6 +602,8 @@ class ServerEstimatorTOFLSelectionMFastest(ServerEstimatorTOFLSelectionDL):
                          model_size,
                          avalilable_clients,
                          datapath)
+        
+        self.server_name = "tofl_mfastest"
 
         if m_clients > n_select_clients:
             self.logger.error("Invalid configuration. Number of m_clients \
