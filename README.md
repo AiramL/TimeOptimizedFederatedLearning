@@ -21,7 +21,7 @@ Install the requirements:
 
 ### Simplified execution
 
-To reproduce the paper's experiments and reduce the execution time, download the data previously generated. This data contains mobility traces and communication conditions generated with SUMO and the communication model respectively.
+To reproduce the paper's experiments and reduce the execution time, download the data previously generated. This data contains mobility traces and communication conditions generated with SUMO and the communication model respectively. The total size of all files is up to 200 GB.
 
 ### Complete execution
 

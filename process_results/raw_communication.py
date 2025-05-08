@@ -379,7 +379,7 @@ if __name__ == "__main__":
     
     THREAD = False
     SINGLE = True
-    speed = 1 
+    speed = 2 
     
 
     if THREAD:
