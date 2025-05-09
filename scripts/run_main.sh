@@ -2,11 +2,11 @@
 
 cd ..
 
-for data in $( seq 0 9 )
+for data in 1
 do
-	for size in 500 1000 2000 3000 
+	for size in 500  
 	do
-		for speed in 0 #1 2
+		for speed in 0
 		do
 				for server in "random" "m_fastest" "tofl_oracle" "tofl_estimator_dl"
 			do

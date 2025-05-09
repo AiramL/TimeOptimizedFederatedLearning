@@ -97,7 +97,7 @@ def main(sid=0,
 def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 100
+    n_epochs = 10
     m_ratio = 0.5 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
@@ -140,7 +140,7 @@ def save_results(speed,method,model_size,dataset,number_of_clients_to_select,res
 def execute_results_per_client(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 100
+    n_epochs = 10
     m_ratio = 0.5 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"

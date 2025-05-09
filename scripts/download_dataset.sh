@@ -20,5 +20,5 @@ wget https://gta.ufrj.br/~airam/DATASETS/WiSec_DataModifiedVeremi_Dataset/attack
 wget https://gta.ufrj.br/~airam/DATASETS/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat --no-check-certificate
 wget https://gta.ufrj.br/~airam/DATASETS/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat --no-check-certificate
 
-#cd ../../../utils/
-#python3.10 get_image_datasets.py
+cd ../../../utils/
+python3.10 get_image_datasets.py

@@ -17,6 +17,12 @@ Install the requirements:
  cd scripts
  source create\_env.sh
 
+Create the necessary paths and download datasets:
+ 
+ cd scripts
+ source create\_paths.sh
+ source download\_datasets.sh
+
 ## Execution
 
 ### Simplified execution
@@ -24,5 +30,26 @@ Install the requirements:
 To reproduce the paper's experiments and reduce the execution time, download the data previously generated. This data contains mobility traces and communication conditions generated with SUMO and the communication model respectively. The total size of all files is up to 200 GB.
 
 ### Complete execution
+
+Create SUMOs' trips: 
+ 
+ cd scripts
+ source generate\_trips.sh
+
+Process the trips:
+
+ python process\_results/process\_mobility.py
+
+Generate raw communication:
+ 
+ cd scripts
+ source raw\_communication.sh
+
+Generate processed communication
+
+ source processed\_communication.sh
+
+
+## Generate Figures
 
 
