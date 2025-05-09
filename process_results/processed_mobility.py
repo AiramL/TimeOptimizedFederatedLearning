@@ -38,7 +38,7 @@ def process_scenario(n_nodes=20,
         writer.writelines(txt_writer)
 
 n_cars = "100"
-speeds = [0, 1, 2] 
+speeds = [2] 
 threads = {}
 
 for speed in speeds:

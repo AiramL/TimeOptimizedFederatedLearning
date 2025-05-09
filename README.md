@@ -45,7 +45,7 @@ Create SUMOs' trips:
 Process the trips:
 
 ```bash
- python process_results/process_mobility.py
+ python process_results/processed_mobility.py
 ```
 
 Generate raw communication:
