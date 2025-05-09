@@ -16,15 +16,15 @@ Install the requirements:
 
 ```bash
  cd scripts
- source create\_env.sh
+ source create_env.sh
 ```
 
 Create the necessary paths and download datasets:
  
 ```bash
  cd scripts
- source create\_paths.sh
- source download\_datasets.sh
+ source create_paths.sh
+ source download_datasets.sh
 ```
 
 ## Execution
@@ -39,26 +39,26 @@ Create SUMOs' trips:
  
 ```bash
  cd scripts
- source generate\_trips.sh
+ source generate_trips.sh
 ```
 
 Process the trips:
 
 ```bash
- python process\_results/process\_mobility.py
+ python process_results/process_mobility.py
 ```
 
 Generate raw communication:
  
 ```bash
  cd scripts
- source raw\_communication.sh
+ source raw_communication.sh
 ```
 
 Generate processed communication
 
 ```bash
- source processed\_communication.sh
+ source processed_communication.sh
 ```
 
 
