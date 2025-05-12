@@ -75,13 +75,13 @@ Generate delays results:
 Training time figure: 
 
 ```bash
- python generate_figures/
+ python generate_figures/communication.py
 ```
 
 Epoch time figure: 
 
 ```bash
- python generate_figures/
+ python generate_figures/epoch.py
 ```
 
 Accuracy evolution figure: 
