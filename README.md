@@ -87,7 +87,7 @@ Epoch time figure:
 Accuracy evolution figure: 
 
 ```bash
- python generate_figures/
+ python generate_figures/time2acc.py
 ```
 
 
