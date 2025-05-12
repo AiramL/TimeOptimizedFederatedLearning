@@ -1,9 +1,9 @@
 from numpy import mean, std
 from pickle import load, dump
 
-def process_epochs(file_path="../results/client_selection/raw/epoch/",n_executions=10):
+def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=10):
     
-    save_path = "../results/client_selection/processed/"
+    save_path = "results/client_selection/processed/"
 
     servers = ["random",
                "m_fastest",
@@ -31,4 +31,5 @@ def process_epochs(file_path="../results/client_selection/raw/epoch/",n_executio
 
 
 if __name__ == "__main__":
+
     process_epochs()

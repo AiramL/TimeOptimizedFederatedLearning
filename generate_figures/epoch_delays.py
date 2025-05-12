@@ -2,6 +2,8 @@ from pickle import load
 import matplotlib.pyplot as plt
 from numpy import mean, std
 
+from legends import legends_dicts
+
 def selection_error_plot(n_clients=95, file_path="results/client_selection/processed/", PLOT=False, language="pt"):
 
     plt.figure(figsize=(12, 8))
@@ -12,24 +14,15 @@ def selection_error_plot(n_clients=95, file_path="results/client_selection/proce
                "tofl_estimator_dl",
                "tofl_estimator_m_fastest"]
     
+    legends = legends_dicts[language]
 
     if language == "en":
-        legends = {"random": "Random",
-                   "m_fastest": "M-Fastest (M=50%)",
-                   "tofl_oracle": "TOFL Oracle",
-                   "tofl_estimator_dl" : "TOFL Estimator",
-                   "tofl_estimator_m_fastest": "TOFL Estimating \nand Selecting M-Fastest Clients"}
         
         plt.xlabel("Strategy")
         plt.ylabel("Global Epoch Delay (s)")
 
     elif language == "pt":
-        legends = {"random": "Aleatório",
-                   "m_fastest": "M-Fastest (M=50%)",
-                   "tofl_oracle": "TOFL Oráculo",
-                   "tofl_estimator_dl" : "TOFL Estimador",
-                   "tofl_estimator_m_fastest": "TOFL Estimando e \nSelecionando os M-Fastest Clientes"}
-        
+
         plt.xlabel("Estratégia")
         plt.ylabel("Tempo de Trainamento de Época Global (s)")
 
@@ -49,8 +42,17 @@ def selection_error_plot(n_clients=95, file_path="results/client_selection/proce
             capsize=3)
 
     plt.legend()
-    plt.savefig("figures/time_epoch"+str(n_clients)+".png",dpi=300,bbox_inches='tight')
+    plt.savefig("figures/time_epoch"+str(n_clients)+"_"+language+".png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
 
-    selection_error_plot()
+    languages = ["pt", "en"]
+
+    n_clients = [16, 95]
+
+    for lang in languages:
+
+        for n_client in n_clients:
+
+            selection_error_plot(language=lang,
+                                 n_clients=n_client)

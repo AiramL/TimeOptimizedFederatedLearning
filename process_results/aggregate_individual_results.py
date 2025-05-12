@@ -1,6 +1,6 @@
 from pickle import load, dump
 
-file_path = "results/client_selection/speed0/"
+file_path = "results/client_selection/processed/"
 
 servers = ["random",
            "m_fastest",

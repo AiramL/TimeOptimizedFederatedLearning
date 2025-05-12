@@ -55,13 +55,44 @@ Generate raw communication:
  source raw_communication.sh
 ```
 
-Generate processed communication
+Generate processed communication:
 
 ```bash
  source processed_communication.sh
 ```
 
+Generate delays results:
+
+```bash
+ python src/main.py
+ python process_results/aggregate_individual_results.py
+ python process_results/process_epoch.py
+```
+
 
 ## Generate Figures
 
+Training time figure: 
 
+```bash
+ python generate_figures/
+```
+
+Epoch time figure: 
+
+```bash
+ python generate_figures/
+```
+
+Accuracy evolution figure: 
+
+```bash
+ python generate_figures/
+```
+
+
+Energy figure: 
+
+```bash
+ python generate_figures/energy.py
+```
