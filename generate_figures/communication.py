@@ -67,7 +67,9 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
         plt.ylabel("Tempo Total de Treinamento (s)")
 
 
-    results = { server : [ ] for server in servers }
+    results = { server : [ ] 
+               for server in servers }
+    
     epochs = range(1,101)
 
     for server in servers:
@@ -82,7 +84,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
         plt.errorbar(epochs, m, yerr=s, capsize=3, label=legends[server])
 
     plt.legend()
-    
+
     plt.savefig("figures/"+model_size[1:]+".png",
                 dpi=300,
                 bbox_inches='tight')

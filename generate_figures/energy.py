@@ -11,7 +11,8 @@ def plot_energy(dictionary,
     
     plt.figure(figsize=(12, 8))
 
-    x_axis = dictionary[list(dictionary.keys())[0]].keys()
+    x_axis = [ x*10 
+              for x in dictionary[list(dictionary.keys())[0]].keys() ]
 
     legends = legends_dicts[language]
 
