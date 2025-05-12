@@ -85,7 +85,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
 
     plt.legend()
 
-    plt.savefig("figures/"+model_size[1:]+".png",
+    plt.savefig("figures/communication_model_size"+model_size[1:]+"_"+language+".png",
                 dpi=300,
                 bbox_inches='tight')
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     for model_size in sizes:
 
-        selection_error_plot("results/client_selection/speed0/", 
+        selection_error_plot("results/client_selection/speed2/", 
                              "_size_"+model_size, 
                              language="pt")
         

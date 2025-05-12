@@ -13,6 +13,8 @@ mkdir -p ../mobility/raw/speed2
 mkdir -p ../results/client_selection/speed0
 mkdir -p ../results/client_selection/speed1
 mkdir -p ../results/client_selection/speed2
+mkdir -p ../results/client_selection/raw/epoch
+mkdir -p ../results/client_selection/processed
 mkdir ../logs
 mkdir -p ../results/classification/processed/random
 mkdir -p ../results/classification/processed/tofl

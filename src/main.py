@@ -204,7 +204,7 @@ if  __name__ == "__main__":
 
         model_sizes=[500]
 
-        speed = 1 
+        speed = 2 
 
         threads = { }
         
