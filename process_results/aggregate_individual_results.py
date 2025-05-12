@@ -1,17 +1,15 @@
 from pickle import load, dump
 
-file_path = "results/client_selection/processed/"
+file_path = "results/client_selection/speed2/"
 
 servers = ["random",
            "m_fastest",
            "tofl_oracle",
-           "tofl_estimator_dl"]
+           "tofl_estimator_dl",
+           "tofl_estimator_m_fastest"]
         
 
-sizes=[500,
-       1000,
-       2000,
-       3000]
+sizes=[500]
 
 datasets = [ i for i in range(10) ]
 
