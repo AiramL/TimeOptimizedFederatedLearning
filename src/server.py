@@ -150,9 +150,11 @@ class Server(ABC):
 class ServerRandomSelection(Server):
 
     def __init__(self, 
-                 *args):
+                 *args,
+                 **kwargs):
 
-        super().__init__(*args)
+        super().__init__(*args,
+                         **kwargs)
  
         self.server_name = "random"
 
@@ -164,9 +166,11 @@ class ServerRandomSelection(Server):
 class ServerFixedSelection(Server):
     
     def __init__(self, 
-                 *args):
+                 *args,
+                 **kwargs):
 
-        super().__init__(*args)
+        super().__init__(*args,
+                         **kwargs)
  
         self.server_name = "fixed"
     
