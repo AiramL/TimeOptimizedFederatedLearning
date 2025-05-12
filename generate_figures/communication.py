@@ -27,7 +27,8 @@ def selection_plot(file_path="results/client_selection/",
     servers = ["random",
                "m_fastest",
                "tofl_oracle",
-               "tofl_estimator_dl"]
+               "tofl_estimator_dl",
+               "tofl_estimator_m_fastest"]
     
     legends = legends_dicts["en"]
 
@@ -52,7 +53,8 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
     servers = ["random",
                "m_fastest",
                "tofl_oracle",
-               "tofl_estimator_dl"]
+               "tofl_estimator_dl",
+               "tofl_estimator_m_fastest"]
 
     legends = legends_dicts[language]
 
