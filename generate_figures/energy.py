@@ -27,7 +27,11 @@ def plot_energy(dictionary,
             stds.append(std(dictionary[server][err],axis=0))
             
             
-        plt.errorbar(x_axis, means, yerr=stds, capsize=3, label=legends[server])
+        plt.errorbar(x_axis, 
+                     [ 100*x for x in means ], 
+                      yerr=[ 100*x for x in stds ], 
+                      capsize=3, 
+                      label=legends[server])
 
     if language == "en":        
 
@@ -38,12 +42,19 @@ def plot_energy(dictionary,
         
         plt.xlabel("Taxa de Erro por Cliente (%)")
         plt.ylabel("Eficiência de Treinamento (%)")
-    
+
+
+    plt.xticks(x_axis, 
+               [str(x) for x in x_axis])
+
     plt.legend()
 
     plt.savefig("figures/training_efficiency_"+language+".png",
                 dpi=300,
                 bbox_inches='tight')
+    
+   
+    
 
     if PLOT:
         plt.show()
