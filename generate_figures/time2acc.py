@@ -2,6 +2,8 @@ from pickle import load
 import matplotlib.pyplot as plt
 from itertools import accumulate
 
+from legends import legends_dicts
+
 def process_accuracy_delays(n_clients=95,
                             dataset="WiSec",
                             acc_path="results/classification/processed/",
@@ -18,23 +20,14 @@ def process_accuracy_delays(n_clients=95,
                "tofl_estimator_dl",
                "tofl_estimator_m_fastest"]
    
+    legends = legends_dicts[language]
     
     if language == "en":
-        legends = {"random": "Random",
-                   "m_fastest": "M-Fastest (M=50%)",
-                   "tofl_oracle": "TOFL Oracle",
-                   "tofl_estimator_dl" : "TOFL Estimator",
-                   "tofl_estimator_m_fastest": "TOFL Estimating and Selecting M-Fastest Clients"}
         
         plt.xlabel("Time (s)")
         plt.ylabel("Accuracy (%)")
 
     elif language == "pt":
-        legends = {"random": "Aleatório",
-                   "m_fastest": "M-Fastest (M=50%)",
-                   "tofl_oracle": "TOFL Oráculo",
-                   "tofl_estimator_dl" : "TOFL Estimador",
-                   "tofl_estimator_m_fastest": "TOFL Estimando e Selecionando os M-Fastest Clientes"}
         
         plt.xlabel("Tempo (s)")
         plt.ylabel("Acurácia (%)")
@@ -74,9 +67,21 @@ def process_accuracy_delays(n_clients=95,
                      label=legends[server])
     
     plt.legend()
-    plt.savefig("figures/"+dataset+"_time2acc.png",dpi=300,bbox_inches='tight')
+    plt.savefig("figures/"+dataset+"_time2acc_"+language+".png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
 
-    process_accuracy_delays(dataset="WiSec")
-    process_accuracy_delays(dataset="VeReMi")
+    n_clients = [16, 95]
+    languages = ["en", "pt"]
+    datasets = ["WiSec", "VeReMi"]
+
+    for client in n_clients:
+
+        for lang in languages:
+
+            for dataset in datasets:
+
+                process_accuracy_delays(dataset=dataset,
+                                        n_clients=client,
+                                        language=lang)
+    
