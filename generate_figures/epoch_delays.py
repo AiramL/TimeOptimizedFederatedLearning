@@ -2,9 +2,9 @@ from pickle import load
 import matplotlib.pyplot as plt
 from numpy import mean, std
 
-def selection_error_plot(n_clients=95, file_path="results/client_selection/processed/", PLOT=False, language="pt"):
+def selection_error_plot(n_clients=16, file_path="results/client_selection/processed/", PLOT=False, language="pt"):
 
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
     
     servers = ["random",
                "m_fastest",
@@ -18,20 +18,20 @@ def selection_error_plot(n_clients=95, file_path="results/client_selection/proce
                    "m_fastest": "M-Fastest (M=50%)",
                    "tofl_oracle": "TOFL Oracle",
                    "tofl_estimator_dl" : "TOFL Estimator",
-                   "tofl_estimator_m_fastest": "TOFL Estimating \nand Selecting M-Fastest Clients"}
+                   "tofl_estimator_m_fastest": "TOFL Estimating \nand Selecting \nM-Fastest Clients"}
         
-        plt.xlabel("Strategy")
-        plt.ylabel("Global Epoch Delay (s)")
+        plt.xlabel("Strategy", fontsize=20)
+        plt.ylabel("Global Epoch Delay (s)", fontsize=20)
 
     elif language == "pt":
         legends = {"random": "Aleatório",
                    "m_fastest": "M-Fastest (M=50%)",
                    "tofl_oracle": "TOFL Oráculo",
                    "tofl_estimator_dl" : "TOFL Estimador",
-                   "tofl_estimator_m_fastest": "TOFL Estimando e \nSelecionando os M-Fastest Clientes"}
+                   "tofl_estimator_m_fastest": "TOFL Estimando e \nSelecionando os \nM-Fastest Clientes"}
         
-        plt.xlabel("Estratégia")
-        plt.ylabel("Tempo de Trainamento de Época Global (s)")
+        plt.xlabel("Estratégia", fontsize=20)
+        plt.ylabel("Tempo de Trainamento de Época Global (s)", fontsize=20)
 
     means = []
     stds = []
@@ -47,10 +47,14 @@ def selection_error_plot(n_clients=95, file_path="results/client_selection/proce
             means, 
             yerr=stds, 
             capsize=3)
-
-    plt.legend()
+    
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.legend(fontsize=20)
     plt.savefig("figures/time_epoch"+str(n_clients)+".png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
 
-    selection_error_plot()
+    for n_clients in [16, 95]:
+
+        selection_error_plot(n_clients=n_clients)
