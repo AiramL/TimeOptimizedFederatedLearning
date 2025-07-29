@@ -6,16 +6,18 @@ from legends import legends_dicts
 
 def single_client_plot():
 
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
 
     for index in range(20):
         with open("results/7000/results_client"+str(index),"rb") as loader:
             result = load(loader)
             plt.plot(range(101),result,label="client_"+str(index))
 
-    plt.xlabel("Epoch Number (#)")
-    plt.ylabel("Delay (s)")
-    plt.legend()
+    plt.xlabel("Epoch Number (#)", fontsize=16)
+    plt.ylabel("Delay (s)", fontsize=16)
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.legend(fontsize=20)
     plt.show()
 
 def selection_plot(file_path="results/client_selection/",
@@ -48,7 +50,7 @@ def selection_plot(file_path="results/client_selection/",
 
 def selection_error_plot(file_path="results/client_selection/",model_size="model_size500", PLOT=False, n_executions=10, language="pt"):
     
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
     
     servers = ["random",
                "m_fastest",
@@ -60,13 +62,13 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
 
     if language == "en":
         
-        plt.xlabel("Selected Clients (#)")
-        plt.ylabel("Total Training Time (s)")
+        plt.xlabel("Selected Clients (#)", fontsize=16)
+        plt.ylabel("Total Training Time (s)", fontsize=16)
 
     elif language == "pt":
 
-        plt.xlabel("Quantidade de Clientes Selecionados (#)")
-        plt.ylabel("Tempo Total de Treinamento (s)")
+        plt.xlabel("Quantidade de Clientes Selecionados (#)", fontsize=16)
+        plt.ylabel("Tempo Total de Treinamento (s)", fontsize=16)
 
 
     results = { server : [ ] 
@@ -85,7 +87,9 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
         s = std(results[server],axis=0)
         plt.errorbar(epochs, m, yerr=s, capsize=3, label=legends[server])
 
-    plt.legend()
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.legend(fontsize=20)
 
     plt.savefig("figures/communication_model_size"+model_size[1:]+"_"+language+".png",
                 dpi=300,

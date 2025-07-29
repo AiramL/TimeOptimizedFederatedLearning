@@ -35,20 +35,21 @@ def plot_energy(dictionary,
 
     if language == "en":        
 
-        plt.xlabel("Clients' Error Rate (%)")
-        plt.ylabel("Training Efficiency (%)")
+        plt.xlabel("Clients' Error Rate (%)", fontsize=16)
+        plt.ylabel("Training Efficiency (%)", fontsize=16)
 
     elif language == "pt":
         
-        plt.xlabel("Taxa de Erro por Cliente (%)")
-        plt.ylabel("Eficiência de Treinamento (%)")
+        plt.xlabel("Taxa de Erro por Cliente (%)", fontsize=16)
+        plt.ylabel("Eficiência de Treinamento (%)", fontsize=16)
 
 
     plt.xticks(x_axis, 
                [str(x) for x in x_axis])
 
-    plt.legend()
-
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.legend(fontsize=20)
     plt.savefig("figures/training_efficiency_"+language+".png",
                 dpi=300,
                 bbox_inches='tight')
@@ -65,5 +66,4 @@ if __name__ == "__main__":
     with open("results/energy","rb") as reader:
         dictionary = load(reader)
 
-    plot_energy(dictionary, 
-                PLOT=True)
+    plot_energy(dictionary)
