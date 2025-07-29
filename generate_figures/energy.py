@@ -9,7 +9,7 @@ def plot_energy(dictionary,
                 PLOT=False, 
                 language="pt"):
     
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
 
     x_axis = [ x*10 
               for x in dictionary[list(dictionary.keys())[0]].keys() ]
@@ -35,18 +35,21 @@ def plot_energy(dictionary,
 
     if language == "en":        
 
-        plt.xlabel("Clients' Error Rate (%)")
-        plt.ylabel("Training Efficiency (%)")
+        plt.xlabel("Clients' Error Rate (%)", fontsize=16)
+        plt.ylabel("Training Efficiency (%)", fontsize=16)
 
     elif language == "pt":
         
-        plt.xlabel("Taxa de Erro por Cliente (%)")
-        plt.ylabel("Eficiência de Treinamento (%)")
+        plt.xlabel("Taxa de Erro por Cliente (%)", fontsize=16)
+        plt.ylabel("Eficiência de Treinamento (%)", fontsize=16)
 
 
     plt.xticks(x_axis, 
                [str(x) for x in x_axis])
 
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.legend(fontsize=20)
     plt.legend()
 
     plt.savefig("figures/training_efficiency_"+language+".png",
