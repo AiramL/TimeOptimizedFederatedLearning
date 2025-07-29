@@ -50,8 +50,6 @@ def plot_energy(dictionary,
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
     plt.legend(fontsize=20)
-    plt.legend()
-
     plt.savefig("figures/training_efficiency_"+language+".png",
                 dpi=300,
                 bbox_inches='tight')
@@ -68,5 +66,4 @@ if __name__ == "__main__":
     with open("results/energy","rb") as reader:
         dictionary = load(reader)
 
-    plot_energy(dictionary, 
-                PLOT=True)
+    plot_energy(dictionary)
