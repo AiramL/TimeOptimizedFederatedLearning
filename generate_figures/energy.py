@@ -9,7 +9,7 @@ def plot_energy(dictionary,
                 PLOT=False, 
                 language="pt"):
     
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
 
     x_axis = [ x*10 
               for x in dictionary[list(dictionary.keys())[0]].keys() ]
