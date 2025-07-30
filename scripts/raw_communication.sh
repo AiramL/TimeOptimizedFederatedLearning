@@ -4,7 +4,7 @@ cd ..
 
 for index in $( seq 0 29 )
 do
-		for speed in $( seq 0 2 ) 
+		for speed in 2 
 		do	
 
 			python process_results/raw_communication.py 0 $speed $index &

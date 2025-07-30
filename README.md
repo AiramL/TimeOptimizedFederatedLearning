@@ -48,13 +48,14 @@ To reproduce the paper's experiments and reduce the execution time, download the
 Create SUMOs' trips: 
  
 ```bash
- cd ..
- source scripts/generate_trips.sh
+ cd ../scripts
+ source generate_trips.sh
 ```
 
 Process the trips:
 
 ```bash
+ cd ..
  python process_results/processed_mobility.py
 ```
 
@@ -68,6 +69,7 @@ Generate raw communication:
 Generate processed communication:
 
 ```bash
+ cd scripts
  source processed_communication.sh
 ```
 
