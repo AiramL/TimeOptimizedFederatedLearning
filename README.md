@@ -23,7 +23,7 @@ All the dependencies are going to be downloaded with the provided scripts.
 Install the requirements:
 
 ```bash
- cd scripts
+ source create_paths.sh
  source create_env.sh
 ```
 
@@ -31,7 +31,6 @@ Create the necessary paths and download datasets:
  
 ```bash
  cd scripts
- source create_paths.sh
  source download_datasets.sh
  source install_dependencies.sh
 ```
