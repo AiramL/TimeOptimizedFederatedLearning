@@ -13,7 +13,7 @@ All the dependencies are going to be downloaded with the provided scripts.
 
 # Minimum Requirement
 
-- SO: Ubuntu 20.04.5 LTS or 22.04.5 LTS
+- SO: Ubuntu 22.04.5 LTS
 - Cores: 24
 - Memory: 32 GB
 
