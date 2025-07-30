@@ -24,7 +24,7 @@ do
         for key in "${!speeds[@]}";
         do
                 PWD_WORK=$SUMO_MOBILITY_PATH/scenarios/$key
-		[ ! -d $PWD_WORK ] &&  mkdir $PWD_WORK
+		[ ! -d $PWD_WORK ] &&  mkdir -p $PWD_WORK
                 topology_filename=$PWD_WORK/manhattan_net_$NB_grid.xml
 		
 		echo "PHASE 1 -> Generating the grid topology"

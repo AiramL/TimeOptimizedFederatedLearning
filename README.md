@@ -9,7 +9,25 @@ We consider to be able to get all 4 stamps of the conference.
 
 # Dependencies 
 
-All the dependencies are going to be downloaded with the provided scripts.
+Conda is the only dependecy that you need to install in order to execute the framework [1]. All the other dependencies are going to be downloaded with the provided scripts.
+
+## Get conda installer
+
+```bash
+ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+```
+
+## Change the permissions
+
+```bash
+ chmod +x Miniconda3-latest-Linux-x86_64.sh
+```
+
+## Execute the installation
+
+```bash
+ ./Miniconda3-latest-Linux-x86_64.sh
+```
 
 # Minimum Requirement
 
@@ -105,3 +123,8 @@ Energy figure:
 ```bash
  python generate_figures/energy.py
 ```
+
+# LICENSE
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
