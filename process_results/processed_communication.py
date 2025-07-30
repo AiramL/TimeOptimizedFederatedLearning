@@ -32,9 +32,10 @@ def generate_mean_and_std(n_executions=30,origin="mobility_0_"):
     return (df_mean,df_std)
 
 
-SINGLE = False
+SINGLE = True
 
 if SINGLE:
+   
     speed = sys.argv[1]
     index = sys.argv[2]
 
