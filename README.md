@@ -23,16 +23,15 @@ All the dependencies are going to be downloaded with the provided scripts.
 Install the requirements:
 
 ```bash
- source create_paths.sh
- source create_env.sh
+ source scripts/create_paths.sh
+ source scripts/create_env.sh
 ```
 
 Create the necessary paths and download datasets:
  
 ```bash
- cd scripts
- source download_datasets.sh
- source install_dependencies.sh
+ source scripts/download_datasets.sh
+ source scripts/install_dependencies.sh
 ```
 
 # Execution
@@ -48,14 +47,12 @@ To reproduce the paper's experiments and reduce the execution time, download the
 Create SUMOs' trips: 
  
 ```bash
- cd ../scripts
- source generate_trips.sh
+ source scripts/generate_trips.sh
 ```
 
 Process the trips:
 
 ```bash
- cd ..
  python process_results/processed_mobility.py
 ```
 
@@ -63,14 +60,13 @@ Generate raw communication:
  
 ```bash
  cd scripts
- source raw_communication.sh
+ source scripts/raw_communication.sh
 ```
 
 Generate processed communication:
 
 ```bash
- cd scripts
- source processed_communication.sh
+ source scripts/processed_communication.sh
 ```
 
 Generate delays results:
@@ -80,6 +76,8 @@ Generate delays results:
  python process_results/aggregate_individual_results.py
  python process_results/process_epoch.py
 ```
+
+# Federated Learning Training
 
 
 ## Generate Figures

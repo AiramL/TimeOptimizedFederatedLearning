@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd ..
 
 for speed in 2 
 do

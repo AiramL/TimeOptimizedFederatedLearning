@@ -9,7 +9,7 @@ def main(sid=0,
          model_size=527,
          number_of_clients=10,
          server_type="random",
-         n_epochs=10,
+         n_epochs=3,
          datapath="data/processed/v2x_mobility_20_mean.csv",
          number_of_clients_to_select=2,
          m_clients=2):
@@ -97,7 +97,7 @@ def main(sid=0,
 def execute_results(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 10
+    n_epochs = 3
     m_ratio = 0.5 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
@@ -140,7 +140,7 @@ def save_results(speed,method,model_size,dataset,number_of_clients_to_select,res
 def execute_results_per_client(model_sizes,servers,data,speed):
 
     number_of_clients = 100
-    n_epochs = 10
+    n_epochs = 3
     m_ratio = 0.5 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
@@ -209,11 +209,13 @@ if  __name__ == "__main__":
         threads = { }
         
         data_range = 10
-        ranges = 2
+        ranges = 5
         ranges_size = int(data_range/ranges)
 
         for data in range(data_range):
+        
             for server in servers:
+            
                 for size in model_sizes:
                     threads[server+str(size)+str(data)] = threading.Thread(target=execute_results_per_client, args=([size],[server],[data],speed))
         
@@ -239,20 +241,22 @@ if  __name__ == "__main__":
         servers = ["random",
                    "m_fastest",
                    "tofl_oracle",
-                   "tofl_estimator_dl"]
+                   "tofl_estimator_dl",
+                   "tofl_estimator_m_fastest"]
         
 
         model_sizes=[500]
 
-        speed = 0 
+        speed = 2 
 
         threads = { }
         
         data_range = 10
-        ranges = 5
+        ranges = 1
         ranges_size = int(data_range/ranges)
 
         for data in range(data_range):
+
             for server in servers:
                 for size in model_sizes:
                     threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data],speed))

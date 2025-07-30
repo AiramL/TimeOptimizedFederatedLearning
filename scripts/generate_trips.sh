@@ -1,7 +1,7 @@
 #!/bin/bash
 export SUMO_HOME=/usr/share/sumo
 export HOME=$HOME:$SUMO_HOME
-export SUMO_MOBILITY_PATH=$PWD/../mobility/raw
+export SUMO_MOBILITY_PATH=$PWD/mobility/raw
 ## Paths scripts
 PWD_TOOL=/usr/share/sumo/tools
 ## Variables
@@ -9,7 +9,7 @@ NB_Cars=(100)
 NB_Runs=(0 1 2 3 4 5 6 7 8 9 10)
 NB_grid=2 ### for value of x grids will be x-1
 carFM=Krauss ### Krauss, IDM, ACC
-Simulation_duration=600
+Simulation_duration=60
 
 
 ##m/sec 
@@ -28,10 +28,10 @@ do
                 topology_filename=$PWD_WORK/manhattan_net_$NB_grid.xml
 		
 		echo "PHASE 1 -> Generating the grid topology"
-
                 #### To generate a manhattan network topology
                 #netgenerate --grid --grid.number $NB_grid --grid.x-length 600 --grid.y-length 50 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
                 netgenerate --grid --grid.number $NB_grid --grid.x-length 600 --grid.y-length 600 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
+		sleep 1
                 for (( i=0; i<${#NB_Cars[@]}; i++ ))
                 do
 

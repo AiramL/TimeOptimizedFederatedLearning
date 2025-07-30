@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd ..
-
 for index in $( seq 0 29 )
 do
 		for speed in 2 
