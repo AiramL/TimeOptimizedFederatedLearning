@@ -7,7 +7,7 @@ import sys
 def main(sid=0,
          speed=0,
          model_size=527,
-         number_of_clients=10,
+         number_of_clients=5,
          server_type="random",
          n_epochs=3,
          datapath="data/processed/v2x_mobility_20_mean.csv",
@@ -96,7 +96,7 @@ def main(sid=0,
 
 def execute_results(model_sizes,servers,data,speed):
 
-    number_of_clients = 100
+    number_of_clients = 5
     n_epochs = 3
     m_ratio = 0.5 
 
@@ -139,7 +139,7 @@ def save_results(speed,method,model_size,dataset,number_of_clients_to_select,res
 
 def execute_results_per_client(model_sizes,servers,data,speed):
 
-    number_of_clients = 100
+    number_of_clients = 5
     n_epochs = 3
     m_ratio = 0.5 
 
@@ -209,7 +209,7 @@ if  __name__ == "__main__":
         threads = { }
         
         data_range = 10
-        ranges = 5
+        ranges = 1
         ranges_size = int(data_range/ranges)
 
         for data in range(data_range):

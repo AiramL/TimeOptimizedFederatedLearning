@@ -11,7 +11,7 @@ def single_client_plot():
     for index in range(20):
         with open("results/7000/results_client"+str(index),"rb") as loader:
             result = load(loader)
-            plt.plot(range(101),result,label="client_"+str(index))
+            plt.plot(range(4),result,label="client_"+str(index))
 
     plt.xlabel("Epoch Number (#)", fontsize=16)
     plt.ylabel("Delay (s)", fontsize=16)
@@ -24,7 +24,7 @@ def selection_plot(file_path="results/client_selection/",
                    file_name="model_size500", 
                    PLOT=False):
     
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
     
     servers = ["random",
                "m_fastest",
@@ -40,8 +40,8 @@ def selection_plot(file_path="results/client_selection/",
     for index, name in enumerate(servers):
         plt.plot(range(1,len(result[index])+1),result[index][:],label=legends[name])
 
-    plt.xlabel("Selected Clients (#)")
-    plt.ylabel("Total Training Time (s)")
+    plt.xlabel("Selected Clients (#)", fontsize=16)
+    plt.ylabel("Total Training Time (s)", fontsize=16)
     plt.legend()
     plt.savefig("figures/"+file_name+".png",dpi=300,bbox_inches='tight')
 
@@ -74,7 +74,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
     results = { server : [ ] 
                for server in servers }
     
-    epochs = range(1,101)
+    epochs = range(5)
 
     for server in servers:
         for dataset in range(n_executions):
@@ -83,6 +83,7 @@ def selection_error_plot(file_path="results/client_selection/",model_size="model
                 results[server].append(result_list)
     
     for server in servers:
+        
         m = mean(results[server],axis=0)
         s = std(results[server],axis=0)
         plt.errorbar(epochs, m, yerr=s, capsize=3, label=legends[server])

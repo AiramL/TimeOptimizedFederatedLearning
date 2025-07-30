@@ -6,7 +6,7 @@ from legends import legends_dicts
 
 def selection_error_plot(n_clients=95, file_path="results/client_selection/processed/", PLOT=False, language="pt"):
 
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
     
     servers = ["random",
                "m_fastest",
@@ -40,15 +40,15 @@ def selection_error_plot(n_clients=95, file_path="results/client_selection/proce
             means, 
             yerr=stds, 
             capsize=3)
-
-    plt.legend()
+    
+    plt.legend(fontsize=16)
     plt.savefig("figures/time_epoch"+str(n_clients)+"_"+language+".png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
 
     languages = ["pt", "en"]
 
-    n_clients = [16, 95]
+    n_clients = [2, 5]
 
     for lang in languages:
 

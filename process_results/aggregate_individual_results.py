@@ -21,7 +21,7 @@ for size in sizes:
             
             agg_results = []
             
-            for n_clients in range(1,101):
+            for n_clients in range(1,6):
             
                 file = "model_"+model+\
                        "_size_"+str(size)+\

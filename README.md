@@ -108,15 +108,8 @@ Training time figure:
 Epoch time figure: 
 
 ```bash
- python generate_figures/epoch.py
+ python generate_figures/epoch_delays.py
 ```
-
-Accuracy evolution figure: 
-
-```bash
- python generate_figures/time2acc.py
-```
-
 
 Energy figure: 
 
