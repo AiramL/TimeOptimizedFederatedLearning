@@ -59,7 +59,6 @@ Process the trips:
 Generate raw communication:
  
 ```bash
- cd scripts
  source scripts/raw_communication.sh
 ```
 
