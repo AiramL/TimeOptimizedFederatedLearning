@@ -1,9 +1,9 @@
 #!/bin/bash
 
-eps=100
+eps=3
 TOFL=0
-numClients=20
-numClientsFit=16
+numClients=5
+numClientsFit=2
 bs=128
 strategy="random"
 #strategy="m_fastest"

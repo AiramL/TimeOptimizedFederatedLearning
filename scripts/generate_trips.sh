@@ -5,11 +5,11 @@ export SUMO_MOBILITY_PATH=$PWD/mobility/raw
 ## Paths scripts
 PWD_TOOL=/usr/share/sumo/tools
 ## Variables
-NB_Cars=(100)
+NB_Cars=(5)
 NB_Runs=(0 1 2 3 4 5 6 7 8 9 10)
 NB_grid=2 ### for value of x grids will be x-1
 carFM=Krauss ### Krauss, IDM, ACC
-Simulation_duration=60
+Simulation_duration=600
 
 
 ##m/sec 
