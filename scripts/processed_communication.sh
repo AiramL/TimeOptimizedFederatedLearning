@@ -9,5 +9,7 @@ do
 	done
 done
 
+wait 
 
+echo "process finished"
 

@@ -32,8 +32,8 @@ Conda is the only dependecy that you need to install in order to execute the fra
 # Minimum Requirement
 
 - SO: Ubuntu 22.04.5 LTS
-- Cores: 24
-- Memory: 32 GB
+- Cores: 4
+- Memory: 4 GB
 
 
 # Installation
