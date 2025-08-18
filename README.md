@@ -1,5 +1,7 @@
 # TOFL: Time Optimized Federated Learning
 
+Vehicular networks face cyber threats that can harm drivers, passengers, and pedestrians. In this scenario, federated learning is a possible solution to train models that detect threats without violating user privacy. However, federated learning is particularly sensitive to communication delays, which is a natural consequence of high mobility in vehicular networks. This problem is commonly ignored in the literature, which does not consider the possibility of network disconnections. This work proposes a client selection strategy designed to minimize the training time of a machine learning model for vehicular threat detection, considering the communication time that varies according to the movement of clients. The results demonstrate that TOFL, using only 20% of the total available clients, can reduce the time required to achieve high accuracy by up to 50% compared to state-of-the-art approaches, while reducing the resource consumption of client devices.
+
 This repository contains the code developed for SBSeg 2025. The code is composed by three parts. The first part simulates vehicles mobility, to extract this pattern to estimate the user delays, on the second part, using 5G technology. Finally, the third part simulates the federated learning training, given the latency values obtained during the first and second parts. The object is to test different client selection strategies in a scenario with mobility.
 
 # Security considerations
@@ -153,6 +155,8 @@ Expected output:
 
 ### Generate delay results:
 
+Parameters: 
+
 This script selects the clients and generates the communication delay result for different algorithms:
 ```bash
 python src/main.py
@@ -160,6 +164,9 @@ python src/main.py
 Expected output: 
 ```bash
 ```
+
+Expected time
+
 
 The previous python script generates several CSV files, which must be aggregated in order to be consumed. This can be doen by executing the following script:
 ```bash
@@ -200,6 +207,22 @@ Energy figure:
 python generate_figures/energy.py
 ```
 This script generates the results located on figures/training\_efficiency\_pt.png.
+
+# Paper
+
+[TOFL: Time Optimized Federated Learning](https://www.gta.ufrj.br/ftp/gta/TechReports/SSA25.pdf)
+
+# Cite this work
+
+```bash
+@inproceedings{souza2025tofl,
+  title={TOFL: Time Optimized Federated Learning},
+  author={de Souza, L. A. C., Sammarco, M., Achir, N., Campista, M. E. M., Costa, L. H. M. K.},
+  booktitle={XXV Simpósio Brasileiro de Cibersegurança (SBSeg)},
+  year={2025},
+  organization={SBC}
+}
+```
 
 # LICENSE
 
