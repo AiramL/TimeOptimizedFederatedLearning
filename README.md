@@ -18,6 +18,13 @@ We aim to obtain all four stamps from the conference: available, functional, sus
 - Memory: 4 GB
 - Storage: 64 GB
 
+# Virtual machine
+
+The whole environment was virtualized to make the execution easier. You can download the virtual machine image on the following address:
+```bash
+https://gta.ufrj.br/~airam/tofl.ova
+```
+
 # Dependencies 
 
 ## This repository has the following dependencies: 
@@ -34,22 +41,13 @@ We aim to obtain all four stamps from the conference: available, functional, sus
 - matplotlib 3.10.3
 - flower 1.7.0
 - tensorflow 2.19.0
-- scikit-learn 0.25.2
+- scikit-learn 1.7.1
 - seaborn 0.13.2
-- scikit-image 1.7.1
+- scikit-image 0.25.2
 
 # Installation
 
-## Clone this repository:
-```bash
-git clone https://github.com/AiramL/TimeOptimizedFederatedLearning.git
-```
-## Change to the new directory
-```bash
-cd TimeOptimizedFederatedLearning
-```
-
-## Install conda
+## Conda
 
 ### Get the script to install miniconda
 ```bash
@@ -71,29 +69,39 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 source ~/.bashrc
 ```
 
-## Create paths:
+## TOFL
+
+### Clone this repository:
+```bash
+git clone https://github.com/AiramL/TimeOptimizedFederatedLearning.git
+```
+### Change to the new directory
+```bash
+cd TimeOptimizedFederatedLearning
+```
+
+### Create paths:
 ```bash
 source scripts/build/paths.sh
 ```
-## Install dependecies:
+### Install dependecies:
 ```bash
 source scripts/build/dependencies.sh
 ```
 
-## Accept the terms:
+### Accept the terms:
 During the installation of dependencies and environment you might be asked to accept the terms of conda and SUMO. Make sure to enter yes. Also, conda enmvironment must be activated after its installation.
 
-## Create the virtual environment:
+### Create the virtual environment:
 ```bash
 source scripts/build/env.sh
 ```
 
-Download datasets:
+### Download datasets:
 ```bash
 source scripts/build/datasets.sh
 ```
 
- 
 # Execution
 
 All the codes were executed with root user on a virtual machine.
@@ -112,11 +120,17 @@ We consider that the minimum test is to reproduce the figures in the paper. Ther
 ```bash
 source scripts/run/raw/mobility.sh
 ```
+Expected output: 
+```bash
+```
 
 ### Process trips:
 
 ```bash
 source scripts/run/processed/mobility.py
+```
+Expected output: 
+```bash
 ```
 
 ### Generate raw communication:
@@ -124,11 +138,17 @@ source scripts/run/processed/mobility.py
 ```bash
 source scripts/run/raw/communication.sh
 ```
+Expected output: 
+```bash
+```
 
 ### Generate processed communication:
 
 ```bash
 source scripts/run/processed/communication.sh
+```
+Expected output: 
+```bash
 ```
 
 ### Generate delay results:
@@ -137,15 +157,27 @@ This script selects the clients and generates the communication delay result for
 ```bash
 python src/main.py
 ```
+Expected output: 
+```bash
+```
 
 The previous python script generates several CSV files, which must be aggregated in order to be consumed. This can be doen by executing the following script:
 ```bash
 python process_results/aggregate_individual_results.py
 ```
+Expected output: 
+```bash
+```
+
 Another process that we should do is the delays per epoch, in order to show on the graphs:
 ```bash
 python process_results/process_epoch.py
 ```
+
+Expected output: 
+```bash
+```
+
 
 # Generate Figures
 
@@ -160,12 +192,14 @@ Epoch time figure:
 ```bash
 python generate_figures/epoch_delays.py
 ```
+This script generates the results located on figures/
 
 Energy figure: 
 
 ```bash
 python generate_figures/energy.py
 ```
+This script generates the results located on figures/training\_efficiency\_pt.png.
 
 # LICENSE
 
