@@ -1,14 +1,23 @@
 # TOFL: Time Optimized Federated Learning
 
-
 This repository contains the code developed for SBSeg 2025. The code is composed by three parts. The first part simulates vehicles mobility, to extract this pattern to estimate the user delays, on the second part, using 5G technology. Finally, the third part simulates the federated learning training, given the latency values obtained during the first and second parts. The object is to test different client selection strategies in a scenario with mobility.
 
 # Considered Stamps
 
 We aim to obtain all four stamps from the conference: available, functional, sustainable, and reproducible.
 
+
+# Minimum Requirement
+
+- SO: Ubuntu 22.04.5 LTS
+- Cores: 4
+- Memory: 4 GB
+
 # Dependencies 
 
+Git command.
+Python3.12.
+vim
 Conda is the only dependency that you need to install in order to execute the framework [1]. All the other dependencies are going to be downloaded with the provided scripts.
 
 ## Get conda installer
@@ -29,33 +38,48 @@ Conda is the only dependency that you need to install in order to execute the fr
  ./Miniconda3-latest-Linux-x86_64.sh
 ```
 
-# Minimum Requirement
+## Reload bash
 
-- SO: Ubuntu 22.04.5 LTS
-- Cores: 4
-- Memory: 4 GB
-
-
+```bash
+ source ~/.bashrc
+```
 # Installation
 
+Clone this repository:
+
+```bash
+ git clone https://github.com/AiramL/TimeOptimizedFederatedLearning.git
+```
+Change to the new directory
+```bash
+ cd TimeOptimizedFederatedLearning
+```
+Create paths:
+```bash
+ source scripts/build/paths.sh
+```
 Install the requirements:
 
 ```bash
- source scripts/create_paths.sh
- source scripts/create_env.sh
+source scripts/build/env.sh
 ```
 
-Create the necessary paths and download datasets:
- 
+Download datasets:
 ```bash
- source scripts/download_datasets.sh
- source scripts/install_dependencies.sh
+ source scripts/build/datasets.sh
+```
+
+Install dependecies:
+```bash
+ source scripts/build/dependencies.sh
 ```
 # Security considerations
 
 Our code only uses CSV files pre-processed from simulated CAM data. Therefore, this code does not impose any risk for the host during its execution.
 
 # Execution
+
+All the codes were executed with root user on a virtual machine.
 
 ## Estimated execution time
 
@@ -98,10 +122,13 @@ Generate delay results:
 
 ```bash
  python src/main.py
+```
+```bash
  python process_results/aggregate_individual_results.py
+```
+```bash
  python process_results/process_epoch.py
 ```
-
 # Federated Learning Training
 
 
