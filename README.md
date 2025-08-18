@@ -20,11 +20,10 @@ We aim to obtain all four stamps from the conference: available, functional, sus
 
 # Dependencies 
 
-This repository has the following dependencies: 
+## This repository has the following dependencies: 
 
 - Git command 2.34.1
 - Python3.12
-- vim 8.12
 - VirtualBox 7.1.12 (for the VM execution only)
 - Conda 25.5.1
 - SUMO 1.24.0
@@ -41,36 +40,52 @@ This repository has the following dependencies:
 
 # Installation
 
-Clone this repository:
-
+## Clone this repository:
 ```bash
 git clone https://github.com/AiramL/TimeOptimizedFederatedLearning.git
 ```
-Change to the new directory
+## Change to the new directory
 ```bash
 cd TimeOptimizedFederatedLearning
 ```
-Create paths:
+
+## Install conda
+
+### Get the script to install miniconda
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+```
+
+### Change script permissions
+```bash
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+```
+
+### Execute installation
+```bash
+./Miniconda3-latest-Linux-x86_64.sh
+```
+
+### Run environment
+```bash
+source ~/.bashrc
+```
+
+## Create paths:
 ```bash
 source scripts/build/paths.sh
 ```
-
-Install dependecies:
+## Install dependecies:
 ```bash
 source scripts/build/dependencies.sh
 ```
 
-Create the virtual environment:
+## Accept the terms:
+During the installation of dependencies and environment you might be asked to accept the terms of conda and SUMO. Make sure to enter yes. Also, conda enmvironment must be activated after its installation.
+
+## Create the virtual environment:
 ```bash
 source scripts/build/env.sh
-```
-
-Accept the terms:
-```bash
-a
-a
-y
-y
 ```
 
 Download datasets:
@@ -78,7 +93,7 @@ Download datasets:
 source scripts/build/datasets.sh
 ```
 
-
+ 
 # Execution
 
 All the codes were executed with root user on a virtual machine.
