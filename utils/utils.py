@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from os import mkdir
 
-from dataset_operations import *
+from .dataset_operations import *
 
 def get_args_client():
     parser = argparse.ArgumentParser()
