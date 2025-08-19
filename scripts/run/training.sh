@@ -1,3 +1,4 @@
+# This code executes the federated learning training, starting clients and server
 #                            eps tofl  ncl ncf  bs   strategy dataset
 source scripts/run/baremetal.sh "3"  "0"  "5" "2" "128" "random" "VeReMi" & 
 wait

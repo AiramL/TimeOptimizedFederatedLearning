@@ -67,11 +67,11 @@ def process_accuracy_delays(n_clients=95,
                      label=legends[server])
     
     plt.legend()
-    plt.savefig("figures/"+dataset+"_time2acc_"+language+".png",dpi=300,bbox_inches='tight')
+    plt.savefig(f"figures/{dataset}_time2acc_n_clients_{n_clients}_{language}.png",dpi=300,bbox_inches='tight')
 
 if __name__ == "__main__":
 
-    n_clients = [16, 95]
+    n_clients = [2, 5]
     languages = ["en", "pt"]
     datasets = ["WiSec", "VeReMi"]
 
