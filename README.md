@@ -55,7 +55,7 @@ Load the image on VirtualBox to execute the experiments and execute all commands
 user: root
 password: SBS3g2025
 ```
-When using the provided virtual machine, you can skip directly to the section [Execution](#execution).
+When using the provided virtual machine, you can skip directly to the [Execution](#execution) Section.
 
 # Baremetal Installation (30 minutes)
 
@@ -118,11 +118,11 @@ source scripts/build/env.sh
 source scripts/build/datasets.sh
 ```
 
-# Execution (< 10 minutes)
+# Execution 
 
 All the codes were executed with the root user on a virtual machine. If you are using your machine without virtualization, you can execute the commands with your local user.
 
-## Minimum test
+## Minimum test (< 10 minutes)
 
 We consider that the minimum test is to reproduce the figures in the paper. Therefore, we provide a simplified execution, which uses different parameters from the paper. The reduced parameters are listed below:
 
