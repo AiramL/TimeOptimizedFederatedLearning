@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 
 from os import listdir
 from time import sleep
-from sys import path
 
 from utils.dataset_operations import *
 from utils.models import build_model 
