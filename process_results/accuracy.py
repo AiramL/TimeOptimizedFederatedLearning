@@ -13,7 +13,7 @@ from pickle import dump
 # language = 1 -> print in portuguese-br
 # language = otherwise -> print in english
 
-def file_to_list(figureType=0,epochs=100,results_path='../results/classification/random',pattern="79871/79871"):
+def file_to_list(figureType=0,epochs=3,results_path='results/classification/random',pattern="79871/79871"):
 
     
     file_names = {}
@@ -63,33 +63,41 @@ def file_to_list(figureType=0,epochs=100,results_path='../results/classification
     for i in range(total_files):
         ac[i] = accuracies[i][:]
 
-    ac = [ele[:100] for ele in ac if ele != []]
+    ac = [ele[:epochs] for ele in ac if ele != []]
     
+
     try:
-        x1Mean = mean(ac,axis=0);
-        x1Interval = std(ac,axis=0)*1.96/sqrt(80);
+        x1Mean = mean(ac,axis=0)
+        x1Interval = std(ac,axis=0)*1.96/sqrt(80)
+        return(x1Mean, x1Interval)    
     
-    except:
+    except Exception as e:
+        
+        print("error:", e)
+        
         for i in ac:
             print(len(i))
     
-    return(x1Mean, x1Interval)    
    
 if __name__ == "__main__":
     
-    pattern="64/64"   
-    dataset = "VeReMi"
-    #dataset = "WiSec"
-    model = "m_fastest"
-    #model = "random"
+    pattern="128/128"   
+    datasets = [ "VeReMi", "WiSec" ]
+    models = [ "m_fastest", "random" ]
     
-    mean,std = file_to_list(figureType=1,epochs=40,results_path='../results/classification/raw/'+model+'/'+dataset+'/',pattern=pattern)
-    
-    with open('../results/classification/processed/'+model+'/'+dataset+'_mean_model','wb') as writer:
-        dump(mean, writer)
 
-    with open('../results/classification/processed/'+model+'/'+dataset+'_std_model','wb') as writer:
-        dump(std, writer) 
+    for model in models:
+        
+        for dataset in datasets:
+
+
+            m,s = file_to_list(figureType=1,epochs=3,results_path='results/classification/raw/'+model+'/'+dataset+'/',pattern=pattern)
+            
+            with open('results/classification/processed/'+model+'/'+dataset+'_mean_model','wb') as writer:
+                dump(m, writer)
+
+            with open('results/classification/processed/'+model+'/'+dataset+'_std_model','wb') as writer:
+                dump(s, writer) 
     
 
 

@@ -1,12 +1,27 @@
 #!/bin/bash
 
-eps=$1
-TOFL=$2
-numClients=$3
-numClientsFit=$4
-bs=$5
-strategy=$6
-dataset=$7
+if [ $1 ]; 
+then	
+	eps=$1
+	TOFL=$2
+	numClients=$3
+	numClientsFit=$4
+	bs=$5
+	strategy=$6
+	dataset=$7
+
+else
+	
+	eps=3
+	TOFL=0
+	numClients=5
+	numClientsFit=2
+	bs=128
+	strategy="random"
+	dataset="VeReMi"
+
+fi
+
 image_flag=0
 
 echo "Verifying if the results directory exists"
@@ -39,3 +54,5 @@ do
 	sleep 2
 
 done
+
+wait

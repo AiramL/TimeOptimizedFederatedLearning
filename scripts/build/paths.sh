@@ -15,7 +15,8 @@
 [ ! -d results/client_selection/speed2 ] && mkdir -p results/client_selection/speed2
 [ ! -d results/client_selection/raw/epoch ] && mkdir -p results/client_selection/raw/epoch
 [ ! -d results/client_selection/processed ] && mkdir -p results/client_selection/processed
+[ ! -d results/selected_clients ] && mkdir -p results/selected_clients
 [ ! -d logs ] && mkdir logs
 [ ! -d results/classification/processed/random ] && mkdir -p results/classification/processed/random
 [ ! -d results/classification/processed/tofl ] && mkdir -p results/classification/processed/tofl
-[ ! -d results/classification/processed/kfastest ] && mkdir -p results/classification/processed/kfastest
+[ ! -d results/classification/processed/m_fastest ] && mkdir -p results/classification/processed/m_fastest

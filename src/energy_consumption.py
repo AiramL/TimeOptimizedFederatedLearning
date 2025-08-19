@@ -54,16 +54,16 @@ results = { server:{ int(err*10):[] for err in error_rate }
                           for server in servers           }
 
 # experiments configurations
-num_selected_clients = 16
+num_selected_clients = 2
 m_clients = int(num_selected_clients*0.5)
-epochs = [ str(epoch) for epoch in range(1,11) ]
+epochs = [ str(epoch) for epoch in range(1,4) ]
 
 
 for epoch in epochs:
 
     for err in error_rate:
         
-        error_list = generate_error_list(size=100, 
+        error_list = generate_error_list(size=5, 
                                         error_rate=err)
 
         for server in servers:

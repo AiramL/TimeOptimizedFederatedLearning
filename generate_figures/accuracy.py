@@ -51,8 +51,9 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
 
 if __name__ == "__main__":
     
-    dataset = "VeReMi"
-    #dataset = "WiSec"
+    datasets = ["VeReMi", "WiSec"]
 
-    accuracy_error_plot("results/classification/processed/", dataset)
+    for dataset in datasets:
+    
+        accuracy_error_plot("results/classification/processed/", dataset)
         

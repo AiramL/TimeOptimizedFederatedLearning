@@ -1,3 +1,7 @@
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 from timeit import default_timer as timer
 import flwr as fl
 import tensorflow as tf
@@ -39,13 +43,18 @@ SAVE_COMPUTATIONAL_TIME = False
 
 # Load delays
 if COMMUNICATION_FLAG:
+
     if client_id < 10:
-        delays = pd.read_csv("../delays/client0"+str(client_id), header=None)
-    else:
-        delays = pd.read_csv("../delays/client"+str(client_id), header=None)
+        
+        delays = pd.read_csv("delays/client0"+str(client_id), header=None)
+   
+    else: 
+    
+        delays = pd.read_csv("delays/client"+str(client_id), header=None)
 
 # Load data
 if IMAGE_DATA:
+
     print("Training with CIFAR-10")
     trPer=0.8
     x_train, y_train, x_test, y_test = load_data_federated_IID("CIFAR-10", 
@@ -64,11 +73,12 @@ if IMAGE_DATA:
 
 # Intrusion Detection in CAMs
 else:
+
+    print("Training with CAM dataset")
     # define DATASET and test_size
     x_train, x_test, y_train, y_test = load_CAM_data_federated(DATASET,ts)
     
     spe = len(x_train)//bs
-
 
     # Defining the deep learning model
     model = build_model(x_train.shape[1:][1],y_train.shape[1:][0],MODEL)
@@ -99,7 +109,7 @@ class FLClient(fl.client.NumPyClient):
         model.fit(x_train, y_train, epochs=n_local_epochs, batch_size=bs)
         tsp = datetime.now()
         timestamp = tsp.strftime('%Y-%m-%d-%H:%M:%S')
-        model.save('../../models/vnc_local_model_client'+str(client_id)+'_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
+        model.save('models/vnc_local_model_client'+str(client_id)+'_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
         
         # Determine client's computational time 
         computational_time = timer() - fit_start
@@ -129,10 +139,10 @@ class FLClient(fl.client.NumPyClient):
         self.update_global_epoch()
         
         if client_id == 1:
-            model.save('../../models/vnc_model.keras')
+            model.save('models/vnc_model.keras')
             tsp = datetime.now()
             timestamp = tsp.strftime('%Y-%m-%d-%H:%M:%S')
-            model.save('../../models/vnc_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
+            model.save('models/vnc_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
 
         return loss, len(x_test), {"accuracy": float(accuracy)}
 
