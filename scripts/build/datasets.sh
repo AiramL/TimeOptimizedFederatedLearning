@@ -20,6 +20,4 @@ cd ../Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset
 [ ! -f attack8withlabels.mat ] && wget https://gta.ufrj.br/~airam/DATASETS/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat --no-check-certificate
 [ ! -f attack16withlabels.mat ] && wget https://gta.ufrj.br/~airam/DATASETS/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat --no-check-certificate
 
-cd ../../../utils/
-python get_image_datasets.py
-cd ..
+cd ../../../
