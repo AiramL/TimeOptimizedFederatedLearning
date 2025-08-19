@@ -12,6 +12,8 @@ Our code only uses CSV files pre-processed from simulated CAM data. Therefore, t
 
 The code has the following tree: 
 
+```
+
 ├── LICENSE
 ├── README.md
 ├── requirements.txt
@@ -60,6 +62,7 @@ The code has the following tree:
     ├── load_federated_data.py
     ├── models.py
     └── utils.py
+```
 
 During its execution, other paths will be created to store the log and results.
 
