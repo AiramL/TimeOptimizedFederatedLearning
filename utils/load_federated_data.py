@@ -27,17 +27,17 @@ def load_data_federated_IID(dataset_name,clientID,numClients,trPer):
         X_test_current = np.array([],dtype=np.float32)
         Y_test_current = np.array([],dtype=np.float32)
 
-        X_train_current = np.asarray(load(open('../../datasets/'+
+        X_train_current = np.asarray(load(open('datasets/'+
             dataset_name+'/class'+str(i)+'Train','rb')), dtype=np.float32)
         
-        X_test_current = np.asarray(load(open('../../datasets/'+
+        X_test_current = np.asarray(load(open('datasets/'+
             dataset_name+'/class'+str(i)+'Test','rb')), dtype=np.float32)
 
-        Y_train_current = np.asarray(load(open('../../datasets/'+
+        Y_train_current = np.asarray(load(open('datasets/'+
             dataset_name+'/class'+str(i)+'TrainLabel','rb')), dtype=np.float32)
 
 
-        Y_test_current = np.asarray(load(open('../../datasets/'+
+        Y_test_current = np.asarray(load(open('datasets/'+
             dataset_name+'/class'+str(i)+'TestLabel','rb')),dtype=np.float32)
 
         begin_slice_train = int(len(Y_train_current)/numClients*(clientID-1))
@@ -95,7 +95,7 @@ def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
     # Need to implement the VeRemi data transformation
     if DATASET == "VeReMi":
         # Load dataset
-        df = pd.read_csv('../../datasets/VeReMi_Extension/mixalldata_clean.csv')
+        df = pd.read_csv('datasets/VeReMi_Extension/mixalldata_clean.csv')
 
         # Sort by sender and timestamp
         df.sort_values(["sender", "messageID"], inplace=True)
@@ -154,11 +154,11 @@ def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
 
     elif DATASET == "WiSec":
         # Load dataset
-        dataset_1 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat')
-        dataset_2 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack1withlabels.mat')
-        dataset_3 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack2withlabels.mat')
-        dataset_4 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack4withlabels.mat')
-        dataset_5 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat')
+        dataset_1 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat')
+        dataset_2 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack1withlabels.mat')
+        dataset_3 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack2withlabels.mat')
+        dataset_4 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack4withlabels.mat')
+        dataset_5 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat')
     
         # Pre-process
         header = ["type",
@@ -224,7 +224,7 @@ def load_CAM_data_federated(DATASET="VeReMi",test_size=0.2):
     return x_train[:8192*4], x_test[:2048*4], y_train[:8192*4], y_test[:2048*4]
 
 
-def load_CAM_data(client_id,datapath='../../datasets/processed/'):
+def load_CAM_data(client_id,datapath='datasets/processed/'):
     
     client_id -= 1
 
@@ -247,7 +247,7 @@ def load_CAM_data(client_id,datapath='../../datasets/processed/'):
 
 def generate_distribution_CAM(n_clients=20, dataset="WiSec"):
     
-    datapath = '../datasets/processed/'
+    datapath = 'datasets/processed/'
 
     sub_X_train = []
     sub_y_train = []
@@ -258,11 +258,11 @@ def generate_distribution_CAM(n_clients=20, dataset="WiSec"):
     if dataset == "WiSec":
 
         # Load dataset
-        dataset_1 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat')
-        dataset_2 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack1withlabels.mat')
-        dataset_3 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack2withlabels.mat')
-        dataset_4 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack4withlabels.mat')
-        dataset_5 = scio.loadmat('../datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat')
+        dataset_1 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack16withlabels.mat')
+        dataset_2 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack1withlabels.mat')
+        dataset_3 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack2withlabels.mat')
+        dataset_4 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack4withlabels.mat')
+        dataset_5 = scio.loadmat('datasets/Modified_VeReMi/WiSec_DataModifiedVeremi_Dataset/attack8withlabels.mat')
 
         # Pre-process
         header = ["type",
@@ -328,7 +328,7 @@ def generate_distribution_CAM(n_clients=20, dataset="WiSec"):
     elif dataset == "VeReMi":
 
         # Load dataset
-        df = pd.read_csv('../datasets/VeReMi_Extension/mixalldata_clean.csv')
+        df = pd.read_csv('datasets/VeReMi_Extension/mixalldata_clean.csv')
 
         # Sort by sender and timestamp
         df.sort_values(["sender", "messageID"], inplace=True)
