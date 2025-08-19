@@ -4,14 +4,68 @@ Vehicular networks face cyber threats that can harm drivers, passengers, and ped
 
 This repository contains the code developed for SBSeg 2025. The code is composed by three parts. The first part simulates vehicles mobility, to extract this pattern to estimate the user delays, on the second part, using 5G technology. Finally, the third part simulates the federated learning training, given the latency values obtained during the first and second parts. The object is to test different client selection strategies in a scenario with mobility.
 
-# Security considerations
+# Security Considerations
 
 Our code only uses CSV files pre-processed from simulated CAM data. Therefore, this code does not impose any risk for the host during its execution.
+
+# Code Organization
+
+The code has the following tree: 
+
+├── LICENSE
+├── README.md
+├── requirements.txt
+├── generate_figures
+│   ├── accuracy.py
+│   ├── communication.py
+│   ├── energy.py
+│   ├── epoch_delays.py
+│   ├── legends.py
+│   └── time2acc.py
+├── scripts
+│   ├── build
+│   │   ├── datasets.sh
+│   │   ├── dependencies.sh
+│   │   ├── env.sh
+│   │   └── paths.sh
+│   ├── run
+│   │   ├── baremetal.sh
+│   │   ├── processed
+│   │   │   ├── communication.sh
+│   │   │   └── mobility.sh
+│   │   ├── raw
+│   │   │   ├── communication.sh
+│   │   │   └── mobility.sh
+│   │   └── training.sh
+│   └── stop
+│       └── clean.sh
+├── src
+│   ├── client.py
+│   ├── energy_consumption.py
+│   ├── estimator.py
+│   ├── federated_learning
+│   │   ├── centralized.py
+│   │   ├── client.py
+│   │   └── server.py
+│   ├── load_estimator.py
+│   ├── load_model.py
+│   ├── main.py
+│   ├── server.py
+│   ├── train_estimator.py
+│   └── train_model.py
+├── models
+│   ├── model_10.pt
+└── utils
+    ├── dataset_operations.py
+    ├── load_federated_data.py
+    ├── models.py
+    └── utils.py
+
+During its execution, other paths will be created to store the log and results.
 
 # Considered Stamps
 
 We aim to obtain all four stamps from the conference: available, functional, sustainable, and reproducible.
-
 
 # Minimum Requirement
 
