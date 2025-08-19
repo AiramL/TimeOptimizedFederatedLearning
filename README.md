@@ -2,7 +2,118 @@
 
 Vehicular networks face cyber threats that can harm drivers, passengers, and pedestrians. In this scenario, federated learning is a possible solution to train models that detect threats without violating user privacy. However, federated learning is particularly sensitive to communication delays, which is a natural consequence of high mobility in vehicular networks. This problem is commonly ignored in the literature, which does not consider the possibility of network disconnections. This work proposes a client selection strategy designed to minimize the training time of a machine learning model for vehicular threat detection, considering the communication time that varies according to the movement of clients. The results demonstrate that TOFL, using only 20% of the total available clients, can reduce the time required to achieve high accuracy by up to 50% compared to state-of-the-art approaches, while reducing the resource consumption of client devices.
 
-This repository contains the code developed for SBSeg 2025. The code is composed by three parts. The first part simulates vehicles mobility, to extract this pattern to estimate the user delays, on the second part, using 5G technology. Finally, the third part simulates the federated learning training, given the latency values obtained during the first and second parts. The object is to test different client selection strategies in a scenario with mobility.
+This repository contains the code developed for SBSeg 2025. The code is composed of three parts. The first part simulates vehicles mobility, to extract this pattern to estimate the user delays, on the second part, using 5G technology. Finally, the third part simulates the federated learning training, given the latency values obtained during the first and second parts. The object is to test different client selection strategies in a scenario with mobility. 
+
+# Channel Model
+
+The communication model takes the processed SUMO output to determine the clients' delays. It generates 30 raw simulations that we use to compute the average user throughput. For the communication model, we use the 3GPP TR 38.901, the most versatile and widely accepted channel model. It can handle urban, rural, and highway scenarios with realistic parameters for Doppler shift, path loss, and multi-path propagation. For detailed intersection scenarios, consider using TAPAS V2X or Geometry-Based Stochastic Models.
+
+Overview:
+- Standardized by 3GPP for 5G.
+- Includes urban macro, urban micro, rural, and indoor channel models.
+- Supports frequencies up to 100 GHz.
+
+The Python implementation to model the 3GPP TR 38.901 channel for wireless communication code focuses on the Urban Macrocell (UMa) and Urban Microcell (UMi) path loss and fading models. The implementation includes:
+
+- Path Loss Calculation for LOS and NLOS scenarios.
+- Doppler Shift to account for mobility.
+- Small-Scale Fading using Rician and Rayleigh fading.
+- Shadowing for large-scale fading.
+
+> **IMPORTANT:**
+> 1. This model is based on the papers that I shared with you and some simplifications.
+> 2. This is a simple model without interference between the vehicles. The interference is a common noise added to the path loss. We can easily adapt this by considering only the vehicles that are transmitting during a given time slot and adding a correlation matrix that depends on the distances between the vehicles. It complicates the simulation a bit, but it is still feasible. Let's start with this simple model.
+
+Below, we calculate the downlink metrics for a vehicle, including distance, path loss, fading, received power, SINR, and spectral efficiency.
+
+For the Path Loss, we consider the 3GPP TR 38.901 Urban Macrocell (UMa) model, which includes LOS and NLOS conditions with shadowing effects.
+
+For Doppler Shift, we have to simulate the effect of relative motion between the user and base station. This motion is calculated based on user velocity, angle (not considered here), and carrier frequency.
+
+We assume small-scale fading by considering Rician Fading (Used for LOS conditions) and Rayleigh Fading (Used for NLOS conditions).
+
+**Simulation Parameters:**
+
+The outputs should be the path loss, fading gain, Doppler shift, and received power for each user.
+
+Hereafter, the mathematical formulation of each of the considered models.
+
+---
+
+#### 1. Distance Calculation
+
+The Euclidean distance *d* between the vehicle and the base station is given by:
+
+$d = \sqrt{(x_{\text{BS}} - x_{\text{UE}})^2 + (y_{\text{BS}} - y_{\text{UE}})^2}$
+
+where $(x_{BS}, y_{BS})$ is the base station position, and $(x_{UE}, y_{UE})$ is the vehicle position.
+
+---
+
+#### 2. Path Loss
+
+The path loss for **LOS** (*Line-of-Sight*) is given by:
+
+$PL_{\text{LOS}} = 32.4 + 20 \log_{10}(d) + 20 \log_{10}(f_{\text{GHz}})$
+
+For **NLOS** (*Non-Line-of-Sight*), an additional penalty is added:
+
+$PL_{\text{NLOS}} = PL_{\text{LOS}} + \text{NLOS Penalty}$
+
+where:
+- $d$: Distance (meters)
+- $f_{\text{GHz}}$: Carrier frequency in GHz
+
+---
+
+#### 3. Shadowing
+
+Shadowing is modeled as a Gaussian random variable with standard deviation $\sigma$:
+
+$PL = PL_{\text{LOS/NLOS}} + N(0, \sigma^2)$
+
+---
+
+#### 4. Fading (Rician)
+
+Rician fading for LOS is generated as:
+
+$\text{Fading} = \sqrt{\frac{K}{K+1}} + N(0, \sigma^2)$
+
+For NLOS, Rayleigh fading is used.
+
+---
+
+#### 5. Received Power
+
+The received power $P_{\text{RX}}$ is computed as:
+
+$P_{\text{RX}} = P_{\text{TX}} - PL + 10 \log_{10}(\text{Fading}^2)$
+
+where:
+- $P_{\text{TX}}$: Transmit power in dBm
+- $PL$: Path loss (dB)
+- $Fading$: Fading gain
+
+---
+
+#### 6. Signal-to-Interference-plus-Noise Ratio (SINR)
+
+$\text{SINR} = 10^{\frac{P_{\text{RX}} - N_0}{10}}$
+
+where $N_0$ is the noise power, computed as:
+
+$N_0 = -174 + 10 \log_{10}(BW)$
+
+where $BW$ is the bandwidth (Hz).
+
+---
+
+#### 7. Spectral Efficiency
+
+The spectral efficiency $SE$ is calculated using the Shannon formula:
+
+$SE = \log_2(1 + \text{SINR})$
 
 # Security Considerations
 
@@ -114,11 +225,11 @@ password: SBS3g2025
 ```
 When using the provided virtual machine, you can skip directly to the [Execution](#execution) Section.
 
-# Baremetal Installation (30 minutes)
+# Baremetal Installation
 
 If you want to install from scratch, the dependencies must be installed. Firstly, we install conda to manage the virtual environment. Then, we install TOFL by cloning the git repository.
 
-## Conda (2 minutes)
+## Conda (1 minute)
 
 ### Get the script to install miniconda
 ```bash
@@ -141,9 +252,9 @@ Accept all the conditions and choose the path to install miniconda3, by default,
 source ~/.bashrc
 ```
 
-## TOFL (28 minutes)
+## TOFL
 
-### Clone this repository:
+### Clone this repository
 ```bash
 git clone https://github.com/AiramL/TimeOptimizedFederatedLearning.git
 ```
@@ -160,12 +271,12 @@ source scripts/build/paths.sh
 ### Accept the terms
 During the installation of dependencies and environment, you might be asked to accept the terms of conda and SUMO. Make sure to enter yes. Also, the conda environment must be activated after its installation.
 
-### Install dependencies (5 minutes)
+### Install dependencies (3 minutes)
 ```bash
 source scripts/build/dependencies.sh
 ```
 
-### Create the virtual environment (18 minutes)
+### Create the virtual environment (5 minutes)
 ```bash
 source scripts/build/env.sh
 ```
@@ -191,6 +302,8 @@ We consider that the minimum test is to reproduce the figures in the paper. Ther
 - Grid size: 600 x 600 
 - Car model: Krauss
 - Number of executions: 10
+
+We consider that the test was successful if we can generate all figures on the paper with this new set of parameters.
 
 ### Create SUMOs' trips (2 minutes): 
 
@@ -222,118 +335,6 @@ Expected output:
 ```bash
 process finished
 ```
-
-### Channel Model
-
-The communication model takes the processed SUMO output to determine the clients' delays. It generates 30 raw simulations that we use to compute the average user throughput. For the communication model we use the 3GPP TR 38.901, the most versatile and widely accepted channel model. It can handle urban, rural, and highway scenarios with realistic parameters for Doppler shift, path loss, and multi-path propagation. For detailed intersection scenarios, consider using TAPAS V2X or Geometry-Based Stochastic Models.
-
-Overview:
-- Standardized by 3GPP for 5G.
-- Includes urban macro, urban micro, rural, and indoor channel models.
-- Supports frequencies up to 100 GHz.
-
-The Python implementation to model the 3GPP TR 38.901 channel for wireless communication code focuses on the Urban Macrocell (UMa) and Urban Microcell (UMi) path loss and fading models. The implementation includes:
-
-- Path Loss Calculation for LOS and NLOS scenarios.
-- Doppler Shift to account for mobility.
-- Small-Scale Fading using Rician and Rayleigh fading.
-- Shadowing for large-scale fading.
-
-> **IMPORTANT:**
-> 1. This model is based on the papers that I shared with you and some simplifications.
-> 2. This is a simple model without interference between the vehicles. The interference is a common noise added to the path loss. We can easily adapt this by considering only the vehicles that are transmitting during a given time slot and adding a correlation matrix that depends on the distances between the vehicles. It complicates the simulation a bit, but it is still feasible. Let's start with this simple model.
-
-Below, we calculate the downlink metrics for a vehicle, including distance, path loss, fading, received power, SINR, and spectral efficiency.
-
-For the Path Loss, we consider the 3GPP TR 38.901 Urban Macrocell (UMa) model, which includes LOS and NLOS conditions with shadowing effects.
-
-For Doppler Shift, we have to simulate the effect of relative motion between the user and base station. This motion is calculated based on user velocity, angle (not considered here), and carrier frequency.
-
-We assume small-scale fading by considering Rician Fading (Used for LOS conditions) and Rayleigh Fading (Used for NLOS conditions).
-
-**Simulation Parameters:**
-
-The outputs should be the path loss, fading gain, Doppler shift, and received power for each user.
-
-Hereafter, the mathematical formulation of each of the considered models.
-
----
-
-#### 1. Distance Calculation
-
-The Euclidean distance *d* between the vehicle and the base station is given by:
-
-$d = \sqrt{(x_{\text{BS}} - x_{\text{UE}})^2 + (y_{\text{BS}} - y_{\text{UE}})^2}$
-
-where $(x_{BS}, y_{BS})$ is the base station position, and $(x_{UE}, y_{UE})$ is the vehicle position.
-
----
-
-#### 2. Path Loss
-
-The path loss for **LOS** (*Line-of-Sight*) is given by:
-
-$PL_{\text{LOS}} = 32.4 + 20 \log_{10}(d) + 20 \log_{10}(f_{\text{GHz}})$
-
-For **NLOS** (*Non-Line-of-Sight*), an additional penalty is added:
-
-$PL_{\text{NLOS}} = PL_{\text{LOS}} + \text{NLOS Penalty}$
-
-where:
-- $d$: Distance (meters)
-- $f_{\text{GHz}}$: Carrier frequency in GHz
-
----
-
-#### 3. Shadowing
-
-Shadowing is modeled as a Gaussian random variable with standard deviation $\sigma$:
-
-$PL = PL_{\text{LOS/NLOS}} + N(0, \sigma^2)$
-
----
-
-#### 4. Fading (Rician)
-
-Rician fading for LOS is generated as:
-
-$\text{Fading} = \sqrt{\frac{K}{K+1}} + N(0, \sigma^2)$
-
-For NLOS, Rayleigh fading is used.
-
----
-
-#### 5. Received Power
-
-The received power $P_{\text{RX}}$ is computed as:
-
-$P_{\text{RX}} = P_{\text{TX}} - PL + 10 \log_{10}(\text{Fading}^2)$
-
-where:
-- $P_{\text{TX}}$: Transmit power in dBm
-- $PL$: Path loss (dB)
-- $Fading$: Fading gain
-
----
-
-#### 6. Signal-to-Interference-plus-Noise Ratio (SINR)
-
-$\text{SINR} = 10^{\frac{P_{\text{RX}} - N_0}{10}}$
-
-where $N_0$ is the noise power, computed as:
-
-$N_0 = -174 + 10 \log_{10}(BW)$
-
-where $BW$ is the bandwidth (Hz).
-
----
-
-#### 7. Spectral Efficiency
-
-The spectral efficiency $SE$ is calculated using the Shannon formula:
-
-$SE = \log_2(1 + \text{SINR})$
-
 ### Generate raw communication (around 4 minutes):
 
 ```bash
@@ -395,7 +396,6 @@ The previous python script generates several CSV files, which must be aggregated
 python process_results/aggregate_individual_results.py
 ```
 
-
 Another process that we should do is the delays per epoch, to show on the graphs:
 ```bash
 python process_results/process_epoch.py
@@ -438,6 +438,12 @@ This script generates the results located in figures/time\_epoch2\_pt.png and fi
 ```bash
 python generate_figures/accuracy.py
 ```
+This script generates the accuracy x epoch figure, located on figures/VeReMi\_accuracy.png and figures/WiSec\_accuracy.png. It is not present on the paper.
+
+```bash
+python generate_figures/time2acc.py
+```
+This script generates the accuracy x time figures, located on figures/VeReMi\_time2acc\_n\_clients\_2\_pt.png, figures/VeReMi\_time2acc\_n\_clients\_5\_pt.png. figures/WiSec\_time2acc\_n\_clients\_2\_pt.png, and figures/WiSec\_time2acc\_n\_clients\_5\_pt.png.
 
 ## Energy figure
 
@@ -445,6 +451,10 @@ python generate_figures/accuracy.py
 python generate_figures/energy.py
 ```
 This script generates the results located on figures/training\_efficiency\_pt.png.
+
+# Conclusion
+
+If we were able to generate all the 5 
 
 # Paper
 
