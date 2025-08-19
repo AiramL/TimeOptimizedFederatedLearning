@@ -10,7 +10,7 @@ dataset=$7
 image_flag=0
 
 echo "Verifying if the results directory exists"
-[ ! -d ../results/classification/raw/$strategy/$dataset/ ] && mkdir -p ../results/classification/raw/$strategy/$dataset/
+[ ! -d results/classification/raw/$strategy/$dataset/ ] && mkdir -p results/classification/raw/$strategy/$dataset/
 
 echo "Starting server"
 cd ../src/federated_learning
@@ -33,7 +33,7 @@ do
 		python3.12 client.py -cid=$i -b=$bs -cf=0 >> ../../results/classification/tofl/client_"$i" &
 	
 	else
-		python3.12 client.py -nc=$numClients -cid=$i -b=$bs -cf=0 -ncf=$numClientsFit >> ../../results/classification/raw/$strategy/$dataset/"client_""$i" &
+		python3.12 client.py -nc=$numClients -cid=$i -b=$bs -cf=0 -ncf=$numClientsFit >> results/classification/raw/$strategy/$dataset/"client_""$i" &
 	fi
 	echo "Waiting client "$i" initialization"
 	sleep 2
