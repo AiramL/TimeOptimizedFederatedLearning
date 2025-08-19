@@ -1,9 +1,6 @@
 import flwr as fl
 
-from sys import path
-path.append("../../utils/")
-
-from utils import *
+from utils.utils import *
 
 args = get_args_server()
 
