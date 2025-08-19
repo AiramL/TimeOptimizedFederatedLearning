@@ -128,9 +128,16 @@ We consider that the minimum test is to reproduce the figures in the paper. Ther
 
 - Number of clients: 5
 - Number of epochs: 3
-- SUMO simulation time: 
+- SUMO simulation time: 600 seconds
+- Client's speed: 50 km/h
+- Scenario: Manhattan
+- Grid size: 600 x 600 
+- Car model: Krauss
+- Number of executions: 10
 
 ### Create SUMOs' trips (2 minutes): 
+
+Firstly, we need to create the mobility pattern of federated learning clients. We do this by executing sumo in a Manhattan grid.
  
 ```bash
 source scripts/run/raw/mobility.sh
@@ -149,6 +156,8 @@ One or more coordinates are negative, some applications might need strictly posi
 
 ### Process trips (< 1 second):
 
+SUMO generates raw files about users' mobility, which we need to extract to use as input for the communication model.
+
 ```bash
 source scripts/run/processed/mobility.sh
 ```
@@ -157,8 +166,119 @@ Expected output:
 process finished
 ```
 
+### Channel Model
+
+The communication model takes the processed SUMO output to determine the clients' delays. It generates 30 raw simulations that we use to compute the average user throughput. For the communication model we use the 3GPP TR 38.901, the most versatile and widely accepted channel model. It can handle urban, rural, and highway scenarios with realistic parameters for Doppler shift, path loss, and multi-path propagation. For detailed intersection scenarios, consider using TAPAS V2X or Geometry-Based Stochastic Models.
+
+Overview:
+- Standardized by 3GPP for 5G.
+- Includes urban macro, urban micro, rural, and indoor channel models.
+- Supports frequencies up to 100 GHz.
+
+The Python implementation to model the 3GPP TR 38.901 channel for wireless communication code focuses on the Urban Macrocell (UMa) and Urban Microcell (UMi) path loss and fading models. The implementation includes:
+
+- Path Loss Calculation for LOS and NLOS scenarios.
+- Doppler Shift to account for mobility.
+- Small-Scale Fading using Rician and Rayleigh fading.
+- Shadowing for large-scale fading.
+
+> **IMPORTANT:**
+> 1. This model is based on the papers that I shared with you and some simplifications.
+> 2. This is a simple model without interference between the vehicles. The interference is a common noise added to the path loss. We can easily adapt this by considering only the vehicles that are transmitting during a given time slot and adding a correlation matrix that depends on the distances between the vehicles. It complicates the simulation a bit, but it is still feasible. Let's start with this simple model.
+
+Below, we calculate the downlink metrics for a vehicle, including distance, path loss, fading, received power, SINR, and spectral efficiency.
+
+For the Path Loss, we consider the 3GPP TR 38.901 Urban Macrocell (UMa) model, which includes LOS and NLOS conditions with shadowing effects.
+
+For Doppler Shift, we have to simulate the effect of relative motion between the user and base station. This motion is calculated based on user velocity, angle (not considered here), and carrier frequency.
+
+We assume small-scale fading by considering Rician Fading (Used for LOS conditions) and Rayleigh Fading (Used for NLOS conditions).
+
+**Simulation Parameters:**
+
+The outputs should be the path loss, fading gain, Doppler shift, and received power for each user.
+
+Hereafter, the mathematical formulation of each of the considered models.
+
+---
+
+#### 1. Distance Calculation
+
+The Euclidean distance *d* between the vehicle and the base station is given by:
+
+$d = \sqrt{(x_{\text{BS}} - x_{\text{UE}})^2 + (y_{\text{BS}} - y_{\text{UE}})^2}$
+
+where $(x_{BS}, y_{BS})$ is the base station position, and $(x_{UE}, y_{UE})$ is the vehicle position.
+
+---
+
+#### 2. Path Loss
+
+The path loss for **LOS** (*Line-of-Sight*) is given by:
+
+$PL_{\text{LOS}} = 32.4 + 20 \log_{10}(d) + 20 \log_{10}(f_{\text{GHz}})$
+
+For **NLOS** (*Non-Line-of-Sight*), an additional penalty is added:
+
+$PL_{\text{NLOS}} = PL_{\text{LOS}} + \text{NLOS Penalty}$
+
+where:
+- $d$: Distance (meters)
+- $f_{\text{GHz}}$: Carrier frequency in GHz
+
+---
+
+#### 3. Shadowing
+
+Shadowing is modeled as a Gaussian random variable with standard deviation $\sigma$:
+
+$PL = PL_{\text{LOS/NLOS}} + N(0, \sigma^2)$
+
+---
+
+#### 4. Fading (Rician)
+
+Rician fading for LOS is generated as:
+
+$\text{Fading} = \sqrt{\frac{K}{K+1}} + N(0, \sigma^2)$
+
+For NLOS, Rayleigh fading is used.
+
+---
+
+#### 5. Received Power
+
+The received power $P_{\text{RX}}$ is computed as:
+
+$P_{\text{RX}} = P_{\text{TX}} - PL + 10 \log_{10}(\text{Fading}^2)$
+
+where:
+- $P_{\text{TX}}$: Transmit power in dBm
+- $PL$: Path loss (dB)
+- $Fading$: Fading gain
+
+---
+
+#### 6. Signal-to-Interference-plus-Noise Ratio (SINR)
+
+$\text{SINR} = 10^{\frac{P_{\text{RX}} - N_0}{10}}$
+
+where $N_0$ is the noise power, computed as:
+
+$N_0 = -174 + 10 \log_{10}(BW)$
+
+where $BW$ is the bandwidth (Hz).
+
+---
+
+#### 7. Spectral Efficiency
+
+The spectral efficiency $SE$ is calculated using the Shannon formula:
+
+$SE = \log_2(1 + \text{SINR})$
+
 ### Generate raw communication (around 4 minutes):
- 
+
 ```bash
 source scripts/run/raw/communication.sh
 ```
@@ -178,6 +298,7 @@ index  25
 
 ### Generate processed communication (< 30 seconds):
 
+Now, we take all the throughput files and take the average, which will be used on the simulator. Each client has its average throughput that depends on their distance to the base station.
 ```bash
 source scripts/run/processed/communication.sh
 ```
@@ -193,9 +314,7 @@ processing finished
 
 ### Generate delay results (< 30 seconds):
 
-Parameters: 
-
-This script selects the clients and generates the communication delay result for different algorithms:
+This script selects the clients and generates the communication delay result for different algorithms. The output allows us to analyze the results obtained on the paper.
 ```bash
 python src/main.py
 ```
