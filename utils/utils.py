@@ -14,12 +14,12 @@ def get_args_client():
     parser.add_argument("-b","--batch_size", type=int, default=32, help="Batch size to use during the federated learning training")
     parser.add_argument("-ts","--test_size", type=float, default=0.2, help="Test size to use")
     parser.add_argument("-s","--subset_size", type=int, default=100, help="Number of samples to use during the federated learning training")
-    parser.add_argument("-nle","--number_of_local_epochs", type=int, default=5, help="How many updates the client does before to send the updated model to the server")
-    parser.add_argument("-dp","--data_path", type=str, default="../../datasets/VeReMi_Extension/mixalldata_clean.csv", help="Path to the data")
-    parser.add_argument("-dsp","--dataset_path", type=str, default="../../datasets/VeReMi_Extension", help="Dataset directory")
-    parser.add_argument("-mp","--model_path", type=str, default="../../models/model", help="Path to the model")
+    parser.add_argument("-nle","--number_of_local_epochs", type=int, default=5, help="How many updates the client does before sending the updated model to the server")
+    parser.add_argument("-dp","--data_path", type=str, default="datasets/VeReMi_Extension/mixalldata_clean.csv", help="Path to the data")
+    parser.add_argument("-dsp","--dataset_path", type=str, default="datasets/VeReMi_Extension", help="Dataset directory")
+    parser.add_argument("-mp","--model_path", type=str, default="models/model", help="Path to the model")
     parser.add_argument("-cid","--client_id", type=int, default=1, help="Client identifier") 
-    parser.add_argument("-rp","--result_path", type=str, default="../../results/", help="Path to store results")
+    parser.add_argument("-rp","--result_path", type=str, default="results/", help="Path to store results")
     parser.add_argument("-imf","--image_flag", type=bool, default=False, help="Indicates the type of data")
     parser.add_argument("-md","--model", type=str, default="BIGAN", help="Model name to use in the FL scenario")
     parser.add_argument("-ds","--dataset", type=str, default="VeReMi", help="Dataset name")
@@ -75,4 +75,4 @@ def generate_pre_processed_dataset(DATA_PATH,DATASET_PATH):
 
 
 if __name__ == "__main__":
-    generate_pre_processed_dataset('../datasets/VeReMi_Extension/mixalldata_clean.csv','../datasets/VeReMi_Extension')
+    generate_pre_processed_dataset('datasets/VeReMi_Extension/mixalldata_clean.csv','datasets/VeReMi_Extension')
