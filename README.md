@@ -276,12 +276,12 @@ During the installation of dependencies and environment, you might be asked to a
 source scripts/build/dependencies.sh
 ```
 
-### Create the virtual environment (5 minutes)
+### Create the virtual environment (6 minutes)
 ```bash
 source scripts/build/env.sh
 ```
 
-### Download datasets (5 minutes)
+### Download datasets (8 minutes)
 ```bash
 source scripts/build/datasets.sh
 ```
@@ -290,7 +290,7 @@ source scripts/build/datasets.sh
 
 All the codes were executed with the root user on a virtual machine. If you are using your machine without virtualization, you can execute the commands with your local user.
 
-## Minimum test (< 10 minutes)
+## Minimum test (10 minutes)
 
 We consider that the minimum test is to reproduce the figures in the paper. Therefore, we provide a simplified execution, which uses different parameters from the paper. The reduced parameters are listed below:
 
@@ -305,7 +305,7 @@ We consider that the minimum test is to reproduce the figures in the paper. Ther
 
 We consider that the test was successful if we can generate all figures on the paper with this new set of parameters.
 
-### Create SUMOs' trips (2 minutes): 
+### Create SUMOs' trips (35 seconds): 
 
 Firstly, we need to create the mobility pattern of federated learning clients. We do this by executing sumo in a Manhattan grid.
  
@@ -335,7 +335,7 @@ Expected output:
 ```bash
 process finished
 ```
-### Generate raw communication (around 4 minutes):
+### Generate raw communication (4 minutes):
 
 ```bash
 source scripts/run/raw/communication.sh
@@ -354,7 +354,7 @@ processing mobility file  8
 index  25
 ```
 
-### Generate processed communication (< 30 seconds):
+### Generate processed communication (2 minitues):
 
 Now, we take all the throughput files and take the average, which will be used on the simulator. Each client has its average throughput that depends on their distance to the base station.
 ```bash
@@ -370,7 +370,7 @@ processing finished
 processing finished
 ```
 
-### Generate delay results (< 30 seconds):
+### Generate delay results (1 minute):
 
 This script selects the clients and generates the communication delay result for different algorithms. The output allows us to analyze the results obtained on the paper.
 ```bash
@@ -390,16 +390,20 @@ processing model size  500  dataset  9
 experiments finished
 ```
 
+### Aggregate Communication Results (< 1 second)
 
 The previous python script generates several CSV files, which must be aggregated to be consumed. This can be done by executing the following script:
 ```bash
 python process_results/aggregate_individual_results.py
 ```
 
+### Process Communication Results (< 1 second)
+
 Another process that we should do is the delays per epoch, to show on the graphs:
 ```bash
 python process_results/process_epoch.py
 ```
+### Federated Learning Training (Skip in Virtual Machine Execution)
 
 Let's execute a federated learning training during 3 epochs with our 5 clients. Let's select 2 clients per epoch. We need to run with both datasets, so this experiment takes around 5 minutes. If you are running on a virtual machine, the time can be way longer due to the dataset pre-processing. Therefore, we recommend skipping directly to the [Results](#results) Section using the already generated data in this repository.
 ```bash
@@ -417,7 +421,7 @@ We also need to generate the energy consumption regarding the number of client f
 python src/energy_consumption.py
 ```
 
-This script generates the results located in results/energy.
+This script generates the results located in results/energy, which we are going to plot.
 
 # Results
 
@@ -454,7 +458,11 @@ This script generates the results located on figures/training\_efficiency\_pt.pn
 
 # Conclusion
 
-If we were able to generate all the 5 
+If we were able to generate all 8 figures, the test was successful. To reproduce the exact results in the paper, you must change the simulation parameters as follows:
+
+- Number of clients: 100
+- Number of epochs: 40
+- SUMO simulation time: 6000 seconds
 
 # Paper
 
