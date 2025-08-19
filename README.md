@@ -185,8 +185,8 @@ We aim to obtain all four stamps from the conference: available, functional, sus
 
 - SO: Ubuntu 22.04.5 LTS
 - Cores: 2
-- Memory: 2 GB
-- Storage: 40 GB
+- Memory: 4 GB
+- Storage: 64 GB
 
 ## Estimated execution time
 
