@@ -8,12 +8,11 @@ from sklearn.model_selection import train_test_split
 from os import listdir
 from time import sleep
 from sys import path
-path.append("../../utils/")
 
-from dataset_operations import *
-from models import build_model 
-from utils import *
-from load_federated_data import *
+from utils.dataset_operations import *
+from utils.models import build_model 
+from utils.utils import *
+from utils.load_federated_data import *
 
 # Get parameters
 args = get_args_client()
