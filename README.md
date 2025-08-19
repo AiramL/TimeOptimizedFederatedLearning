@@ -338,28 +338,51 @@ The previous python script generates several CSV files, which must be aggregated
 python process_results/aggregate_individual_results.py
 ```
 
+
 Another process that we should do is the delays per epoch, to show on the graphs:
 ```bash
 python process_results/process_epoch.py
 ```
 
-# Generate Figures
+Let's execute a federated learning training during 3 epochs with our 5 clients. Let's select 2 clients per epoch. We need to run with both datasets, so this experiment takes around 5 minutes. If you are running on a virtual machine, the time can be way longer due to the dataset pre-processing. Therefore, we recommend skipping directly to the [Results](#results) Section using the already generated data in this repository.
+```bash
+source scripts/run/training.sh
+```
 
-Training time figure: 
+We need to process the results to generate the figure (< 1 second):
+```bash
+python process_results/accuracy.py
+```
 
+We also need to generate the energy consumption regarding the number of client failures. 
+
+```bash
+python src/energy_consumption.py
+```
+
+This script generates the results located in results/energy.
+
+# Results
+
+## Training Time Figure
 ```bash
 python generate_figures/communication.py
 ```
 The script generates the results located in figures/communication\_model\_sizesize\_500\_pt.png
 
-Epoch time figure: 
+## Epoch time figure: 
 
 ```bash
 python generate_figures/epoch_delays.py
 ```
 This script generates the results located in figures/time\_epoch2\_pt.png and figures/time\_epoch5\_pt.png
 
-Energy figure: 
+## Accuracy Figure
+```bash
+python generate_figures/accuracy.py
+```
+
+## Energy figure
 
 ```bash
 python generate_figures/energy.py
