@@ -1,4 +1,4 @@
-algorithm = "AP"
+algorithm = "TOFL"
 
 
 legends_dicts = { "en": {"random": "Random",
