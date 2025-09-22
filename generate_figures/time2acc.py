@@ -71,7 +71,7 @@ def process_accuracy_delays(n_clients=95,
 
 if __name__ == "__main__":
 
-    n_clients = [2, 5]
+    n_clients = [16, 95]
     languages = ["en", "pt"]
     datasets = ["WiSec", "VeReMi"]
 

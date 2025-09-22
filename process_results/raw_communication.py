@@ -5,6 +5,10 @@ from os import listdir
 import threading
 import sys 
 
+from utils.utils import load_base_stations_positions
+
+scenario="SINGLE_BASE_STATION"
+
 # Constants
 c = 3e8  # Speed of light (m/s)
 frequency = 5.9e9  # Carrier frequency for V2X (Hz)
@@ -22,7 +26,7 @@ V2X_LOS_pathloss_exp = 2.0  # Path loss exponent for LOS
 V2X_NLOS_penalty = 20  # Additional path loss penalty for NLOS (dB). The NLOS is only a penalty. I think it is ok for this work since it is not the main focus.
 
 # Base station position
-base_station_position = np.array([0, 0])  # BS at origin
+base_stations_positions = load_base_stations_positions(scenario)
 
 # Bandwidth allocation methods. I made this to test different strategies at the base station level
 bandwidth_allocation_method_dl = "proportional"  # Downlink allocation method
@@ -96,25 +100,6 @@ def rician_fading(k_factor=8):
     s = np.sqrt(k_factor / (k_factor + 1))  # LOS component
     sigma = np.sqrt(1 / (2 * (k_factor + 1)))  # NLOS component
     return np.abs(np.random.normal(s, sigma) + 1j * np.random.normal(0, sigma))
-
-# Test the Chanel Model
-los = True # consider LOS envirenment 
-urban = False # consider Urban envirenment 
-
-v_ue = np.array([10, 0])  # BS at origin
-# Step 1: Compute distance
-distance = np.linalg.norm(v_ue - base_station_position)
-# Step 2. Calculate path loss using LOS or NLOS model.
-pl_dl = path_loss_dl = path_loss_v2x(distance, los, urban)
-# Step 3. Model fading using Rician or Rayleigh distribution.
-fad_dl = fading_dl = rician_fading() if los else np.random.rayleigh()
-# Step 4. Calculate received power using the transmit power and path loss.
-rx_power_dl = tx_power_bs - path_loss_dl + 10 * np.log10(fading_dl**2)
-# Step 5. Compute SINR based on received power and noise.
-sinr_dl = 10 ** ((rx_power_dl - (-174 + 10 * np.log10(total_bandwidth_dl))) / 10)
-# Step 6. Calculate spectral efficiency using Shannon's formula.
-spectral_efficiency_dl = np.log2(1 + sinr_dl)
-
 
 def equal_bandwidth_allocation(vehicles, total_bandwidth, link_type):
     """
@@ -191,6 +176,7 @@ class Vehicle:
     """
 
     def __init__(self, node_id, x, y, speed, los_prob=0.8):
+        
         self.node_id = node_id
         self.position = np.array([x, y])
         self.speed = speed  # Speed in m/s
@@ -222,9 +208,36 @@ class Vehicle:
         self.fading_dl = None
         self.fading_ul = None
 
-        self.base_station_range = 300000000
+        self.base_station_range = 600
+
+        self.base_station_position = self.attach_to_base_station()
+    
+    # attach a client to the closest base station
+    def attach_to_base_station(self):
+
+        closest_base_station = base_stations_positions[0]
+        shortest_distance = np.linalg.norm(self.position - closest_base_station)
+
+        for index in range(1, len(base_stations_positions)):
+
+            # compute the distance from base station to the vehicle
+            new_base_station_distance = np.linalg.norm(self.position - base_stations_positions[index])
+
+            # verify if is closer than the first one
+            if new_base_station_distance < shortest_distance:
+                
+                closest_base_station = base_stations_positions[index]
+                shortest_distance = new_base_station_distance
+
+        return closest_base_station
 
     def update_position(self, new_x, new_y):
+        
+        # disconnects the client from a previous base station
+        if (not self.throughput_dl) or (not self.throughput_ul):
+           
+            self.attach_to_base_station()
+
         self.position = np.array([new_x, new_y])
 
     def calculate_downlink_metrics(self):
@@ -246,7 +259,7 @@ class Vehicle:
             self.spectral_efficiency_dl (float): Spectral efficiency in bps/Hz.
         """
         # Step 1: Compute distance
-        distance = np.linalg.norm(self.position - base_station_position)
+        distance = np.linalg.norm(self.position - self.base_station_position)
 
         # Step 2: Calculate path loss
         self.path_loss_dl = path_loss_v2x(distance, self.los)
@@ -287,7 +300,7 @@ class Vehicle:
             self.spectral_efficiency_ul (float): Spectral efficiency (bps/Hz).
         """
         # Step 1: Compute distance
-        distance = np.linalg.norm(self.position - base_station_position)
+        distance = np.linalg.norm(self.position - self.base_station_position)
 
         # Step 2: Calculate path loss
         self.path_loss_ul = path_loss_v2x(distance, self.los)
@@ -304,16 +317,20 @@ class Vehicle:
 
         # Step 6: Calculate spectral efficiency
         self.spectral_efficiency_ul = np.log2(1 + self.sinr_ul)
-
+        
         # Update distance
         self.distance_ul = distance
 
     # adding the disconnection condition
     def calculate_throughput(self):
+
         if self.distance_ul < self.base_station_range:
+        
             self.throughput_dl = (self.spectral_efficiency_dl * self.allocated_bandwidth_dl) * 1e-6
             self.throughput_ul = (self.spectral_efficiency_ul * self.allocated_bandwidth_ul) * 1e-6
+        
         else:
+
             self.throughput_dl = 0.0 
             self.throughput_ul = 0.0
 

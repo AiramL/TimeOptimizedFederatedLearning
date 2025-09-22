@@ -5,16 +5,16 @@ do
 		for speed in 2 
 		do	
 
-			python process_results/raw_communication.py 0 $speed $index &
-			python process_results/raw_communication.py 1 $speed $index &
-			python process_results/raw_communication.py 2 $speed $index &
-			python process_results/raw_communication.py 3 $speed $index &
-			python process_results/raw_communication.py 4 $speed $index &
-			python process_results/raw_communication.py 5 $speed $index &
-			python process_results/raw_communication.py 6 $speed $index &
-			python process_results/raw_communication.py 7 $speed $index &
-			python process_results/raw_communication.py 8 $speed $index &
-			python process_results/raw_communication.py 9 $speed $index 
+			python -m process_results.raw_communication 0 $speed $index &
+			python -m process_results.raw_communication 1 $speed $index &
+			python -m process_results.raw_communication 2 $speed $index &
+			python -m process_results.raw_communication 3 $speed $index &
+			python -m process_results.raw_communication 4 $speed $index &
+			python -m process_results.raw_communication 5 $speed $index &
+			python -m process_results.raw_communication 6 $speed $index &
+			python -m process_results.raw_communication 7 $speed $index &
+			python -m process_results.raw_communication 8 $speed $index &
+			python -m process_results.raw_communication 9 $speed $index 
 
 		done
 done

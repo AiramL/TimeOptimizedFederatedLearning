@@ -30,7 +30,7 @@ do
 		echo "PHASE 1 -> Generating the grid topology"
                 #### To generate a manhattan network topology
                 #netgenerate --grid --grid.number $NB_grid --grid.x-length 600 --grid.y-length 50 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
-                netgenerate --grid --grid.number $NB_grid --grid.x-length 600 --grid.y-length 600 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
+                netgenerate --grid --grid.number $NB_grid --grid.x-length 3000 --grid.y-length 3000 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
 		sleep 1
                 for (( i=0; i<${#NB_Cars[@]}; i++ ))
                 do

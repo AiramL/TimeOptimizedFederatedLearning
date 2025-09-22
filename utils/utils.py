@@ -7,6 +7,7 @@ from os import mkdir
 from .dataset_operations import *
 
 def get_args_client():
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-sip","--server_ip", type=str, default="[::]", help="Server IP address")
@@ -30,6 +31,7 @@ def get_args_client():
     return parser.parse_args()
 
 def get_args_server():
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-sip","--server_ip", type=str, default="[::]", help="Server IP address")
@@ -42,6 +44,7 @@ def get_args_server():
     return parser.parse_args()
 
 def generate_pre_processed_dataset(DATA_PATH,DATASET_PATH):
+
     # Load dataset
     df = load_dataset_to_dataframe(DATA_PATH)
 
@@ -71,8 +74,15 @@ def generate_pre_processed_dataset(DATA_PATH,DATASET_PATH):
     return 0
 
 
+def load_base_stations_positions(scenario="SINGLE_BASE_STATION"):
 
+    if scenario == "SINGLE_BASE_STATION":
 
+        return [np.array([0, 0])]  # BS at origin
+    
+    elif scenario == "LUXEMBOURG":
+
+        pass
 
 if __name__ == "__main__":
     generate_pre_processed_dataset('datasets/VeReMi_Extension/mixalldata_clean.csv','datasets/VeReMi_Extension')
