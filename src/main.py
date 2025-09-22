@@ -4,6 +4,8 @@ from server import *
 import threading
 import sys
 
+from utils.utils import load_config
+
 def main(sid=0,
          speed=0,
          model_size=527,
@@ -94,54 +96,23 @@ def main(sid=0,
     ''' simulate the training'''
     return server.train()
 
-def execute_results(model_sizes,servers,data,speed):
-
-    number_of_clients = 5
-    n_epochs = 3
-    m_ratio = 0.5 
-
-    dataset_path = "data/processed/speed"+str(speed)+"/"
-
-    for model_size in model_sizes:
-    
-        for dataset in data:
-            
-            for method in servers:
-            
-                results = [ ]
-                
-                print("processing model size ",
-                        model_size,
-                        " dataset ",
-                        dataset)
-                
-                for number_of_clients_to_select in range(1,number_of_clients+1):                
-                    
-                    p = int(number_of_clients_to_select*m_ratio)
-                    m_clients =  p if p > 0 else 1 
-                    
-                    results.append(main(model_size=model_size,
-                                        speed=speed,
-                                        number_of_clients_to_select=number_of_clients_to_select,
-                                        number_of_clients=number_of_clients,
-                                        n_epochs=n_epochs,
-                                        m_clients=m_clients,
-                                        server_type=method,
-                                        datapath=dataset_path+str(dataset)+".csv"))
-
-                with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset),"wb") as writer:
-                    dump(results,writer)
 
 def save_results(speed,method,model_size,dataset,number_of_clients_to_select,results):
 
     with open("results/client_selection/speed"+str(speed)+"/model_"+method+"_size_"+str(model_size)+"_dataset_"+str(dataset)+"_n_clients_"+str(number_of_clients_to_select),"wb") as writer:
         dump(results,writer)
 
-def execute_results_per_client(model_sizes,servers,data,speed):
+def execute_results_per_client(model_sizes,
+                               servers,
+                               data,
+                               speed, 
+                               n_clients,
+                               n_epochs,
+                               m_ratio):
 
-    number_of_clients = 5
-    n_epochs = 3
-    m_ratio = 0.5 
+    number_of_clients = n_clients
+    n_epochs = n_epochs
+    m_ratio = m_ratio 
 
     dataset_path = "data/processed/speed"+str(speed)+"/"
     
@@ -177,102 +148,64 @@ def execute_results_per_client(model_sizes,servers,data,speed):
 
 if  __name__ == "__main__":
 
-    SINGLE = False
-    M_CLIENT = True
+    cfg = load_config("config/config.yaml")
 
-    if SINGLE:
-        server = sys.argv[1]        
 
-        size = int(sys.argv[2])
-        
-        speed = int(sys.argv[3]) 
-        
-        data = int(sys.argv[4])
-
-        execute_results([size],[server],[data],speed)
-
-        print("experiments finished")
+    servers = cfg["simulation"]["strategy"]
+    model_sizes= cfg["simulation"]["model"]["size"]
+    speeds = cfg["simulation"]["speed"]["index"] 
+    n_clients = cfg["simulation"]["cars"] 
+    n_epochs = cfg["simulation"]["federated_learning"]["server"]["epochs"] 
+    m_ratio = cfg["simulation"]["federated_learning"]["server"]["m_ratio"] 
     
-    elif M_CLIENT:
-        
-        servers = ["random",
-                   "m_fastest",
-                   "tofl_oracle",
-                   "tofl_estimator_dl",
-                   "tofl_estimator_m_fastest"]
-        
 
-        model_sizes=[500]
+    threads = { }
+    
+    data_range = 10
+    ranges = 1
+    ranges_size = int(data_range/ranges)
 
-        speed = 2 
-
-        threads = { }
-        
-        data_range = 10
-        ranges = 1
-        ranges_size = int(data_range/ranges)
+    for speed in speeds:
 
         for data in range(data_range):
-        
+    
             for server in servers:
-            
+        
                 for size in model_sizes:
-                    threads[server+str(size)+str(data)] = threading.Thread(target=execute_results_per_client, args=([size],[server],[data],speed))
-        
-        for subset in range(ranges):
+
+                    threads[server+str(size)+str(data)+str(speed)] = threading.Thread(target=execute_results_per_client, 
+                                                                                      args=([size],
+                                                                                      [server],
+                                                                                      [data],
+                                                                                      speed,
+                                                                                      n_clients,
+                                                                                      n_epochs,
+                                                                                      m_ratio))
+    
+    for subset in range(ranges):
+
+        for speed in speeds:
 
             for data in range(subset*ranges_size,(subset+1)*ranges_size):
+
                 if data < data_range:
+                
                     for server in servers:
+                    
                         for size in model_sizes:
-                            threads[server+str(size)+str(data)].start()
-            
+                        
+                            threads[server+str(size)+str(data)+str(speed)].start()
+        
+        for speed in speeds:
+    
             for data in range(subset*ranges_size,(subset+1)*ranges_size):
+
                 if data < data_range:
+                
                     for server in servers:
+                    
                         for size in model_sizes:
-                            threads[server+str(size)+str(data)].join()
+                        
+                            threads[server+str(size)+str(data)+str(speed)].join()
 
-        print("experiments finished")
-
-
-    else:
-        
-        servers = ["random",
-                   "m_fastest",
-                   "tofl_oracle",
-                   "tofl_estimator_dl",
-                   "tofl_estimator_m_fastest"]
-        
-
-        model_sizes=[500]
-
-        speed = 2 
-
-        threads = { }
-        
-        data_range = 10
-        ranges = 1
-        ranges_size = int(data_range/ranges)
-
-        for data in range(data_range):
-
-            for server in servers:
-                for size in model_sizes:
-                    threads[server+str(size)+str(data)] = threading.Thread(target=execute_results, args=([size],[server],[data],speed))
-        
-        for subset in range(ranges):
-
-            for data in range(subset*ranges_size,(subset+1)*ranges_size):
-                if data < data_range:
-                    for server in servers:
-                        for size in model_sizes:
-                            threads[server+str(size)+str(data)].start()
-            
-            for data in range(subset*ranges_size,(subset+1)*ranges_size):
-                if data < data_range:
-                    for server in servers:
-                        for size in model_sizes:
-                            threads[server+str(size)+str(data)].join()
-
-        print("experiments finished")
+    print("experiments finished")

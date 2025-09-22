@@ -5,9 +5,16 @@ from os import listdir
 import threading
 import sys 
 
-from utils.utils import load_base_stations_positions
+from utils.utils import (
+        load_base_stations_positions,
+        load_config)
 
-scenario="SINGLE_BASE_STATION"
+# load configs
+cfg = load_config("config/config.yaml")
+
+scenario = cfg["simulation"]["base_station"]["scenario"]
+n_base_stations = cfg["simulation"]["base_station"]["number"]
+
 
 # Constants
 c = 3e8  # Speed of light (m/s)
@@ -208,7 +215,7 @@ class Vehicle:
         self.fading_dl = None
         self.fading_ul = None
 
-        self.base_station_range = 600
+        self.base_station_range = cfg["simulation"]["base_station"]["range"]
 
         self.base_station_position = self.attach_to_base_station()
     

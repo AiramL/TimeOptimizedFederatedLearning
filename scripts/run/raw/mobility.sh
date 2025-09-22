@@ -2,22 +2,32 @@
 export SUMO_HOME=/usr/share/sumo
 export HOME=$HOME:$SUMO_HOME
 export SUMO_MOBILITY_PATH=$PWD/mobility/raw
+
+
+
 ## Paths scripts
 PWD_TOOL=/usr/share/sumo/tools
 ## Variables
-NB_Cars=(5)
+NB_Cars=($(yq '.simulation.cars' config/config.yaml))
 NB_Runs=(0 1 2 3 4 5 6 7 8 9 10)
 NB_grid=2 ### for value of x grids will be x-1
 carFM=Krauss ### Krauss, IDM, ACC
-Simulation_duration=600
+Simulation_duration=$(yq '.simulation.duration' config/config.yaml)
 
 
 ##m/sec 
 declare -A speeds
 
-#speeds[speed0]=3.638889 #13.1km/h
-#speeds[speed1]=8.333333 #30km/h
-speeds[speed2]=13.88889 #50km/h
+indexes=$(yq '.simulation.speed.index' config/config.yaml)
+values=$(yq '.simulation.speed.value' config/config.yaml)
+
+for i in "${!indexes[@]}"; do
+
+	speeds["${indexes[$i]}"]="${values[$i]}"
+
+done
+
+
 
 for (( run=0; run<${#NB_Runs[@]}; run++ ))
 do
@@ -29,7 +39,6 @@ do
 		
 		echo "PHASE 1 -> Generating the grid topology"
                 #### To generate a manhattan network topology
-                #netgenerate --grid --grid.number $NB_grid --grid.x-length 600 --grid.y-length 50 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
                 netgenerate --grid --grid.number $NB_grid --grid.x-length 3000 --grid.y-length 3000 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
 		sleep 1
                 for (( i=0; i<${#NB_Cars[@]}; i++ ))

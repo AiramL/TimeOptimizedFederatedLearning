@@ -1,4 +1,5 @@
 import threading
+from utils.utils import load_config
 
 def process_scenario(n_nodes=20, 
                      file_name="mobility/raw/scenarios/speed0/Krauss/20/manhattan_Krauss_20_",
@@ -37,22 +38,29 @@ def process_scenario(n_nodes=20,
     with open(processed_file, "w") as writer:
         writer.writelines(txt_writer)
 
-n_cars = "5"
-speeds = [2] 
-threads = {}
+if __name__ == "__main__":
 
-for speed in speeds:
-    for execution in range(10):
-        threads["thread"+str(execution)+str(speed)] = threading.Thread(target=process_scenario,
-                                                        args=(int(n_cars), 
-                                                              "mobility/raw/scenarios/speed"+str(speed)+"/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
-                                                              execution,
-                                                              speed))
+    cfg = load_config("config/config.yaml")
 
-        threads["thread"+str(execution)+str(speed)].start()
-    
-        threads["thread"+str(execution)+str(speed)].join()
+    n_cars = str(cfg["simulation"]["cars"])
+    speeds = cfg["simulation"]["speed"]["index"]
+    threads = {}
+
+    for speed in speeds:
+        print(speed)
+
+        for execution in range(10):
+        
+            threads["thread"+str(execution)+str(speed)] = threading.Thread(target=process_scenario,
+                                                            args=(int(n_cars), 
+                                                                  "mobility/raw/scenarios/speed"+str(speed)+"/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
+                                                                  execution,
+                                                                  speed))
+
+            threads["thread"+str(execution)+str(speed)].start()
+        
+            threads["thread"+str(execution)+str(speed)].join()
 
 
-print("process finished")
+    print("process finished")
 

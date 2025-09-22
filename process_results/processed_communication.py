@@ -32,33 +32,17 @@ def generate_mean_and_std(n_executions=30,origin="mobility_0_"):
     return (df_mean,df_std)
 
 
-SINGLE = True
 
-if SINGLE:
+if __name__ == "__main__":
    
     speed = sys.argv[1]
     index = sys.argv[2]
 
     print("processing file ", index) 
+    
     df_mean, df_std = generate_mean_and_std(30,origin="mobility_"+str(index)+"_speed_"+str(speed))
     file_path =  "data/processed/speed"+str(speed)+"/"
     file_name = file_path+str(index)+".csv"
     df_mean.to_csv(file_name)
+
     print("processing finished")
-
-else:
-
-    speeds = [0,1,2]
-    
-    for speed in speeds:
-
-        for index in range(10):
-        
-            print("processing file ", index, " speed ", speed) 
-            df_mean, df_std = generate_mean_and_std(30,origin="mobility_"+str(index)+"_speed_"+str(speed))
-            file_path =  "data/processed/speed"+str(speed)+"/"
-            file_name = file_path+str(index)+".csv"
-            df_mean.to_csv(file_name)
-
-
-    

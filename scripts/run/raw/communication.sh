@@ -1,8 +1,11 @@
 #!/bin/bash
 
+speeds=$(yq '.simulation.speed.index' "config/config.yaml") 
+
 for index in $( seq 0 29 )
 do
-		for speed in 2 
+		for speed in speeds 
+
 		do	
 
 			python -m process_results.raw_communication 0 $speed $index &
@@ -14,9 +17,11 @@ do
 			python -m process_results.raw_communication 6 $speed $index &
 			python -m process_results.raw_communication 7 $speed $index &
 			python -m process_results.raw_communication 8 $speed $index &
-			python -m process_results.raw_communication 9 $speed $index 
+			python -m process_results.raw_communication 9 $speed $index &
 
 		done
+
+		wait
 done
 
 wait

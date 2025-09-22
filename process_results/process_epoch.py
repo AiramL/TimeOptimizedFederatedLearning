@@ -1,7 +1,10 @@
+import yaml
 from numpy import mean, std
 from pickle import load, dump
 
-def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=10):
+from utils.utils import load_config
+
+def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=10, total_clients=100):
     
     save_path = "results/client_selection/processed/"
 
@@ -11,9 +14,9 @@ def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=
                "tofl_estimator_dl",
                "tofl_estimator_m_fastest"]
 
-    results = { server+str(n_clients) : [] for server in servers for n_clients in range(1,101) }
+    results = { server+str(n_clients) : [] for server in servers for n_clients in range(1,total_clients+1) }
 
-    for n_clients in range(1,6):
+    for n_clients in range(1,total_clients+1):
         for server in servers:
             for execution in range(n_executions):
                 with open(file_path+"server_"+server+"_n_clients_selected_"+str(n_clients)+"execution_"+str(execution),"rb") as loader:
@@ -21,7 +24,7 @@ def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=
                     results[server+str(n_clients)].append(result_list)
 
 
-    for n_clients in range(1,6):
+    for n_clients in range(1,total_clients+1):
         for server in servers:
             with open(save_path+"server_"+server+"_n_clients_selected_"+str(n_clients)+"_mean","wb") as writer:
                 dump(mean(results[server+str(n_clients)],axis=0),writer)
@@ -31,5 +34,8 @@ def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=
 
 
 if __name__ == "__main__":
+    
 
-    process_epochs()
+    cfg = load_config("config/config.yaml")
+
+    process_epochs(total_clients=cfg["simulation"]["cars"])

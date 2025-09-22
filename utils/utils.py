@@ -1,3 +1,5 @@
+import yaml 
+
 import pandas as pd
 import argparse
 import tensorflow as tf
@@ -83,6 +85,12 @@ def load_base_stations_positions(scenario="SINGLE_BASE_STATION"):
     elif scenario == "LUXEMBOURG":
 
         pass
+
+def load_config(file_name):
+
+    with open(file_name,"r") as reader:
+    
+        return yaml.safe_load(reader)
 
 if __name__ == "__main__":
     generate_pre_processed_dataset('datasets/VeReMi_Extension/mixalldata_clean.csv','datasets/VeReMi_Extension')
