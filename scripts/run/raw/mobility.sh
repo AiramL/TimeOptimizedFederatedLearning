@@ -18,8 +18,8 @@ Simulation_duration=$(yq '.simulation.duration' config/config.yaml)
 ##m/sec 
 declare -A speeds
 
-indexes=$(yq '.simulation.speed.index' config/config.yaml)
-values=$(yq '.simulation.speed.value' config/config.yaml)
+indexes=$(yq '.simulation.speed.index[]' config/config.yaml)
+values=$(yq '.simulation.speed.value[]' config/config.yaml)
 
 for i in "${!indexes[@]}"; do
 

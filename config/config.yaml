@@ -1,16 +1,16 @@
 simulation:
 
-        cars: 100
-        duration: 2000
+        cars: 2
+        duration: 600
         speed:
                 index: 
                         - 0
-                        - 1
-                        - 2
+                          #        - 1
+                          #        - 2
                 value:
                         - 3.638889 # 13.1km/h
-                        - 8.333333 # 30 km/h
-                        - 13.88889 # 50 km/h
+                          #        - 8.333333 # 30 km/h
+                          #        - 13.88889 # 50 km/h
         model:
                 size:
                         - 500

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python -m process_results.processed_mobility
+python -m utils.process.results.processed.mobility

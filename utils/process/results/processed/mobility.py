@@ -2,7 +2,7 @@ import threading
 from utils.utils import load_config
 
 def process_scenario(n_nodes=20, 
-                     file_name="mobility/raw/scenarios/speed0/Krauss/20/manhattan_Krauss_20_",
+                     file_name="mobility/raw/scenarios/0/Krauss/20/manhattan_Krauss_20_",
                      execution=0,
                      speed=0):
 
@@ -47,13 +47,12 @@ if __name__ == "__main__":
     threads = {}
 
     for speed in speeds:
-        print(speed)
 
         for execution in range(10):
         
             threads["thread"+str(execution)+str(speed)] = threading.Thread(target=process_scenario,
                                                             args=(int(n_cars), 
-                                                                  "mobility/raw/scenarios/speed"+str(speed)+"/Krauss/"+n_cars+"/manhattan_Krauss_"+n_cars+"_",
+                                                                  f"mobility/raw/scenarios/{speed}/Krauss/{n_cars}/manhattan_Krauss_{n_cars}_",
                                                                   execution,
                                                                   speed))
 
