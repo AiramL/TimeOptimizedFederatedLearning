@@ -1,7 +1,9 @@
+import csv
+
 import numpy as np
 import matplotlib.pyplot as plt
-import csv
 from os import listdir
+
 import threading
 import sys 
 
@@ -13,8 +15,10 @@ from utils.utils import (
 cfg = load_config("config/config.yaml")
 
 scenario = cfg["simulation"]["base_station"]["scenario"]
-n_base_stations = cfg["simulation"]["base_station"]["number"]
 
+# Base station position
+base_stations_file = cfg["simulation"]["base_station"]["positions"]
+base_stations, n_base_stations = load_base_stations_positions(base_stations_file)
 
 # Constants
 c = 3e8  # Speed of light (m/s)
@@ -32,8 +36,6 @@ total_bandwidth_ul = 10e6  # Total bandwidth for uplink (Hz)
 V2X_LOS_pathloss_exp = 2.0  # Path loss exponent for LOS
 V2X_NLOS_penalty = 20  # Additional path loss penalty for NLOS (dB). The NLOS is only a penalty. I think it is ok for this work since it is not the main focus.
 
-# Base station position
-base_stations_positions = load_base_stations_positions(scenario)
 
 # Bandwidth allocation methods. I made this to test different strategies at the base station level
 bandwidth_allocation_method_dl = "proportional"  # Downlink allocation method

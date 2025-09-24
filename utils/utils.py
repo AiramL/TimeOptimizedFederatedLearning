@@ -76,16 +76,13 @@ def generate_pre_processed_dataset(DATA_PATH,DATASET_PATH):
     return 0
 
 
-def load_base_stations_positions(scenario="SINGLE_BASE_STATION"):
+def load_base_stations_positions(positions_file="communication/base_stations.csv"):
 
-    if scenario == "SINGLE_BASE_STATION":
+    base_stations_positions = pd.read_csv(positions_file)
 
-        return [np.array([0, 0])]  # BS at origin
+    return [ item for item in base_stations_positions.to_numpy() ], base_stations_positions.shape[0]
+
     
-    elif scenario == "LUXEMBOURG":
-
-        pass
-
 def load_config(file_name):
 
     with open(file_name,"r") as reader:
