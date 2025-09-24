@@ -1,6 +1,6 @@
 from abc import ABC
 from abc import abstractmethod
-from .train_model import LSTM
+from .train import LSTM
 import torch
 
 class Estimator(ABC):
@@ -20,6 +20,7 @@ class Estimator(ABC):
         self.model = model
 
 class EstimatorLSTM(Estimator):
+
     def __init__(self,model_path="models/model_10.pt"):
         
         model = LSTM()

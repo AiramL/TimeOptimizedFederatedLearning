@@ -374,7 +374,7 @@ processing finished
 
 This script selects the clients and generates the communication delay result for different algorithms. The output allows us to analyze the results obtained on the paper.
 ```bash
-python src/main.py
+source scripts/run/raw/results.sh
 ```
 Expected output: 
 ```bash
@@ -394,15 +394,9 @@ experiments finished
 
 The previous python script generates several CSV files, which must be aggregated to be consumed. This can be done by executing the following script:
 ```bash
-python process_results/aggregate_individual_results.py
+source scripts/run/processed/results.sh
 ```
 
-### Process Communication Results (< 1 second)
-
-Another process that we should do is the delays per epoch, to show on the graphs:
-```bash
-python process_results/process_epoch.py
-```
 ### Federated Learning Training (Skip in Virtual Machine Execution)
 
 Let's execute a federated learning training during 3 epochs with our 5 clients. Let's select 2 clients per epoch. We need to run with both datasets, so this experiment takes around 5 minutes. If you are running on a virtual machine, the time can be way longer due to the dataset pre-processing. Therefore, we recommend skipping directly to the [Results](#results) Section using the already generated data in this repository.

@@ -1,6 +1,6 @@
 from os import listdir
-from client import *
-from server import *
+from .client import *
+from .server import *
 import threading
 import sys
 

@@ -44,11 +44,12 @@ if __name__ == "__main__":
 
     n_cars = str(cfg["simulation"]["cars"])
     speeds = cfg["simulation"]["speed"]["index"]
+    repetitions = cfg["simulation"]["mobility"]["repetitions"]
     threads = {}
 
     for speed in speeds:
 
-        for execution in range(10):
+        for execution in range(repetitions):
         
             threads["thread"+str(execution)+str(speed)] = threading.Thread(target=process_scenario,
                                                             args=(int(n_cars), 

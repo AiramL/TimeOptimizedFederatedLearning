@@ -4,7 +4,10 @@ from numpy import mean, std
 
 from legends import legends_dicts
 
-def selection_error_plot(n_clients=95, file_path="results/client_selection/processed/", PLOT=False, language="pt"):
+def selection_error_plot(n_clients=95, 
+                         file_path="results/client_selection/processed/", 
+                         PLOT=False, 
+                         language="pt"):
 
     plt.figure(figsize=(14, 10))
     
@@ -48,7 +51,7 @@ if __name__ == "__main__":
 
     languages = ["pt", "en"]
 
-    n_clients = [2, 5]
+    n_clients = [16, 95]
 
     for lang in languages:
 

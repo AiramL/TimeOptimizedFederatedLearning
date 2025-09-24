@@ -4,15 +4,16 @@ from pickle import load, dump
 
 from utils.utils import load_config
 
-def process_epochs(file_path="results/client_selection/raw/epoch/",n_executions=10, total_clients=100):
+def process_epochs(file_path="results/client_selection/raw/epoch/",
+                   n_executions=10, 
+                   total_clients=100,
+                   servers = ["random",
+                              "m_fastest",
+                              "tofl_oracle",
+                              "tofl_estimator_dl",
+                              "tofl_estimator_m_fastest"]):
     
     save_path = "results/client_selection/processed/"
-
-    servers = ["random",
-               "m_fastest",
-               "tofl_oracle",
-               "tofl_estimator_dl",
-               "tofl_estimator_m_fastest"]
 
     results = { server+str(n_clients) : [] for server in servers for n_clients in range(1,total_clients+1) }
 
@@ -38,4 +39,6 @@ if __name__ == "__main__":
 
     cfg = load_config("config/config.yaml")
 
-    process_epochs(total_clients=cfg["simulation"]["cars"])
+    process_epochs(servers=cfg["simulation"]["strategy"],
+                   n_executions=cfg["simulation"]["mobility"]["repetitions"],
+                   total_clients=cfg["simulation"]["cars"])

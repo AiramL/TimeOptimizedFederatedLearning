@@ -1,16 +1,17 @@
 #!/bin/bash
 
 speeds=$(yq '.simulation.speed.index[]' "config/config.yaml")
+mobility=$(yq '.simulation.mobility.repetitions' "config/config.yaml")
 
 for speed in $speeds
 
 do
 
-	for index in $( seq 0 9)
+	for index in $( seq 0 $(($mobility-1)))
 
 	do
 
-		python utils/process/results/processed/communication.py $speed $index &
+		python -m utils.process.results.processed.communication $speed $index &
 
 	done
 

@@ -10,7 +10,8 @@ class Client(object):
                  client_id=1,
                  server=None,
                  datapath='executions/mean_tp.csv',
-                 n_epochs=100): 
+                 n_epochs=100,
+                 timeout=120): 
 
         ''' Read the 5G dataset to add at 
         client object the communications conditions. '''    
@@ -24,6 +25,8 @@ class Client(object):
         self.epoch = 0
         self.time_last_chunk = 0.0
         self.computation_delay = [ 0 for i in range(n_epochs)] # in seconds
+        self.timeout = timeout
+        self.epoch_beggin = 0.0
         self.logger = logging.getLogger("client_"+str(client_id))
         logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.CRITICAL)
         
@@ -34,9 +37,18 @@ class Client(object):
     ''' Updates client's positions and 
         communications conditions. '''
     def update_state(self):
-        self.state+=1
+        
+        if self.state + 1 < self.dataframe.shape[0]:
+    
+            self.state += 1
+
+        # reset to the initial point
+        else:
+
+            self.state = 0
 
     def set_state(self, state):
+        
         self.state = int(state)
     
     ''' Determines the delay giving the throughput. '''
@@ -92,15 +104,19 @@ class Client(object):
                                                        initial_time)))
             self.server.set_server_state(self.state)
 
-    def receive_data_chunk(self,data):
+    def receive_data_chunk(self,
+                           data):
+
         maximum_chunk_size = floor(self.message_period * 
                                    1000 * 
                                    self.dataframe['Throughput DL'].iloc[self.state])
                 
         if (maximum_chunk_size >= data):
+        
             self.time_last_chunk = data/(1000 * 
                                          self.dataframe['Throughput DL'].iloc[self.state])
             return 0 # no more data to send
+
         return data - maximum_chunk_size # remain data to send
 
 
@@ -113,12 +129,15 @@ class Client(object):
         self.logger.debug("receiving model %s" % self.server)
         
         while (remain_data):
+        
             self.logger.debug("client ID: %d state: %d",
-                              self.client_id, self.state)
+                              self.client_id, 
+                              self.state)
             
             remain_data = self.receive_data_chunk(remain_data)
             
             if remain_data:
+
                 self.update_state()
 
         # final time

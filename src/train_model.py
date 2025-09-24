@@ -34,7 +34,7 @@ class LSTM(nn.Module):
         x = self.linear(x)
         return x
 
-def load_tp(client_id=1, data_path="data/processed/", data_file="0.csv"):
+def load_tp(client_id=1, data_path="data/processed/speed0/", data_file="0.csv"):
     client_id = 1
     df = pd.read_csv(data_path+data_file)
     dt = df[df['Node ID'] == client_id].reset_index()

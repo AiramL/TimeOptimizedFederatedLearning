@@ -3,25 +3,27 @@ export SUMO_HOME=/usr/share/sumo
 export HOME=$HOME:$SUMO_HOME
 export SUMO_MOBILITY_PATH=$PWD/mobility/raw
 
-
+repetitions=$(yq '.simulation.mobility.repetitions' config/config.yaml)
+sequence=$(seq 0 $(($repetitions-1)))
 
 ## Paths scripts
 PWD_TOOL=/usr/share/sumo/tools
 ## Variables
 NB_Cars=($(yq '.simulation.cars' config/config.yaml))
-NB_Runs=(0 1 2 3 4 5 6 7 8 9 10)
+NB_Runs=($sequence)
 NB_grid=2 ### for value of x grids will be x-1
 carFM=Krauss ### Krauss, IDM, ACC
-Simulation_duration=$(yq '.simulation.duration' config/config.yaml)
-
+grid_size_x=$(yq .'simulation.mobility.distance.x' config/config.yaml )
+grid_size_y=$(yq .'simulation.mobility.distance.y' config/config.yaml )
 
 ##m/sec 
 declare -A speeds
 
-indexes=$(yq '.simulation.speed.index[]' config/config.yaml)
-values=$(yq '.simulation.speed.value[]' config/config.yaml)
+mapfile -t indexes < <(yq '.simulation.speed.index[]' config/config.yaml)
+mapfile -t values < <(yq '.simulation.speed.value[]' config/config.yaml)
 
-for i in "${!indexes[@]}"; do
+for i in "${!indexes[@]}"
+do
 
 	speeds["${indexes[$i]}"]="${values[$i]}"
 
@@ -36,10 +38,11 @@ do
                 PWD_WORK=$SUMO_MOBILITY_PATH/scenarios/$key
 		[ ! -d $PWD_WORK ] &&  mkdir -p $PWD_WORK
                 topology_filename=$PWD_WORK/manhattan_net_$NB_grid.xml
-		
+		Simulation_duration=$(echo "2*($grid_size_x+$grid_size_y)/${speeds[$key]}" | bc -l)	
+
 		echo "PHASE 1 -> Generating the grid topology"
                 #### To generate a manhattan network topology
-                netgenerate --grid --grid.number $NB_grid --grid.x-length 3000 --grid.y-length 3000 --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
+                netgenerate --grid --grid.number $NB_grid --grid.x-length $grid_size_x --grid.y-length $grid_size_y --default.lanenumber 1 --rand.max-distance 100.0 --default.speed ${speeds[$key]}  --no-turnarounds.geometry false -o $topology_filename
 		sleep 1
                 for (( i=0; i<${#NB_Cars[@]}; i++ ))
                 do
@@ -65,3 +68,4 @@ do
         done
 done
 
+mv routes.rou.xml mobility/

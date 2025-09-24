@@ -64,6 +64,7 @@ def plot_energy(dictionary,
 if __name__ == "__main__":
 
     with open("results/energy","rb") as reader:
+        
         dictionary = load(reader)
 
     plot_energy(dictionary)

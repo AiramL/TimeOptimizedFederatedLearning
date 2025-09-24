@@ -6,7 +6,7 @@ import random
 from time import sleep
 import pandas as pd
 from math import floor
-from estimator import *
+from utils.estimator.architecture import *
 import logging
 from collections import deque
 
@@ -26,7 +26,8 @@ class Server(ABC):
                                      "7":7,
                                      "8":8,
                                      "9":9,
-                                     "0":0,}):
+                                     "0":0,},
+                 timeout=120):
         
         self.available_clients = avalilable_clients
         self.selected_clients = []
@@ -45,6 +46,8 @@ class Server(ABC):
         self.SAVE =  False
         self.clients_computation_delay = [ 0 for i in range(n_epochs)] # in secondsi
         self.server_name = ""
+        self.timeout = timeout
+        self.epoch_begging = 0.0
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.CRITICAL)
         
@@ -128,23 +131,30 @@ class Server(ABC):
             self.highest_delay = delay
     
     def calculate_total_delay(self):
+        
         return sum(self.epochs_delays)
 
     def update_epoch(self):
+        
         self.epoch+=1
 
     def update_received_models(self):
+        
         self.num_received_models+=1
         self.logger.debug("number of received models updated: %d" % self.num_received_models)
         models_to_receive = len(self.selected_clients) - self.num_received_models
         self.logger.debug("number of models to be received: %d" % models_to_receive)
 
     def set_server_state(self, state):
+
         if state > self.state:
+           
             self.state = int(state)
     
     def set_clients_state(self):
+        
         for client in self.available_clients.values():
+            
             client.set_state(self.state)
 
 class ServerRandomSelection(Server):
@@ -241,9 +251,11 @@ class ServerMFastestSelection(Server):
         self.m_clients_states.append(int(state))
         
         if len(self.m_clients_states) > 1:
+            
             self.m_clients_states.sort()
 
         if (self.num_received_models == self.number_of_clients_to_select):
+            
             self.state = self.m_clients_states[self.m_clients-1]
 
 
@@ -366,40 +378,73 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
     def local_training(self):
         pass
 
-    def client_receive_model(self, client_id, time):
+    def client_receive_model(self, 
+                             client_id, 
+                             time):
 
         state = time
+        elapsed_time = time
 
         remain_data = self.model_size
+        
+        if state >= self.clients_info[client_id]['Throughput UL'].shape[0]:
+                    
+            state = 0 
         
         while (remain_data):
 
             remain_data, _ = self.receive_data_chunk(remain_data, client_id, state)
             
             if remain_data:
-                state += 1
+
+                if state + 1 < self.clients_info[client_id]['Throughput DL'].shape[0]:
+                    
+                    state += 1
+                    elapsed_time += 1
+
+                else:
+
+                    state = 0 
+                    elapsed_time += 1
+
 
         ''' training '''
         self.local_training()
 
-        return state 
+        return elapsed_time 
     
 
-    def client_send_model(self, client_id, time):
+    def client_send_model(self, 
+                          client_id, 
+                          time):
 
         initial_time = time
         state = time
+        elapsed_time = time 
 
         remain_data = self.model_size
+                
+        if state >= self.clients_info[client_id]['Throughput UL'].shape[0]:
+                    
+            state = 0 
         
         while (remain_data):
         
             remain_data, time_last_chunk = self.send_data_chunk(remain_data, client_id, state)
             
             if remain_data:
-                state += 1
+
+                if state + 1 < self.clients_info[client_id]['Throughput UL'].shape[0]:
+                    
+                    elapsed_time += 1
+                    state += 1
+
+                else:
+                    
+                    elapsed_time += 1
+                    state = 0
                 
-        return float(0.1 * (state + 
+        return float(0.1 * (elapsed_time + 
                             time_last_chunk - 
                             initial_time))
 
@@ -448,9 +493,7 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
 
         for client in self.available_clients.keys():
             
-            self.logger.debug("estimating delay client %s" % client)
-            
-            
+            self.logger.debug("estimating delay client %s" % client) 
             
             # server -> client
             self.logger.debug("estimating download delay")

@@ -1,16 +1,21 @@
 simulation:
-
-        cars: 2
-        duration: 600
+        cars: 100
+        mobility:
+                distance:
+                        x: 3000
+                        y: 3000       
+                repetitions: 10
+        communication:
+                repetitions: 30
         speed:
                 index: 
                         - 0
-                          #        - 1
-                          #        - 2
+                        - 1
+                        - 2
                 value:
                         - 3.638889 # 13.1km/h
-                          #        - 8.333333 # 30 km/h
-                          #        - 13.88889 # 50 km/h
+                        - 8.333333 # 30 km/h
+                        - 13.88889 # 50 km/h
         model:
                 size:
                         - 500

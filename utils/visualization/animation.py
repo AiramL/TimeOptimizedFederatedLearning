@@ -30,7 +30,7 @@ fig, ax = plt.subplots()
 line, = ax.plot([], [], lw=2)
 ax.set_xlim(x.min(), x.max())
 ax.set_ylim(y.min() - 5, y.max() + 5)
-ax.set_xlabel("Position (m)", fontsize=16)
+ax.set_xlabel("Time (100 ms)", fontsize=16)
 ax.set_ylabel("Throughtput (Mbps)", fontsize=16)
 
 def init():
@@ -53,8 +53,8 @@ ani = FuncAnimation(fig,
                     repeat=False,
                     interval=20)
 
-plt.tight_layout()
-plt.show()
+#plt.tight_layout()
+#plt.show()
 
 # Save GIF
 ani.save("figures/animation.gif", writer="pillow", fps=20)
