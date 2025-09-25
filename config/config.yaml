@@ -30,6 +30,6 @@ simulation:
                 - "tofl_estimator_dl"
                 - "tofl_estimator_m_fastest"
         base_station:
-                scenario: "SINGLE_BASE_STATION"
                 range: 600
-                number: 1
+                positions: "communication/base_stations.csv"
+

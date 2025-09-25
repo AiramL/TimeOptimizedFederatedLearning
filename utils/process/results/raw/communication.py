@@ -14,8 +14,6 @@ from utils.utils import (
 # load configs
 cfg = load_config("config/config.yaml")
 
-scenario = cfg["simulation"]["base_station"]["scenario"]
-
 # Base station position
 base_stations_file = cfg["simulation"]["base_station"]["positions"]
 base_stations, n_base_stations = load_base_stations_positions(base_stations_file)
