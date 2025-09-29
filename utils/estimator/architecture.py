@@ -21,11 +21,15 @@ class Estimator(ABC):
 
 class EstimatorLSTM(Estimator):
 
-    def __init__(self,model_path="models/model_10.pt"):
+    def __init__(self,
+                 model_path="models",
+                 speed=2):
+
+        model_name = f"{model_path}/model_10_speed_{speed}.pt"
         
         model = LSTM()
 
-        model.load_state_dict(torch.load(model_path, weights_only=True))
+        model.load_state_dict(torch.load(model_name, weights_only=True))
 
         super().__init__(model)
 

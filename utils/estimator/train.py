@@ -7,6 +7,8 @@ import numpy as np
 import torch.optim as optim
 import torch.utils.data as data
 
+from utils.utils import load_config
+
 def create_dataset(dataset, lookback):
     """Transform a time series into a prediction dataset
     
@@ -40,10 +42,13 @@ class LSTM(nn.Module):
         x = self.linear(x)
         return x
 
-def load_tp(client_id=1, data_path="data/processed/speed0/", data_file="0.csv"):
+def load_tp(client_id=1, 
+            data_path="data/processed/speed", 
+            speed=0, 
+            data_file="0.csv"):
     
     client_id = 1
-    df = pd.read_csv(data_path+data_file)
+    df = pd.read_csv(f"{data_path}{speed}/{data_file}")
     dt = df[df['Node ID'] == client_id].reset_index()
     tpu = dt[['Throughput DL']].values.astype('float32')
     tpd = dt[['Throughput UL']].values.astype('float32')
@@ -51,7 +56,7 @@ def load_tp(client_id=1, data_path="data/processed/speed0/", data_file="0.csv"):
     return tpu, tpd
 
 
-def train():
+def train(speed=0):
 
     # train-test split for time series
     train_size = int(len(tpd) * 0.67)
@@ -126,9 +131,15 @@ def train():
     plt.legend()
     plt.show()
     
-    torch.save(model.state_dict(),"models/model_10.pt")
+    torch.save(model.state_dict(),f"models/model_10_speed_{speed}.pt")
 
 if __name__ == "__main__":
    
-    tpu, tpd = load_tp()
-    train()
+    cfg = load_config('config/config.yaml') 
+
+    speeds = cfg["simulation"]["speed"]["index"] 
+
+    for speed in speeds:
+
+        tpu, tpd = load_tp(speed=speed)
+        train(speed=speed)

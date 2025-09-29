@@ -222,18 +222,18 @@ class Vehicle:
     # attach a client to the closest base station
     def attach_to_base_station(self):
 
-        closest_base_station = base_stations_positions[0]
+        closest_base_station = base_stations[0]
         shortest_distance = np.linalg.norm(self.position - closest_base_station)
 
-        for index in range(1, len(base_stations_positions)):
+        for index in range(1, len(base_stations)):
 
             # compute the distance from base station to the vehicle
-            new_base_station_distance = np.linalg.norm(self.position - base_stations_positions[index])
+            new_base_station_distance = np.linalg.norm(self.position - base_stations[index])
 
             # verify if is closer than the first one
             if new_base_station_distance < shortest_distance:
                 
-                closest_base_station = base_stations_positions[index]
+                closest_base_station = base_stations[index]
                 shortest_distance = new_base_station_distance
 
         return closest_base_station

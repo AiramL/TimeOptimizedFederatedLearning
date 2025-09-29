@@ -157,11 +157,11 @@ if  __name__ == "__main__":
     n_clients = cfg["simulation"]["cars"] 
     n_epochs = cfg["simulation"]["federated_learning"]["server"]["epochs"] 
     m_ratio = cfg["simulation"]["federated_learning"]["server"]["m_ratio"] 
+    data_range = cfg["simulation"]["mobility"]["repetitions"] 
     
 
     threads = { }
     
-    data_range = 10
     ranges = 1
     ranges_size = int(data_range/ranges)
 
