@@ -2,8 +2,8 @@ simulation:
         cars: 100
         mobility:
                 distance:
-                        x: 3000
-                        y: 3000       
+                        x: 1000
+                        y: 1000       
                 repetitions: 10
         communication:
                 repetitions: 30
