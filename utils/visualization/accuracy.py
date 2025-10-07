@@ -36,6 +36,7 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
     
     
     if language == "en":
+
         plt.xlabel("Epoch (#)")
         plt.ylabel("Accuracy (%)")
 

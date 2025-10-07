@@ -45,7 +45,6 @@ error_rate = [ x/10 for x in range(10) ]
 
 servers = ["random",
            "m_fastest",
-           "tofl_oracle",
            "tofl_mfastest",
            "tofl"]
 
@@ -54,16 +53,16 @@ results = { server:{ int(err*10):[] for err in error_rate }
                           for server in servers           }
 
 # experiments configurations
-num_selected_clients = 2
+num_selected_clients = 20
 m_clients = int(num_selected_clients*0.5)
-epochs = [ str(epoch) for epoch in range(1,4) ]
+epochs = [ str(epoch) for epoch in range(1,40) ]
 
 
 for epoch in epochs:
 
     for err in error_rate:
         
-        error_list = generate_error_list(size=5, 
+        error_list = generate_error_list(size=100, 
                                         error_rate=err)
 
         for server in servers:

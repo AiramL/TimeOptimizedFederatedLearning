@@ -1,7 +1,7 @@
 import os
+import copy
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
+from threading import Thread
 from timeit import default_timer as timer
 import flwr as fl
 import tensorflow as tf
@@ -21,7 +21,6 @@ from utils.load_federated_data import *
 args = get_args_client()
 
 # Set Parameters
-client_id = args.client_id
 n_local_epochs = args.number_of_local_epochs
 ss = args.subset_size
 bs = args.batch_size
@@ -38,9 +37,12 @@ MODEL = args.model
 COMMUNICATION_FLAG = args.communication_flag
 num_clients = args.num_clients
 num_selected_clients = args.num_clients_fit
+strategy = args.strategy
 
 SAVE_COMPUTATIONAL_TIME = False
 SAVE_MODEL = False
+COMMUNICATION_FLAG = False
+
 
 # Load delays
 if COMMUNICATION_FLAG:
@@ -77,30 +79,43 @@ else:
 
     print("Training with CAM dataset")
     # define DATASET and test_size
-    x_train, x_test, y_train, y_test = load_CAM_data_federated(DATASET,ts)
+    x_train, x_test, y_train, y_test = load_CAM_data_federated(DATASET,
+                                                               ts)
     
     spe = len(x_train)//bs
 
     # Defining the deep learning model
-    model = build_model(x_train.shape[1:][1],y_train.shape[1:][0],MODEL)
+    print("building model")
+    model = build_model(x_train.shape[1:][1],
+                        y_train.shape[1:][0],
+                        MODEL)
 
 # Federated Learning client
 class FLClient(fl.client.NumPyClient):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, 
+                 *args, 
+                 model,
+                 client_id,
+                 **kwargs):
 
         super(fl.client.NumPyClient, self).__init__(*args, **kwargs)
         self.global_epoch = 0
+        self.model = model
+        self.client_id = client_id
 
     def update_global_epoch(self):
         
         self.global_epoch += 1
 
-    def get_parameters(self,config):
+    def get_parameters(self,
+                       config):
         
-        return model.get_weights()
+        return self.model.get_weights()
 
-    def fit(self, parameters, config):
+    def fit(self, 
+            parameters, 
+            config):
         
         # Simulate the download delay
         if COMMUNICATION_FLAG:
@@ -110,14 +125,18 @@ class FLClient(fl.client.NumPyClient):
         # Start timer to determine the computational time
         fit_start = timer()
 
-        model.set_weights(parameters)
-        model.fit(x_train, y_train, epochs=n_local_epochs, batch_size=bs)
+        self.model.set_weights(parameters)
+        self.model.fit(x_train, 
+                       y_train, 
+                       epochs=n_local_epochs, 
+                       batch_size=bs)
+
         tsp = datetime.now()
         timestamp = tsp.strftime('%Y-%m-%d-%H:%M:%S')
         
         if SAVE_MODEL:
 
-            model.save('models/vnc_local_model_client'+str(client_id)+'_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
+            self.model.save('models/vnc_local_model_client'+str(self.client_id)+'_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
         
         # Determine client's computational time 
         computational_time = timer() - fit_start
@@ -125,7 +144,7 @@ class FLClient(fl.client.NumPyClient):
         if SAVE_COMPUTATIONAL_TIME:
             # Calculating the total local training time
             append_text(RESULT_PATH+"subset_size_"+str(ss)+
-                        "/client_"+str(client_id),
+                        "/client_"+str(self.client_id),
                         str(computational_time)+
                         "\n")
         
@@ -134,12 +153,14 @@ class FLClient(fl.client.NumPyClient):
             
             sleep(delays[2][self.global_epoch])
 
-        return model.get_weights(), len(x_train), {}
+        return self.model.get_weights(), len(x_train), {}
 
-    def evaluate(self, parameters, config):
+    def evaluate(self, 
+                 parameters, 
+                 config):
         
-        model.set_weights(parameters)
-        loss, accuracy = model.evaluate(x_test, y_test)
+        self.model.set_weights(parameters)
+        loss, accuracy = self.model.evaluate(x_test, y_test)
 
         ''' Since all clients are selected to evaluate, we guaratee
             that each client knows the current global epoch number,
@@ -151,12 +172,43 @@ class FLClient(fl.client.NumPyClient):
             
             if client_id == 1:
            
-                model.save('models/vnc_model.keras')
+                self.model.save('models/vnc_model.keras')
                 tsp = datetime.now()
                 timestamp = tsp.strftime('%Y-%m-%d-%H:%M:%S')
-                model.save('models/vnc_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
+                self.model.save('models/vnc_n_clients_'+str(num_selected_clients)+'_epoch_'+str(self.global_epoch)+"_"+str(timestamp)+'.keras')
+
+        with open(f"results/classification/raw/{strategy}/{DATASET}/{args.num_clients_fit}/{self.client_id}", "a") as writer: 
+            
+            writer.writelines(f"{float(accuracy)}\n")
+        
 
         return loss, len(x_test), {"accuracy": float(accuracy)}
 
+def multi_thread_client(model,
+                        client_id):
 
-fl.client.start_client(server_address=SERVER_IP+":"+SERVER_PORT, client=FLClient().to_client())
+    fl.client.start_client(server_address=SERVER_IP+":"+SERVER_PORT, client=FLClient(model=model,
+                                                                                     client_id=client_id).to_client())
+
+    
+print("starting clients")
+
+threads = { }
+
+for client_id in range(1,args.num_clients+1):
+
+    print(f"starting client {client_id}")
+    client_model = copy.deepcopy(model)
+    threads[client_id] = Thread(target=multi_thread_client,
+                                args=(client_model,
+                                      client_id))
+
+
+
+for client_id in range(1,args.num_clients+1):
+
+    threads[client_id].start()
+
+for client_id in range(1,args.num_clients+1):
+
+    threads[client_id].join()

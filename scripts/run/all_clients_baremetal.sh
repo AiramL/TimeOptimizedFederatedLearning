@@ -38,21 +38,8 @@ else
 fi
 
 echo "Starting clients"
-sleep 3
+sleep 5
 
 # initialize clients
-for i in $(seq $numClients)
-do
-	if [ $TOFL -eq 1 ]
-	then
-		python3.12 -m src.federated_learning.client -cid=$i -b=$bs -cf=0 >> results/classification/tofl/$numClientsFit/client_"$i" &
-	
-	else
-		python3.12 -m src.federated_learning.client -nc=$numClients -cid=$i -b=$bs -cf=0 -ncf=$numClientsFit >> results/classification/raw/$strategy/$dataset/$numClientsFit/"client_""$i" &
-	fi
-	echo "Waiting client "$i" initialization"
-	sleep 2
-
-done
-
+python3.12 -m src.federated_learning.all_clients -nc=$numClients -cid=1 -b=$bs -cf=0 -ncf=$numClientsFit -st=$strategy &
 wait

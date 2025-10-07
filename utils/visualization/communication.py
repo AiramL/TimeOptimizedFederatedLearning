@@ -58,7 +58,7 @@ def selection_error_plot(file_path="results/client_selection/",
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
-    plt.legend(fontsize=20)
+    plt.legend(fontsize=16)
 
     plt.savefig("figures/communication_"+model_size[1:]+"_"+language+".png",
                 dpi=300,

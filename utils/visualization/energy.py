@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 from numpy import mean, std
 from pickle import load
 
-from legends import legends_dicts
+from .legends import legends_dicts
 
 def plot_energy(dictionary, 
                 PLOT=False, 
-                language="pt"):
+                language="en"):
     
     plt.figure(figsize=(14, 10))
 

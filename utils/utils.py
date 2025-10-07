@@ -17,6 +17,7 @@ def get_args_client():
     parser.add_argument("-b","--batch_size", type=int, default=32, help="Batch size to use during the federated learning training")
     parser.add_argument("-ts","--test_size", type=float, default=0.2, help="Test size to use")
     parser.add_argument("-s","--subset_size", type=int, default=100, help="Number of samples to use during the federated learning training")
+    parser.add_argument("-st","--strategy", type=str, default="random", help="Federated learning client slection strategy")
     parser.add_argument("-nle","--number_of_local_epochs", type=int, default=5, help="How many updates the client does before sending the updated model to the server")
     parser.add_argument("-dp","--data_path", type=str, default="datasets/VeReMi_Extension/mixalldata_clean.csv", help="Path to the data")
     parser.add_argument("-dsp","--dataset_path", type=str, default="datasets/VeReMi_Extension", help="Dataset directory")

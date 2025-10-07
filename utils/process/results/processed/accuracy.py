@@ -13,7 +13,10 @@ from pickle import dump
 # language = 1 -> print in portuguese-br
 # language = otherwise -> print in english
 
-def file_to_list(figureType=0,epochs=3,results_path='results/classification/random',pattern="79871/79871"):
+def file_to_list(figureType=0,
+                 epochs=40,
+                 results_path='results/classification/random',
+                 pattern="79871/79871"):
 
     
     file_names = {}
@@ -91,7 +94,10 @@ if __name__ == "__main__":
         for dataset in datasets:
 
 
-            m,s = file_to_list(figureType=1,epochs=3,results_path='results/classification/raw/'+model+'/'+dataset+'/',pattern=pattern)
+            m,s = file_to_list(figureType=1,
+                               epochs=40,
+                               results_path='results/classification/raw/'+model+'/'+dataset+'/',
+                               pattern=pattern)
             
             with open('results/classification/processed/'+model+'/'+dataset+'_mean_model','wb') as writer:
                 dump(m, writer)
