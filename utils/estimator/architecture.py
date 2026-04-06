@@ -1,7 +1,10 @@
+import torch
+
 from abc import ABC
 from abc import abstractmethod
-from .train import LSTM
-import torch
+
+from .lstm import LSTM
+
 
 class Estimator(ABC):
 
@@ -23,9 +26,10 @@ class EstimatorLSTM(Estimator):
 
     def __init__(self,
                  model_path="models",
+                 base_station_range=2000,
                  speed=2):
 
-        model_name = f"{model_path}/model_10_speed_{speed}.pt"
+        model_name = f"{model_path}/model_10_speed_{speed}_range_{base_station_range}.pt"
         
         model = LSTM()
 
