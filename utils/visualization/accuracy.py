@@ -1,8 +1,9 @@
 from pickle import load
 import matplotlib.pyplot as plt
 from numpy import mean, std
+from sys import argv
 
-def accuracy_error_plot(file_path="results/classification/processed/",dataset="WiSec", PLOT=False, language="pt"):
+def accuracy_error_plot(file_path="results/classification/processed/",dataset="WiSec", PLOT=False, language="en"):
     
     plt.figure(figsize=(12, 8))
     
@@ -52,9 +53,17 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
 
 if __name__ == "__main__":
     
+    if len(argv) > 1:
+
+        name = argv[1]
+
+    else:
+
+        name = "results"
+
     datasets = ["VeReMi", "WiSec"]
 
     for dataset in datasets:
     
-        accuracy_error_plot("results/classification/processed/", dataset)
+        accuracy_error_plot(f"{name}/classification/processed/", dataset)
         

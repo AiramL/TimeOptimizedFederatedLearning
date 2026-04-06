@@ -6,6 +6,7 @@ import torch.nn as nn
 import numpy as np
 import torch.optim as optim
 import torch.utils.data as data
+import os
 
 from utils.utils import load_config
 
@@ -56,7 +57,8 @@ def load_tp(client_id=1,
     return tpu, tpd
 
 
-def train(speed=0):
+def train(speed=0, 
+          PLOT=False):
 
     # train-test split for time series
     train_size = int(len(tpd) * 0.67)
@@ -123,14 +125,17 @@ def train(speed=0):
             test_plot[train_size+lookback:len(tpd)] = model(X_test.to(device))[:, -1, :].detach().cpu().numpy()
 
     # plot
-    plt.plot(tpd,c='b',label="real data")
-    plt.plot(train_plot, c='r',label="traning")
-    plt.plot(test_plot, c='g',label="testing")
-    plt.xlabel("Sample (#)")
-    plt.ylabel("Throughput (Mb/s)")
-    plt.legend()
-    plt.show()
+    if PLOT:
+        
+        plt.plot(tpd,c='b',label="real data")
+        plt.plot(train_plot, c='r',label="traning")
+        plt.plot(test_plot, c='g',label="testing")
+        plt.xlabel("Sample (#)")
+        plt.ylabel("Throughput (Mb/s)")
+        plt.legend()
+        plt.show()
     
+    os.makedirs("models", exist_ok=True)
     torch.save(model.state_dict(),f"models/model_10_speed_{speed}.pt")
 
 if __name__ == "__main__":

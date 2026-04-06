@@ -4,6 +4,7 @@ from itertools import accumulate
 
 from utils.utils import load_config 
 from .legends import legends_dicts
+from sys import argv
 
 def process_accuracy_delays(n_clients=95,
                             dataset="WiSec",
@@ -89,6 +90,13 @@ def process_accuracy_delays(n_clients=95,
 
 if __name__ == "__main__":
 
+    if len(argv) > 1:
+
+        name = argv[1]
+
+    else:
+
+        name = "results"
     
     cfg = load_config('config/config.yaml')
     
@@ -106,6 +114,8 @@ if __name__ == "__main__":
 
                 process_accuracy_delays(dataset=dataset,
                                         n_clients=client,
+                                        acc_path=f"{name}/classification/processed/",
+                                        time_path=f"{name}/client_selection/processed/",
                                         language=lang,
                                         servers=servers)
     

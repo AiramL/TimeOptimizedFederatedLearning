@@ -6,6 +6,7 @@ from numpy import mean, std, arange
 from math import sqrt
 from os import listdir
 from pickle import dump
+from sys import argv
 
 # figureType = 1 -> print loss
 # figureType = otherwise -> print accuracy
@@ -84,6 +85,14 @@ def file_to_list(figureType=0,
    
 if __name__ == "__main__":
     
+    if len(argv) > 1:
+
+        name = argv[1]
+
+    else:
+
+        name = "results"
+
     pattern="128/128"   
     datasets = [ "VeReMi", "WiSec" ]
     models = [ "m_fastest", "random" ]
@@ -96,13 +105,15 @@ if __name__ == "__main__":
 
             m,s = file_to_list(figureType=1,
                                epochs=40,
-                               results_path='results/classification/raw/'+model+'/'+dataset+'/',
+                               results_path=f'{name}/classification/raw/'+model+'/'+dataset+'/',
                                pattern=pattern)
             
-            with open('results/classification/processed/'+model+'/'+dataset+'_mean_model','wb') as writer:
+            with open(f'{name}/classification/processed/'+model+'/'+dataset+'_mean_model','wb') as writer:
+                
                 dump(m, writer)
 
-            with open('results/classification/processed/'+model+'/'+dataset+'_std_model','wb') as writer:
+            with open(f'{name}/classification/processed/'+model+'/'+dataset+'_std_model','wb') as writer:
+
                 dump(s, writer) 
     
 
