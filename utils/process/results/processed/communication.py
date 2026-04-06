@@ -1,9 +1,6 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from os import (
-        listdir,
-        makedirs)
+from os import makedirs
 
 import sys 
 
@@ -30,12 +27,13 @@ def plot_fig(mean, std):
 
 def generate_mean_and_std(n_executions:int=30,
                           base_station_range:int=2000,
+                          speed=0,
                           origin:str="mobility_0_"):
 
     dataset_name = f"data/raw/{base_station_range}/{origin}_simulation_"
     dataset_extension = ".csv"
 
-    df = pd.read_csv(f"{dataset_name}{0}{dataset_extension}")
+    df = pd.read_csv(f"{dataset_name}{speed}{dataset_extension}")
 
     for execution in range(n_executions):
 
@@ -61,8 +59,9 @@ if __name__ == "__main__":
     base_station_range = cfg['simulation']['base_station']['range']
 
     print("processing file ", index) 
-    file_path = f"data/processed/{base_station_range}/speed{speed}"
+    file_path = f"data/processed/speed{speed}/{base_station_range}"
     file_name = f"{file_path}/{index}.csv"
+
     makedirs(file_path, exist_ok=True)
     
     df_mean, df_std = generate_mean_and_std(repetitions,

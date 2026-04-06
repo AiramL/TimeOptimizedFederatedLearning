@@ -434,15 +434,15 @@ if __name__ == "__main__":
 
                 print("processing mobility file ",mobility)
                 file_name = f"mobility_{mobility}_speed_{speed}.txt"
-                input_data = read_input_file("mobility/processed/{file_name}")
+                input_data = read_input_file(f"mobility/processed/{file_name}")
 
                 for index in range(communication_repetitions):
 
                     print("index ", index)
                     threads[str(index)+str(mobility)] = threading.Thread(target=simulate_v2x,
-                                                                     args=(input_data,
-                                                                           f"data/raw/{base_station_range}",
-                                                                           f"{file_name[:-4]}_simulation_{index}.csv"))
+                                                                         args=(input_data,
+                                                                               f"data/raw/{base_station_range}",
+                                                                               f"{file_name[:-4]}_simulation_{index}.csv"))
                     threads[f"{index}{mobility}"].start()
                 
             for mobility in range(mobility_repetitions):
