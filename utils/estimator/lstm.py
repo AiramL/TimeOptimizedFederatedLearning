@@ -16,7 +16,5 @@ class LSTM(torch.nn.Module):
     def forward(self, x):
         
         x, _ = self.lstm(x)
-        x = self.linear(x)
-        x = torch.exp(x)
 
-        return x
+        return self.linear(x)

@@ -17,8 +17,8 @@ from .data import (
 
 
 def train(speed=0,
-          base_station_range=2000, 
-          PLOT=False):
+          base_station_range=1000, 
+          PLOT=True):
 
     # train-test split for time series
     train_size = int(len(tpd) * 0.67)
@@ -52,7 +52,7 @@ def train(speed=0,
             X_batch, y_batch = X_batch.to(device), y_batch.to(device)
  
             y_pred = model(X_batch)
-            loss = loss_fn(torch.log(y_pred), torch.log(y_batch))
+            loss = loss_fn(y_pred, y_batch)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -67,9 +67,9 @@ def train(speed=0,
         with torch.no_grad():
 
             y_pred = model(X_train.to(device))
-            train_rmse = torch.sqrt(loss_fn(torch.log(y_pred), torch.log(y_train.to(device))))
+            train_rmse = torch.sqrt(loss_fn(y_pred, y_train.to(device)))
             y_pred = model(X_test.to(device))
-            test_rmse = torch.sqrt(loss_fn(torch.log(y_pred), torch.log(y_test.to(device))))
+            test_rmse = torch.sqrt(loss_fn(y_pred, y_test.to(device)))
         
         print("Epoch %d: train RMSE %.4f, test RMSE %.4f" % (epoch, train_rmse, test_rmse))
 
