@@ -1,14 +1,17 @@
+import torch
+
 from abc import ABC 
 from abc import abstractmethod
 from pickle import dump
 from pickle import load
 import random
-from time import sleep
-import pandas as pd
 from math import floor
-from utils.estimator.architecture import *
+
+
 import logging
 from collections import deque
+
+from utils.estimator.architecture import EstimatorLSTM
 
 class Server(ABC):
 
@@ -50,7 +53,7 @@ class Server(ABC):
         self.elapsed_time = 0
         self.epoch_begging = 0.0
         self.logger = logging.getLogger(__name__)
-        logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename="logs/server.log",encoding='utf-8', level=logging.CRITICAL)
         
         
         if n_select_clients > len(avalilable_clients.keys()):
@@ -289,7 +292,8 @@ class ServerMFastestSelection(Server):
             self.state = self.m_clients_states[self.m_clients-1]
 
 
-class ServerTOFLSelection(Server, ABC):
+class ServerTOFLSelection(Server, 
+                          ABC):
 
     def __init__(self, 
                  n_select_clients=5, 
@@ -306,13 +310,16 @@ class ServerTOFLSelection(Server, ABC):
                                       "8": 8,
                                       "9": 9,
                                       "0": 0 },
-                datapath="data/processed/v2x_mobility_0_mean.csv"):
+                datapath="data/processed/v2x_mobility_0_mean.csv",
+                base_station_range=2000):
 
         super().__init__(n_select_clients, 
                          n_epochs, 
                          file_name, 
                          model_size, 
                          avalilable_clients)
+        
+        self.base_station_range = base_station_range
 
         self.past_delays = { client_id : (deque(10*[100],10),
                                           deque(10*[100],10))
@@ -371,28 +378,9 @@ class ServerTOFLSelection(Server, ABC):
 class ServerOracleTOFLSelection(ServerTOFLSelection):
 
     def __init__(self, 
-                 n_select_clients=5, 
-                 n_epochs=10, 
-                 file_name="result", 
-                 model_size=527, 
-                 avalilable_clients={ "1": 1,
-                                      "2": 2,
-                                      "3": 3,
-                                      "4": 4,
-                                      "5": 5,
-                                      "6": 6,
-                                      "7": 7,
-                                      "8": 8,
-                                      "9": 9,
-                                      "0": 0 },
-                 datapath="data/processed/0.csv"):
+                 **kwargs):
         
-        super().__init__(n_select_clients, 
-                         n_epochs, 
-                         file_name, 
-                         model_size, 
-                         avalilable_clients,
-                         datapath)
+        super().__init__(**kwargs)
 
 
         self.computational_delays = []
@@ -401,7 +389,7 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
         self.server_name = "tofl_oracle"
                                 
         self.logger.debug("finished loading data")
-        if n_select_clients > len(self.dataframe['Node ID'].unique()):
+        if self.number_of_clients_to_select > len(self.dataframe['Node ID'].unique()):
             self.logger.error("Invalid number of clients to be selected, \
                                higher than the total available number of clients.")
             raise Exception
@@ -546,30 +534,11 @@ class ServerOracleTOFLSelection(ServerTOFLSelection):
 class ServerEstimatorTOFLSelectionDL(ServerTOFLSelection):
 
     def __init__(self, 
-                 n_select_clients=5, 
-                 n_epochs=10, 
-                 file_name="result", 
-                 model_size=527, 
-                 avalilable_clients={"1": 1,
-                                     "2": 2,
-                                     "3": 3,
-                                     "4": 4,
-                                     "5": 5,
-                                     "6": 6,
-                                     "7": 7,
-                                     "8": 8,
-                                     "9": 9,
-                                     "0": 0 },
-                 datapath="data/processed/v2x_mobility_0_mean.csv"):
+                 **kwargs):
         
-        super().__init__(n_select_clients, 
-                         n_epochs, 
-                         file_name, 
-                         model_size, 
-                         avalilable_clients,
-                         datapath)
+        super().__init__(**kwargs)
 
-        self.estimator = EstimatorLSTM()
+        self.estimator = EstimatorLSTM(base_station_range=self.base_station_range)
 
         self.server_name = "tofl"
 
@@ -666,33 +635,14 @@ class ServerEstimatorTOFLSelectionDL(ServerTOFLSelection):
 class ServerEstimatorTOFLSelectionMFastest(ServerEstimatorTOFLSelectionDL):
 
     def __init__(self,
-                 n_select_clients=5,
                  m_clients=2,
-                 n_epochs=10,
-                 file_name="result",
-                 model_size=527,
-                 avalilable_clients={"1": 1,
-                                     "2": 2,
-                                     "3": 3,
-                                     "4": 4,
-                                     "5": 5,
-                                     "6": 6,
-                                     "7": 7,
-                                     "8": 8,
-                                     "9": 9,
-                                     "0": 0 },
-                 datapath="data/processed/v2x_mobility_0_mean.csv"):
+                 **kwargs):
 
-        super().__init__(n_select_clients,
-                         n_epochs,
-                         file_name,
-                         model_size,
-                         avalilable_clients,
-                         datapath)
-        
+        super().__init__(**kwargs)
+
         self.server_name = "tofl_mfastest"
 
-        if m_clients > n_select_clients:
+        if m_clients > self.number_of_clients_to_select:
             
             self.logger.error("Invalid configuration. Number of m_clients \
                                greater than number of clients to select")
@@ -731,7 +681,7 @@ if __name__ == "__main__":
     #server = ServerRandomSelection()
 
     for i in range(2,11):
-        #server = ServerOracleTOFLSelection(n_select_clients=i)
-        server = ServerEstimatorTOFLSelectionDL(n_select_clients=i)
+        server = ServerOracleTOFLSelection(n_select_clients=i)
+        #server = ServerEstimatorTOFLSelectionDL()
         server.select_clients()
         print(server.selected_clients)

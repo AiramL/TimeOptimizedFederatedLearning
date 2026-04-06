@@ -28,7 +28,7 @@ class Client(object):
         self.timeout = timeout
         self.epoch_beggin = 0.0
         self.logger = logging.getLogger("client_"+str(client_id))
-        logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.CRITICAL)
         
 
     def set_server(self, server):
