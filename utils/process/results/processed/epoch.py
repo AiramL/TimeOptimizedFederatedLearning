@@ -35,7 +35,7 @@ def process_epochs(file_path:str="results/client_selection/raw/epoch",
         
             for execution in range(n_executions):
         
-                with open(f"{file_path}/server_{server}_n_clients_selected_{n_clients}_execution_{execution}","rb") as loader:
+                with open(f"{file_path}/server_{server}_n_clients_selected_{n_clients}_execution_{execution}", "rb") as loader:
         
                     result_list = load(loader)
                     results[server+str(n_clients)].append(result_list)
@@ -76,5 +76,6 @@ if __name__ == "__main__":
         process_epochs(servers=cfg["simulation"]["strategy"],
                        n_executions=cfg["simulation"]["mobility"]["repetitions"],
                        file_path=f"{name}/client_selection/raw/speed{speed}/{base_station_range}/epoch", 
+                       base_station_range=base_station_range,
                        speed=speed,
                        n_selected_list=n_selected_clients_list)

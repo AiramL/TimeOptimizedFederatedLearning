@@ -1,6 +1,8 @@
-speed=0
 execution=0
 cars=$(yq '.simulation.cars' "config/config.yaml")
+speeds=$(yq '.simulation.speed.index[]' "config/config.yaml") 
+
+speed=${speeds[0]}
 
 python -m utils.process.poi
 

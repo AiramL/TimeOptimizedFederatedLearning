@@ -85,7 +85,6 @@ def train(speed=0,
             test_plot = np.ones_like(tpd) * np.nan
             test_plot[train_size+lookback:len(tpd)] = model(X_test.to(device))[:, -1, :].detach().cpu().numpy()
 
-    # plot
     if PLOT:
         
         plt.plot(tpd,c='b',label="real data")
@@ -109,6 +108,6 @@ if __name__ == "__main__":
     for speed in speeds:
 
         tpu, tpd = load_tp(speed=speed,
-                           data_path=f"data/processed/{base_station_range}/speed")
+                           data_path=f"data/processed/speed{speed}/{base_station_range}")
         train(speed=speed,
               base_station_range=base_station_range)

@@ -32,6 +32,7 @@ echo "Starting server"
 if [ "$strategy" = "m_fastest" ]
 then	
 	[[ $(($numClientsFit/2)) = 0 ]] && numClientsFit=1 || numClientsFit=$(($numClientsFit/2))
+	[ ! -d results/classification/raw/$strategy/$dataset/$numClientsFit/ ] && mkdir -p results/classification/raw/$strategy/$dataset/$numClientsFit/
 	python3.12 -m src.federated_learning.server -ncf=$numClientsFit -tf=$TOFL -nc=$numClients -nor=$eps &
 else	
 	python3.12 -m src.federated_learning.server -ncf=$numClientsFit -tf=$TOFL -nc=$numClients -nor=$eps &

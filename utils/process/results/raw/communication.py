@@ -433,8 +433,8 @@ if __name__ == "__main__":
             for mobility in range(mobility_repetitions):
 
                 print("processing mobility file ",mobility)
-                file_name = f"mobility_{mobility}_speed_{speed}.txt"
-                input_data = read_input_file(f"mobility/processed/{file_name}")
+                file_name = f"mobility_{mobility}"
+                input_data = read_input_file(f"mobility/processed/speed{speed}/{file_name}")
 
                 for index in range(communication_repetitions):
 

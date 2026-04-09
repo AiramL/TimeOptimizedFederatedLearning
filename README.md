@@ -401,12 +401,12 @@ source scripts/run/processed/results.sh
 
 Let's execute a federated learning training during 3 epochs with our 5 clients. Let's select 2 clients per epoch. We need to run with both datasets, so this experiment takes around 5 minutes. If you are running on a virtual machine, the time can be way longer due to the dataset pre-processing. Therefore, we recommend skipping directly to the [Results](#results) Section using the already generated data in this repository.
 ```bash
-source scripts/run/training.sh
+source scripts/run/raw/accuracy.sh
 ```
 
 We need to process the results to generate the figure (< 1 second):
 ```bash
-python process_results/accuracy.py
+source scripts/run/processed/accuracy.sh
 ```
 
 We also need to generate the energy consumption regarding the number of client failures. 
@@ -421,7 +421,7 @@ This script generates the results located in results/energy, which we are going 
 
 ## Training Time Figure
 ```bash
-python generate_figures/communication.py
+source scripts/visualize/communication.sh
 ```
 The script generates the results located in figures/communication\_model\_sizesize\_500\_pt.png
 

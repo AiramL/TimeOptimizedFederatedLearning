@@ -14,7 +14,7 @@ writer_buffer = "<additional>\n"
 
 for base_station in base_stations:
     
-    writer_buffer += f"\t<poi id=\"bs\" x={base_station[0]} y=\"{base_station[1]}\" color=\"255,0,0\" layer=3/>\n"
+    writer_buffer += f"\t<poi id=\"bs\" x=\"{base_station[0]}\" y=\"{base_station[1]}\" color=\"255,0,0\" layer=\"1\" width=\"50.0\" height=\"50.0\" />\n"
 
 writer_buffer += "</additional>"
 

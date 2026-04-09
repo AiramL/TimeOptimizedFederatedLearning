@@ -19,7 +19,7 @@ do
 
 		done
 
-		wait
+#		wait
 done
 
 wait

@@ -1,8 +1,8 @@
 import yaml 
+import logging
 
 import pandas as pd
 import argparse
-import tensorflow as tf
 
 from os import mkdir
 
@@ -89,6 +89,22 @@ def load_config(file_name):
     with open(file_name,"r") as reader:
     
         return yaml.safe_load(reader)
+    
+def create_logger(log_path, 
+                  server_name):
+    
+    logger = logging.getLogger(f'logger_{server_name}')
+    logger.setLevel(logging.CRITICAL)
+
+    if not logger.handlers:
+
+        handler = logging.FileHandler(log_path+str(server_name)+'.log')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    return logger
 
 if __name__ == "__main__":
+
     generate_pre_processed_dataset('datasets/VeReMi_Extension/mixalldata_clean.csv','datasets/VeReMi_Extension')

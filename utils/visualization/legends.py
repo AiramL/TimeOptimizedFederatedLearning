@@ -18,3 +18,19 @@ legends_dicts = { "en": {"random": "Random",
                          "tofl_mfastest": algorithm+" com M-Fastest"} 
                          
                          }
+
+style = {"random": "-",
+         "m_fastest": "--",
+         "tofl_oracle": "-.",
+         "tofl": (0, (1, 10)),
+         "tofl_estimator_dl": (0, (1, 5)),
+         "tofl_estimator_m_fastest": (0, (1, 1)),
+         "tofl_mfastest":(0, (3, 10, 1, 10))}
+
+colors = {"random": "b",
+          "m_fastest": "r",
+          "tofl_oracle": "y",
+          "tofl": "k",
+          "tofl_estimator_dl": "k",
+          "tofl_estimator_m_fastest": "g",
+          "tofl_mfastest":"gray"}

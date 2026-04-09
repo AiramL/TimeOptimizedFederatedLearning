@@ -18,12 +18,12 @@ def create_dataset(dataset, lookback):
     return torch.tensor(X), torch.tensor(y)
 
 def load_tp(client_id:int=1, 
-            data_path:str="data/processed/speed", 
+            data_path:str="data/processed/", 
             speed:int=0, 
             data_file:str="0.csv"):
     
     client_id = 1
-    df = pd.read_csv(f"{data_path}{speed}/{data_file}")
+    df = pd.read_csv(f"{data_path}/{data_file}")
     dt = df[df['Node ID'] == client_id].reset_index()
     tpu = dt[['Throughput DL']].values.astype('float32')
     tpd = dt[['Throughput UL']].values.astype('float32')

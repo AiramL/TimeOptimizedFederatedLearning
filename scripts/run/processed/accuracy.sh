@@ -1,1 +1,1 @@
-python utils/processe/results/processed/accuracy.py
+python utils/process/results/processed/accuracy.py

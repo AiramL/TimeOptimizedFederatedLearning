@@ -1,48 +1,78 @@
-from os import listdir
-from .client import *
-from .server import *
+import os
 import threading
-import sys
+import pandas as pd
+
+from pickle import dump
+
+from .client import Client
+from .servers import (
+    ServerRandomSelection,
+    ServerMFastestSelection,
+    ServerFixedSelection,
+    ServerOracleTOFLSelection,
+    ServerEstimatorTOFLSelectionDL,
+    ServerEstimatorTOFLSelectionMFastest,
+    ServerEstimatorTOFLSelectionMFastestClients,
+    ServerFixedSelection,
+    ServerFixedTestSelection,
+)
 
 from utils.utils import load_config
 
-def main(sid=0,
-         speed=0,
-         model_size=527,
-         number_of_clients=5,
-         server_type="random",
-         n_epochs=3,
-         datapath="data/processed/v2x_mobility_20_mean.csv",
-         number_of_clients_to_select=2,
-         m_clients=2,
-         base_station_range=2000):
+def main(sid:int=0,
+         speed:int=0,
+         model_size:int=527,
+         number_of_clients:int=5,
+         server_type:str="random",
+         n_rounds:int=3,
+         datapath:str="data/processed/v2x_mobility_20_mean.csv",
+         number_of_clients_to_select:int=2,
+         m_clients:int=2,
+         base_station_range:int=2000,
+         execution:int=0):
 
     df = pd.read_csv(datapath)
 
-    file_name = "results/client_selection/raw/epoch/server_"+server_type+\
-                "_n_clients_selected_"+str(number_of_clients_to_select)+\
-                "execution_"+datapath.split('/')[3][:-4]
+    results_path = f"results/client_selection/raw/speed{speed}/{base_station_range}/epoch"
+
+    os.makedirs(results_path, 
+                exist_ok=True)
+    
+    selected_clients_path = f"results/selected_clients/speed{speed}/{base_station_range}" 
+    
+    os.makedirs(selected_clients_path, 
+                exist_ok=True)
+
+    log_path = "logs/clients"
+    os.makedirs(log_path,
+                exist_ok=True)
+
+    file_name = f"{results_path}/server_{server_type}_n_clients_selected_{number_of_clients_to_select}_execution_{execution}"
 
     ''' create multiple clients objects '''
     available_clients = {}
+
     for client_id in range(number_of_clients):
+
         available_clients[str(client_id)] = Client(client_id=client_id, 
                                                    model_size=model_size,
                                                    datapath=df, 
-                                                   n_epochs=n_epochs)
+                                                   n_rounds=n_rounds)
 
     if server_type == "random":
         
         server = ServerRandomSelection(avalilable_clients=available_clients,
-                                       n_epochs=n_epochs,
+                                       n_rounds=n_rounds,
                                        file_name=file_name,
+                                       base_station_range=base_station_range,
                                        n_select_clients=number_of_clients_to_select)
 
     elif server_type == "fixed":
         
         server = ServerFixedSelection(avalilable_clients=available_clients,
-                                    n_epochs=n_epochs,
+                                    n_rounds=n_rounds,
                                     file_name=file_name,
+                                    base_station_range=base_station_range,
                                     n_select_clients=number_of_clients_to_select)
         
         server.set_selected_clients(range(number_of_clients_to_select))
@@ -51,75 +81,83 @@ def main(sid=0,
     elif server_type == "m_fastest":
         
         server = ServerMFastestSelection(avalilable_clients=available_clients,
-                                         n_epochs=n_epochs,                                              
+                                         n_rounds=n_rounds,                                              
                                          m_clients=m_clients,
                                          file_name=file_name,
+                                         base_station_range=base_station_range,
                                          n_select_clients=number_of_clients_to_select)
     
     # Need to test
     elif server_type == "tofl_oracle":
         
         server = ServerOracleTOFLSelection(avalilable_clients=available_clients,
-                                           n_epochs=n_epochs,
+                                           n_rounds=n_rounds,
                                            datapath=df,
                                            file_name=file_name,
+                                           base_station_range=base_station_range,
                                            n_select_clients=number_of_clients_to_select)
     
 
-    # Need to test
     elif server_type == "tofl_estimator_dl":
 
         server = ServerEstimatorTOFLSelectionDL(avalilable_clients=available_clients,
-                                              n_epochs=n_epochs,
-                                              datapath=df,
-                                              file_name=file_name,
-                                              n_select_clients=number_of_clients_to_select,
-                                              base_station_range=base_station_range)
+                                                n_rounds=n_rounds,
+                                                datapath=df,
+                                                file_name=file_name,
+                                                n_select_clients=number_of_clients_to_select,
+                                                base_station_range=base_station_range)
    
     elif server_type == "tofl_estimator_m_fastest":
-        server = ServerEstimatorTOFLSelectionMFastest(avalilable_clients=available_clients,
-                                                      m_clients=m_clients,
-                                                      n_epochs=n_epochs,
-                                                      datapath=df,
-                                                      file_name=file_name,
-                                                      n_select_clients=number_of_clients_to_select,
-                                                      base_station_range=base_station_range)
+
+        server = ServerEstimatorTOFLSelectionMFastestClients(avalilable_clients=available_clients,
+                                                             m_clients=m_clients,
+                                                             n_rounds=n_rounds,
+                                                             datapath=df,
+                                                             file_name=file_name,
+                                                             n_select_clients=number_of_clients_to_select,
+                                                             base_station_range=base_station_range)
 
     elif server_type == "fixed_test":
         
         server = ServerFixedTestSelection(avalilable_clients=available_clients,
-                                    n_epochs=n_epochs,
-                                    file_name=file_name,
-                                    n_select_clients=number_of_clients_to_select)
+                                          n_rounds=n_rounds,
+                                          file_name=file_name,
+                                          base_station_range=base_station_range,
+                                          n_select_clients=number_of_clients_to_select)
      
     ''' associate clients and server '''
     for client in available_clients.values():
+        
         client.set_server(server)
 
     ''' simulate the training'''
     return server.train()
 
 
-def save_results(speed,method,model_size,dataset,number_of_clients_to_select,results):
+def save_results(file_path,
+                 file_name,
+                 results):
 
-    with open(f"results/client_selection/speed{speed}/model_{method}_size_{model_size}_dataset_{dataset}_n_clients_{number_of_clients_to_select}","wb") as writer:
+    os.makedirs(file_path, exist_ok=True)
+
+    with open(f"{file_path}/{file_name}","wb") as writer:
 
         dump(results,writer)
 
-def execute_results_per_client(model_sizes,
-                               servers,
-                               data,
-                               speed, 
-                               n_clients,
-                               n_epochs,
-                               m_ratio,
-                               number_of_clients_list,
-                               base_station_range):
+def execute_results_per_client(model_sizes:list,
+                               servers:list,
+                               data:list,
+                               speed:int, 
+                               n_clients:int,
+                               n_rounds:int,
+                               m_ratio:float,
+                               number_of_clients_list:list,
+                               base_station_range:int):
 
-    n_epochs = n_epochs
+    n_rounds = n_rounds
     m_ratio = m_ratio 
 
-    dataset_path = f"data/processed/{base_station_range}/speed{speed}/"
+    dataset_path = f"data/processed/speed{speed}/{base_station_range}"
     
     threads_local = {}
 
@@ -139,20 +177,21 @@ def execute_results_per_client(model_sizes,
                     p = int(number_of_clients_to_select*m_ratio)
                     m_clients =  p if p > 0 else 1 
                     
+                    file_path = f"results/client_selection/speed{speed}/{base_station_range}"
+                    file_name = f"model_{method}_size_{model_size}_dataset_{dataset}_n_clients_{number_of_clients_to_select}"
+
                     threads_local[f'{model_size}{dataset}{method}{number_of_clients_to_select}'] = threading.Thread(target=save_results, 
-                                                                                                                     args=(speed,
-                                                                                                                           method,
-                                                                                                                           model_size,
-                                                                                                                           dataset,
-                                                                                                                           number_of_clients_to_select, 
+                                                                                                                     args=(file_path,
+                                                                                                                           file_name, 
                                                                                                                            main(model_size=model_size,
                                                                                                                                 speed=speed,
                                                                                                                                 number_of_clients_to_select=number_of_clients_to_select,
                                                                                                                                 number_of_clients=n_clients,
-                                                                                                                                n_epochs=n_epochs,
+                                                                                                                                n_rounds=n_rounds,
                                                                                                                                 m_clients=m_clients,
                                                                                                                                 server_type=method,
-                                                                                                                                datapath=dataset_path+str(dataset)+".csv",
+                                                                                                                                datapath=f"{dataset_path}/{dataset}.csv",
+                                                                                                                                execution=dataset,
                                                                                                                                 base_station_range=base_station_range)))
                                                                                                                                     
                     threads_local[f'{model_size}{dataset}{method}{number_of_clients_to_select}'].start()
@@ -167,7 +206,7 @@ if  __name__ == "__main__":
     model_sizes= cfg["simulation"]["model"]["size"]
     speeds = cfg["simulation"]["speed"]["index"] 
     n_clients = cfg["simulation"]["cars"] 
-    n_epochs = cfg["simulation"]["federated_learning"]["server"]["epochs"] 
+    n_rounds = cfg["simulation"]["federated_learning"]["server"]["rounds"] 
     m_ratio = cfg["simulation"]["federated_learning"]["server"]["m_ratio"] 
     data_range = cfg["simulation"]["mobility"]["repetitions"] 
     n_selected_clients_list = cfg["simulation"]["federated_learning"]["server"]["n_clients_list"]
@@ -188,14 +227,14 @@ if  __name__ == "__main__":
 
                     threads[f'{server}{size}{data}{speed}'] = threading.Thread(target=execute_results_per_client, 
                                                                                       args=([size],
-                                                                                      [server],
-                                                                                      [data],
-                                                                                      speed,
-                                                                                      n_clients,
-                                                                                      n_epochs,
-                                                                                      m_ratio,
-                                                                                      n_selected_clients_list,
-                                                                                      base_station_range))
+                                                                                            [server],
+                                                                                            [data],
+                                                                                            speed,
+                                                                                            n_clients,
+                                                                                            n_rounds,
+                                                                                            m_ratio,
+                                                                                            n_selected_clients_list,
+                                                                                            base_station_range))
     
     for subset in range(ranges):
 

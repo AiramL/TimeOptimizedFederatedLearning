@@ -1,6 +1,8 @@
-import pandas as pd
-import logging  
+import os
+
 from math import floor
+
+from utils.utils import create_logger
 
 class Client(object):
 
@@ -10,7 +12,7 @@ class Client(object):
                  client_id=1,
                  server=None,
                  datapath='executions/mean_tp.csv',
-                 n_epochs=100,
+                 n_rounds=100,
                  timeout=120): 
 
         ''' Read the 5G dataset to add at 
@@ -22,31 +24,37 @@ class Client(object):
         self.message_period = message_period
         self.client_id = client_id
         self.server = server
-        self.epoch = 0
+        self.round = 0
         self.time_last_chunk = 0.0
-        self.computation_delay = [ 0 for i in range(n_epochs)] # in seconds
+        self.computation_delay = [ 0 for i in range(n_rounds)] # in seconds
         self.timeout = timeout
-        self.epoch_beggin = 0.0
-        self.logger = logging.getLogger("client_"+str(client_id))
-        logging.basicConfig(filename="logs/client.log",encoding='utf-8', level=logging.CRITICAL)
+        self.round_beginning = 0.0
+        self.elapsed_time = 0.0
+
+        log_path = "logs/clients/"
+        self.logger = create_logger(log_path,
+                                    "client_"+str(client_id))
         
+    # TODO: to implement the training part
+    def local_training(self,
+                       elapsed_time):
+
+        self.set_state(self.state + (self.computation_delay[self.round]/
+                                     self.message_period))
+
+        return elapsed_time + (self.computation_delay[self.round]/
+                                     self.message_period)
 
     def set_server(self, server):
+
         self.server = server  
-
-    ''' Updates client's positions and 
-        communications conditions. '''
-    def update_state(self):
-        
-        if self.state + 1 < self.dataframe.shape[0]:
     
-            self.state += 1
+    def get_delay(self):
 
-        # reset to the initial point
-        else:
-            
-            self.state = 0
-
+        return float(0.1 * (self.elapsed_time +
+                            self.time_last_chunk - 
+                            self.round_beginning))
+    
     def set_state(self, 
                   state):
         
@@ -56,14 +64,43 @@ class Client(object):
 
         else:
             
-            self.state = state // self.dataframe.shape[0]
-    
-    ''' Determines the delay giving the throughput. '''
-    def get_delay(self):
+            self.state = state % self.dataframe.shape[0]
 
-        pass
-    
-    ''' Sends the maximum data as possible during the 100ms. '''
+    # Sends the model to the aggregation server
+    def send_model(self):
+
+        remain_data = self.model_size
+
+        self.logger.debug(f"sending model to server {self.server}")    
+        while (remain_data):
+            
+            self.logger.debug(f"client ID: {self.client_id}, state: {self.state}")
+            remain_data = self.send_data_chunk(remain_data)
+            
+            if remain_data:
+                
+                self.elapsed_time += 1
+                self.update_state()
+
+        self.logger.debug(f"state: {self.state}")
+        self.logger.debug(f"initial state {self.round_beginning}")
+        self.logger.debug(f"last chunck: {float(self.time_last_chunk)}")
+        self.logger.debug("time to send the model: %f" % 
+                          float(0.1 * (self.elapsed_time + 
+                                       self.time_last_chunk - 
+                                       self.round_beginning)))
+
+        if self.server is not None:
+        
+            self.server.update_received_models()
+            self.server.set_highest_delay(float(0.1 * (self.elapsed_time +
+                                                       self.time_last_chunk - 
+                                                       self.round_beginning)))
+
+            self.server.set_server_state(self.state, 
+                                         self.elapsed_time)
+            
+    # Sends the maximum data as possible during the message period 
     def send_data_chunk(self, 
                         data):
         
@@ -79,58 +116,37 @@ class Client(object):
         
         return data - maximum_chunk_size # remain data to send
 
-    # need to implement the trianing part
-    def local_training(self,
-                       elapsed_time):
-
-        self.set_state(self.state + (self.computation_delay[self.epoch]/
-                                     self.message_period))
-
-        return elapsed_time + (self.computation_delay[self.epoch]/
-                                     self.message_period)
 
 
+    def receive_model(self):
 
-    ''' Sends the model to the aggregation server. '''
-    def send_model(self,
-                   initial_time,
-                   elapsed_time):
-        
-        elapsed_time = elapsed_time
+        self.round_beginning = self.state
+        self.elapsed_time = self.state
         remain_data = self.model_size
 
-        self.logger.debug("sending model to server %s", self.server)
-        
+        self.logger.debug(f"receiving model {self.server}")
         while (remain_data):
-            
-            self.logger.debug("client ID: %d, state: %d", 
-                              self.client_id, 
-                              self.state)
-
-            remain_data = self.send_data_chunk(remain_data)
+        
+            self.logger.debug(f"client ID: {self.client_id} state: {self.state}")
+            remain_data = self.receive_data_chunk(remain_data)
             
             if remain_data:
-                
-                elapsed_time += 1
+
+                self.elapsed_time += 1
                 self.update_state()
 
-        self.logger.debug("state: %d" % self.state)
-        self.logger.debug("initial state %d" % initial_time)
-        self.logger.debug("last chunck: %f" % float(self.time_last_chunk))
-        self.logger.debug("time to send the model: %f" % 
-                          float(0.1 * (elapsed_time + 
+        # final time
+        self.logger.debug("time to receive the model: %f" % 
+                          float(0.1 * (self.elapsed_time + 
                                        self.time_last_chunk - 
-                                       initial_time)))
+                                       self.round_beginning)))
+        # training 
+        self.elapsed_time = self.local_training(self.elapsed_time)
 
-        if self.server is not None:
+        # send model back to the server 
+        self.send_model()
         
-            self.server.update_received_models()
-            self.server.set_highest_delay(float(0.1 * (elapsed_time +
-                                                       self.time_last_chunk - 
-                                                       initial_time)))
-
-            self.server.set_server_state(self.state, 
-                                         elapsed_time)
+    
 
     def receive_data_chunk(self,
                            data):
@@ -146,46 +162,27 @@ class Client(object):
             return 0 # no more data to send
 
         return data - maximum_chunk_size # remain data to send
-
-
-    def receive_model(self):
-
-        initial_time = self.state
-        elapsed_time = self.state
-        remain_data = self.model_size
-
-        self.logger.debug("receiving model %s" % self.server)
+    
+    # Updates client's positions and communications conditions. 
+    def update_state(self):
         
-        while (remain_data):
-        
-            self.logger.debug("client ID: %d state: %d",
-                              self.client_id, 
-                              self.state)
+        if self.state + 1 < self.dataframe.shape[0]:
+    
+            self.state += 1
+
+        # reset to the initial point
+        else:
             
-            remain_data = self.receive_data_chunk(remain_data)
-            
-            if remain_data:
+            self.state = 0
 
-                elapsed_time += 1
-                self.update_state()
 
-        # final time
-        self.logger.debug("time to receive the model: %f" % 
-                          float(0.1 * (elapsed_time + 
-                                       self.time_last_chunk - 
-                                       initial_time)))
-        #''' training '''
-        elapsed_time = self.local_training(elapsed_time)
-
-        ''' send model back to the server '''
-        self.send_model(initial_time,
-                        elapsed_time)
         
 
 
 ''' Class test '''    
 
 if __name__ == '__main__':
+
     client = Client()
     client.receive_model()
     client.send_model()

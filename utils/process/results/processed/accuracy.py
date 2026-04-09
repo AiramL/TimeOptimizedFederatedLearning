@@ -1,21 +1,20 @@
-import re
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from numpy import mean, std, arange
 from math import sqrt
-from os import listdir
 from pickle import dump
 from sys import argv
 
-# figureType = 1 -> print loss
-# figureType = otherwise -> print accuracy
+from numpy import (
+    mean, 
+    std)
 
-# language = 1 -> print in portuguese-br
-# language = otherwise -> print in english
+from os import (
+    listdir,
+    makedirs)
 
-def file_to_list(figureType=0,
+
+def file_to_list(figureType=0, # figureType = 1 print loss; otherwise, print accuracy
                  epochs=40,
+                 n_selected=16,
+                 model="random",
                  results_path='results/classification/random',
                  pattern="79871/79871"):
 
@@ -23,15 +22,19 @@ def file_to_list(figureType=0,
     file_names = {}
     result_files = {}
     file_lines = {}
-    
-    
+
+    if model == "m_fastest":
+
+        n_selected/=2
+
+    results_path = f"{results_path}/{int(n_selected)}"
 
     total_files = len(listdir(results_path))
         
         
-    for index,name in enumerate(listdir(results_path)):
+    for index, name in enumerate(listdir(results_path)):
 
-        file_names["filename"+str(index+1)] = results_path+name
+        file_names["filename"+str(index+1)] = f"{results_path}/{name}"
             
     for i in range(1,total_files+1):
 
@@ -114,24 +117,32 @@ if __name__ == "__main__":
     models = [ "m_fastest", "random" ]
     
 
-    for model in models:
-        
-        for dataset in datasets:
+    for n_selected in [2, 16]:
 
-
-            m,s = file_to_list(figureType=1,
-                               epochs=40,
-                               results_path=f'{name}/classification/raw/'+model+'/'+dataset+'/',
-                               pattern=pattern)
+        for model in models:
             
-            with open(f'{name}/classification/processed/'+model+'/'+dataset+'_mean_model','wb') as writer:
+            for dataset in datasets:
+
+
+                m,s = file_to_list(figureType=1,
+                                epochs=40,
+                                results_path=f"{name}/classification/raw/{model}/{dataset}",
+                                n_selected=n_selected,
+                                model=model,
+                                pattern=pattern)
                 
-                dump(m, writer)
+                result_write_path = f"{name}/classification/processed/{model}/{dataset}/{n_selected}"
+                makedirs(result_write_path,
+                            exist_ok=True)
 
-            with open(f'{name}/classification/processed/'+model+'/'+dataset+'_std_model','wb') as writer:
+                with open(f"{result_write_path}/mean_model",'wb') as writer:
+                    
+                    dump(m, writer)
 
-                dump(s, writer) 
-    
+                with open(f"{result_write_path}/std_model",'wb') as writer:
+
+                    dump(s, writer) 
+        
 
 
 

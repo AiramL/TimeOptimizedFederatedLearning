@@ -3,7 +3,10 @@ import matplotlib.pyplot as plt
 from numpy import mean, std
 from sys import argv
 
-def accuracy_error_plot(file_path="results/classification/processed/",dataset="WiSec", PLOT=False, language="en"):
+def accuracy_error_plot(file_path:str="results/classification/processed/",
+                        dataset:str="WiSec", 
+                        PLOT:bool=False, 
+                        language:str="en"):
     
     plt.figure(figsize=(12, 8))
     
@@ -42,11 +45,14 @@ def accuracy_error_plot(file_path="results/classification/processed/",dataset="W
         plt.ylabel("Accuracy (%)")
 
     elif language == "pt":
+
         plt.xlabel("Época (#)")
         plt.ylabel("Acurácia (%)")
     
     plt.legend()
-    plt.savefig("figures/"+dataset+"_accuracy.png",dpi=300,bbox_inches='tight')
+    plt.savefig("figures/"+dataset+"_accuracy.png",
+                dpi=300,
+                bbox_inches='tight')
 
     if PLOT:
         plt.show()

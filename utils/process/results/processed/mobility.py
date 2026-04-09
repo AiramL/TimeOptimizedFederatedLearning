@@ -7,7 +7,7 @@ def process_scenario(n_nodes=20,
                      speed=0):
 
     file_name = file_name+str(execution)+".tcl"
-    processed_file = "mobility/processed/mobility_"+str(execution)+"_speed_"+str(speed)+".txt"
+    processed_file = f"mobility/processed/speed{speed}/mobility_{execution}"
     txt_writer = ""
 
     with open(file_name, "r") as reader:
@@ -43,7 +43,7 @@ def process_scenario(n_nodes=20,
                                 elements_list[7][:-2] + "\n"
                     
     with open(processed_file, "w") as writer:
-        
+
         writer.writelines(txt_writer)
 
 if __name__ == "__main__":
