@@ -107,8 +107,8 @@ def main(sid:int=0,
                                                 n_select_clients=number_of_clients_to_select,
                                                 base_station_range=base_station_range)
    
-    elif server_type == "tofl_estimator_m_fastest":
-
+    elif server_type == "tofl_estimator_m_fastest_clients":
+        
         server = ServerEstimatorTOFLSelectionMFastestClients(avalilable_clients=available_clients,
                                                              m_clients=m_clients,
                                                              n_rounds=n_rounds,
@@ -116,6 +116,15 @@ def main(sid:int=0,
                                                              file_name=file_name,
                                                              n_select_clients=number_of_clients_to_select,
                                                              base_station_range=base_station_range)
+    
+    elif server_type == "tofl_estimator_m_fastest":
+
+        server = ServerEstimatorTOFLSelectionMFastest(avalilable_clients=available_clients,
+                                                             m_clients=m_clients,
+                                                             n_rounds=n_rounds,
+                                                             datapath=df,
+                                                             file_name=file_name,
+                                                             n_select_clients=number_of_clients_to_select)
 
     elif server_type == "fixed_test":
         
@@ -177,7 +186,7 @@ def execute_results_per_client(model_sizes:list,
                     p = int(number_of_clients_to_select*m_ratio)
                     m_clients =  p if p > 0 else 1 
                     
-                    file_path = f"results/client_selection/speed{speed}/{base_station_range}"
+                    file_path = f"results/client_selection/raw/speed{speed}/{base_station_range}"
                     file_name = f"model_{method}_size_{model_size}_dataset_{dataset}_n_clients_{number_of_clients_to_select}"
 
                     threads_local[f'{model_size}{dataset}{method}{number_of_clients_to_select}'] = threading.Thread(target=save_results, 

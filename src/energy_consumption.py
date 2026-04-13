@@ -1,6 +1,11 @@
+import os
 import random
 
-from pickle import load, dump
+from utils.utils import load_config 
+from pickle import (
+        load, 
+        dump,
+)
 
 def generate_error_list(size, 
                         error_rate):
@@ -33,58 +38,86 @@ def read_result(server,
                 epoch, 
                 path,
                 num_selected_clients):
+    
+    if server == "tofl_estimator_dl":
 
-    file_name = server+"epoch"+epoch
+        server = "tofl"
+    
+    elif server == "tofl_estimator_m_fastest_clients":
 
-    with open(path+file_name,"rb") as reader:
+        server = "tofl_mfastest"
+
+    file_name = f"{server}_epoch_{epoch}"
+
+    with open(f"{path}/{file_name}","rb") as reader:
 
         return load(reader)[:num_selected_clients]
 
-# error rate varying from 0% to 90%
-error_rate = [ x/10 for x in range(10) ]
-
-servers = ["random",
-           "m_fastest",
-           "tofl_mfastest",
-           "tofl"]
-
-# store results
-results = { server:{ int(err*10):[] for err in error_rate } 
-                          for server in servers           }
-
-# experiments configurations
-num_selected_clients = 20
-m_clients = int(num_selected_clients*0.5)
-epochs = [ str(epoch) for epoch in range(1,40) ]
 
 
-for epoch in epochs:
+def process_enegy(servers:list=["random"],
+                  speed:int=0,
+                  base_station_range:int=2000):
 
-    for err in error_rate:
-        
-        error_list = generate_error_list(size=100, 
-                                        error_rate=err)
+    # error rate varying from 0% to 90%
+    error_rate = [ x/10 for x in range(10) ]
 
-        for server in servers:
+    # store results
+    results = { server:{ int(err*10):[] for err in error_rate } 
+                              for server in servers           }
+
+    # experiments configurations
+    num_selected_clients = 20
+    m_clients = int(num_selected_clients*0.5)
+    epochs = [ str(epoch) for epoch in range(1,40) ]
+
+
+    for epoch in epochs:
+
+        for err in error_rate:
             
-            # select with different methods
-            if server == "m_fastest":
+            error_list = generate_error_list(size=100, 
+                                            error_rate=err)
 
-                selected_clients = read_result(server,
-                                               epoch,
-                                               "results/selected_clients/",
-                                               m_clients)
+            for server in servers:
+                
+                # select with different methods
+                if ("m_fastest" == server) or ("tofl_estimator_m_fastest_clients" == server):
 
-            else:
+                    selected_clients = read_result(server,
+                                                   epoch,
+                                                   f"results/selected_clients/speed{speed}/{base_station_range}",
+                                                   m_clients)
 
-                selected_clients = read_result(server,
-                                               epoch,
-                                               "results/selected_clients/",
-                                               num_selected_clients)
+                else:
 
-            # compute results
-            results[server][int(10*err)].append(count_true(selected_clients, error_list)/num_selected_clients)
+                    selected_clients = read_result(server,
+                                                   epoch,
+                                                   f"results/selected_clients/speed{speed}/{base_station_range}",
+                                                   num_selected_clients)
 
-with open("results/energy","wb") as writer:
+                # compute results
+                results[server][int(10*err)].append(count_true(selected_clients, error_list)/num_selected_clients)
     
-    dump(results, writer)
+    results_file = f"results/speed{speed}/{base_station_range}" 
+    os.makedirs(results_file,
+                exist_ok=True)
+
+    with open(f"{results_file}/energy","wb") as writer:
+        
+        dump(results, writer)
+
+if __name__ == "__main__":
+
+    cfg = load_config('config/config.yaml')
+
+    servers = cfg["simulation"]["strategy"]
+    speeds = cfg["simulation"]["speed"]["index"]
+    base_station_range = cfg['simulation']['base_station']['range']
+    
+    for speed in speeds:
+
+        process_enegy(servers=servers,
+                      speed=speed,
+                      base_station_range=base_station_range)
+    

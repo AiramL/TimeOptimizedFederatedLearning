@@ -41,18 +41,18 @@ class ServerMFastestSelection(Server):
             self.highest_delay = self.m_clients_delays[self.m_clients-1]
             self.logger.debug("highest delay: %f" % self.highest_delay) 
     
-    def set_server_state(self,
-                         state, 
-                         elapsed_time):
-        
-        self.m_clients_states.append(int(elapsed_time))
-        
-        if len(self.m_clients_states) > 1:
-            
-            self.m_clients_states.sort()
-
-        if (self.num_received_models == self.number_of_clients_to_select):
-            
-            self.highest_delay = self.m_clients_states[self.m_clients-1]
-            self.state = self.m_clients_states[self.m_clients-1]
+    #def set_server_state(self,
+    #                     state, 
+    #                     elapsed_time):
+    #    
+    #    self.m_clients_states.append(int(elapsed_time))
+    #    
+    #    if len(self.m_clients_states) > 1:
+    #        
+    #        self.m_clients_states.sort()
+    #
+    #    if (self.num_received_models == self.number_of_clients_to_select):
+    #        
+    #        self.highest_delay = self.m_clients_states[self.m_clients-1]
+    #        self.state = self.m_clients_states[self.m_clients-1]
 

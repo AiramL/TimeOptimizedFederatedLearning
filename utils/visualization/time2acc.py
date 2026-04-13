@@ -110,8 +110,19 @@ def process_accuracy_delays(n_clients:int=95,
     os.makedirs(figure_path, 
                 exist_ok=True)
 
-    plt.ylim(76,84)
-    plt.xlim(0,9)
+    plt.ylim(78,84)
+    
+    if dataset == "WiSec":
+
+        #plt.xlim(0,9)
+        plt.xlim(0,1000)
+    
+    elif dataset == "VeReMi":
+
+        #plt.xlim(0,7.5)
+        plt.xlim(0,1000)
+    
+
     plt.legend()
     plt.savefig(f"{figure_path}/n_clients_{n_clients}_{language}.png",
                 dpi=300,

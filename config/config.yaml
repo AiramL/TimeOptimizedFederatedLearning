@@ -75,13 +75,13 @@ simulation:
                                 - 98 
                                 - 100
         strategy: 
-        #- "random"
-        #        - "m_fastest"
-        #        - "tofl_oracle"
-        #        - "tofl_estimator_dl"
-                - "tofl_estimator_m_fastest"
+                - "random"
+                - "m_fastest"
+                - "tofl_oracle"
+                - "tofl_estimator_dl"
+                - "tofl_estimator_m_fastest_clients"
         base_station:
-                #range: 1300
-                range: 2000
+                range: 1300
+                #range: 2000
                 positions: "communication/base_stations.csv"
 

@@ -56,7 +56,7 @@ def selection_error_plot(file_path:str="results/client_selection",
         
         m = mean(results[server],axis=0)
         s = std(results[server],axis=0)
-        x = [ index for index in range(1,1+len(m)) ]
+        x = n_selected
 
         plt.plot(x,
                  m,
@@ -74,8 +74,14 @@ def selection_error_plot(file_path:str="results/client_selection",
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
     plt.legend(fontsize=16)
-    plt.xticks(range(1,len(n_selected)+1), n_selected)
-    plt.ylim(0,70)
+    
+    if base_station_range >= 1400:
+
+        plt.ylim(0,70)
+
+    else:
+
+        plt.ylim(0,1000)
     
     figure_path = "figures/communication"
 
@@ -108,7 +114,7 @@ if __name__ == "__main__":
 
             for model_size in sizes:
 
-                selection_error_plot(f"results/client_selection/speed{speed}/{base_station_range}", 
+                selection_error_plot(f"results/client_selection/processed/speed{speed}/{base_station_range}", 
                                      model_size, 
                                      base_station_range=base_station_range,
                                      servers=servers,

@@ -25,7 +25,8 @@ n_clients_selected_list = cfg['simulation']['federated_learning']['server']['n_c
 
 for speed in speeds:
 
-    file_path = f"{name}/client_selection/speed{speed}/{base_station_range}"
+    file_path = f"{name}/client_selection/raw/speed{speed}/{base_station_range}"
+    file_path_writer = f"{name}/client_selection/processed/speed{speed}/{base_station_range}"
 
     for size in sizes:
             
@@ -51,10 +52,10 @@ for speed in speeds:
                     
                 file = f"model_{model}_size_{size}_dataset_{dataset}"
                 
-                os.makedirs(file_path, 
+                os.makedirs(file_path_writer, 
                             exist_ok=True)
 
-                with open(f"{file_path}/{file}","wb") as writer:
+                with open(f"{file_path_writer}/{file}","wb") as writer:
 
                     dump(agg_results, 
                          writer)
